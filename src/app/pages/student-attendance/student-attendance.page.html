@@ -6,9 +6,9 @@
 
 <ion-content>
   <ion-row class="body-content">
-    <ion-col size=5>
+    <ion-col size=6>
       <!-- <ion-item lines="none"> -->
-      <ion-select placeholder="Class list" (ionChange)="selectClass()">
+      <ion-select [(ngModel)]="currentClass" placeholder="Class list" (ionChange)="selectClass()">
         <!-- <ion-label position="fixed">Class List</ion-label> -->
         <ion-select-option *ngFor="let class of classList" [value]="class.code">
           {{class.name}}
@@ -16,9 +16,9 @@
       </ion-select>
       <!-- </ion-item> -->
     </ion-col>
-    <ion-col size=5>
+    <ion-col size=6>
       <!-- <ion-item lines="none"> -->
-      <ion-select placeholder="Section List" (ionChange)="selectSection()">
+      <ion-select [(ngModel)]="currentSection" placeholder="Section List" (ionChange)="selectSection()">
         <!-- <ion-label position="fixed">Section List</ion-label> -->
         <ion-select-option *ngFor="let section of sectionList" [value]="section.code">
           {{section.name}}
@@ -26,10 +26,11 @@
       </ion-select>
       <!-- </ion-item> -->
     </ion-col>
-    <ion-col style="margin-left: 10px;">
-      <ion-icon name="camera" color="blue"></ion-icon>
-    </ion-col>
   </ion-row>
+  <div class="date-box">
+    <ion-datetime displayFormat="DD-MM-YYYY" [(ngModel)]="currentDate" placeholder="Choose Date" (ionChange)="changeDate(currentDate)"
+    [max]="maxDate"></ion-datetime>
+  </div>
   <div style="margin:14px;">
     <ion-list *ngFor="let student of studentList" class="student-list-card">
         <div style="width: 70%; float:left;">

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-student-attendance',
@@ -10,9 +11,15 @@ export class StudentAttendancePage implements OnInit {
   classList: any[];
   sectionList: any[];
   studentList: any[];
-  constructor() { }
+  currentClass: any;
+  currentSection: any;
+  currentDate: any;
+  maxDate: any;
+  constructor(private datepipe: DatePipe) { }
 
   ngOnInit() {
+    debugger
+    this.maxDate = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
     this.classList=[
       {
         "name":"Class-1",
@@ -111,11 +118,15 @@ export class StudentAttendancePage implements OnInit {
   }
 
   selectClass(){
-
+    this.currentSection = "";
+    this.currentDate = "";
   }
 
   selectSection(){
+    this.currentDate = "";
+  }
 
+  changeDate(currentDate) {
   }
 
 }
