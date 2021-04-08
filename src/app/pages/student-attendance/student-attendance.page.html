@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Student Attendance</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row class="body-content">
+    <ion-col size=5>
+      <!-- <ion-item lines="none"> -->
+      <ion-select placeholder="Class list" (ionChange)="selectClass()">
+        <!-- <ion-label position="fixed">Class List</ion-label> -->
+        <ion-select-option *ngFor="let class of classList" [value]="class.code">
+          {{class.name}}
+        </ion-select-option>
+      </ion-select>
+      <!-- </ion-item> -->
+    </ion-col>
+    <ion-col size=5>
+      <!-- <ion-item lines="none"> -->
+      <ion-select placeholder="Section List" (ionChange)="selectSection()">
+        <!-- <ion-label position="fixed">Section List</ion-label> -->
+        <ion-select-option *ngFor="let section of sectionList" [value]="section.code">
+          {{section.name}}
+        </ion-select-option>
+      </ion-select>
+      <!-- </ion-item> -->
+    </ion-col>
+    <ion-col style="margin-left: 10px;">
+      <ion-icon name="camera" color="blue"></ion-icon>
+    </ion-col>
+  </ion-row>
+  <div style="margin:14px;">
+    <ion-list *ngFor="let student of studentList" class="student-list-card">
+        <div style="width: 70%; float:left;">
+          <span class="student-name-text">{{student.name}}</span><br>
+          <div class="roll-no-text">Roll No: {{student.roll_no}}</div>
+       </div>     
+       <div style="width: 30%; float:right">
+        <div style="float: right;margin-left: 30vw;margin-top: 2vw;">
+          <ion-toggle [(ngModel)]="student.attendance"></ion-toggle>
+        </div>
+       </div>
+    </ion-list>
+  </div>
+</ion-content>
+<ion-footer>
+  <div style="height: 12vw;">
+    <span class="save-btn">SAVE</span>
+  </div>
+</ion-footer>
