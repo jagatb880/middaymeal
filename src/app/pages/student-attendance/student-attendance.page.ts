@@ -5,9 +5,10 @@ import { ISection } from 'src/app/interfaces/section';
 import { IStudent } from 'src/app/interfaces/student';
 import { IStudentRecord } from 'src/app/interfaces/studentRecord';
 import { SharedService } from 'src/app/services/shared.service';
-import { ActionSheetController } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { ConstantService } from 'src/app/services/constant.service';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 
 @Component({
   selector: 'app-student-attendance',
@@ -27,8 +28,14 @@ export class StudentAttendancePage implements OnInit {
   studentRecord: IStudentRecord[];
   studentRecords: IStudentRecord[];
   absentRecords: number[];
-  constructor(private datepipe: DatePipe, private sharedSvc: SharedService, private constantSvc: ConstantService,
-    private actionSheetCtrl: ActionSheetController, private storage: Storage) { }
+  constructor(private datepipe: DatePipe, private sharedSvc: SharedService, private diagnostic: Diagnostic,
+    private platform: Platform, private storage: Storage) {
+      // this.platform.ready().then(() => {
+      //   this.platform.resume.subscribe(() => {    
+      //       this.takeLocationPermission();
+      //   });
+      //  });
+    }
 
   ngOnInit() {
     this.studentList = [];
@@ -40,135 +47,131 @@ export class StudentAttendancePage implements OnInit {
     this.absentRecords = [];
     this.maxDate = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
 
-    this.studentDataList = [
-      {
-        "name":"Class-1",
-        "code":1,
-        "sections":[
-          {
-            "name":"Section-A",
-            "code":1,
-            "students":[
-              {
-                "name":"Pritish Ranjan Sahoo",
+    this.studentDataList = [{
+        "name": "Class-1",
+        "code": 1,
+        "sections": [{
+            "name": "Section-A",
+            "code": 1,
+            "students": [{
+                "name": "Pritish Ranjan Sahoo",
                 "student_id": 1,
-                "addmission_no":13,
-                "attendance":true
+                "addmission_no": 13,
+                "attendance": true
               },
               {
-                "name":"Pritish Ranjan Sahoo",
+                "name": "Pritish Ranjan Sahoo",
                 "student_id": 2,
-                "addmission_no":13,
-                "attendance":true
+                "addmission_no": 13,
+                "attendance": true
               },
               {
-                "name":"Pritish Ranjan Sahoo",
+                "name": "Pritish Ranjan Sahoo",
                 "student_id": 3,
-                "addmission_no":13,
-                "attendance":true
+                "addmission_no": 13,
+                "attendance": true
               },
               {
-                "name":"Pritish Ranjan Sahoo",
+                "name": "Pritish Ranjan Sahoo",
                 "student_id": 4,
-                "addmission_no":13,
-                "attendance":true
+                "addmission_no": 13,
+                "attendance": true
               },
               {
-                "name":"Pritish Ranjan Sahoo",
+                "name": "Pritish Ranjan Sahoo",
                 "student_id": 5,
-                "addmission_no":13,
-                "attendance":true
+                "addmission_no": 13,
+                "attendance": true
               },
               {
-                "name":"Pritish Ranjan Sahoo",
+                "name": "Pritish Ranjan Sahoo",
                 "student_id": 6,
-                "addmission_no":13,
-                "attendance":true
+                "addmission_no": 13,
+                "attendance": true
               },
               {
-                "name":"Pritish Ranjan Sahoo",
+                "name": "Pritish Ranjan Sahoo",
                 "student_id": 7,
-                "addmission_no":13,
-                "attendance":true
+                "addmission_no": 13,
+                "attendance": true
               },
               {
-                "name":"Pritish Ranjan Sahoo",
+                "name": "Pritish Ranjan Sahoo",
                 "student_id": 8,
-                "addmission_no":13,
-                "attendance":true
+                "addmission_no": 13,
+                "attendance": true
               }
             ]
           },
           {
-            "name":"Section-B",
-            "code":2,
-            "students":[
-              {
-                "name":"Hari Sankar Sahoo",
+            "name": "Section-B",
+            "code": 2,
+            "students": [{
+                "name": "Hari Sankar Sahoo",
                 "student_id": 1,
-                "addmission_no":13,
-                "attendance":true
+                "addmission_no": 13,
+                "attendance": true
               },
               {
-                "name":"Hari Sankar Sahoo",
+                "name": "Hari Sankar Sahoo",
                 "student_id": 2,
-                "addmission_no":13,
-                "attendance":true
+                "addmission_no": 13,
+                "attendance": true
               },
             ]
           },
           {
-            "name":"Section-C",
-            "code":3,
-            "students":[]
+            "name": "Section-C",
+            "code": 3,
+            "students": []
           }
         ]
       },
       {
-        "name":"Class-2",
-        "code":2,
-        "sections":[]
+        "name": "Class-2",
+        "code": 2,
+        "sections": []
       }
     ]
-    if(this.studentDataList.length > 0){
+    if (this.studentDataList.length > 0) {
       this.classList = this.studentDataList
     }
   }
 
-  selectClass(){
+  selectClass() {
     this.currentSectionCode = "";
     this.currentDate = "";
     this.sharedSvc.imageData = undefined;
-    let studentClass: IClass[] = this.studentDataList.filter(a=> a.code == this.currentClassCode);
+    let studentClass: IClass[] = this.studentDataList.filter(a => a.code == this.currentClassCode);
     this.sectionList = studentClass[0].sections
   }
 
-  selectSection(){
+  selectSection() {
     this.currentDate = "";
     this.sharedSvc.imageData = undefined;
     this.studentList = [];
   }
 
   changeDate(currentDate) {
-    if(currentDate != ""){
+    if (currentDate != "") {
       this.currentDate = currentDate;
       this.absentRecords = [];
-      let studentSection: ISection[] = this.sectionList.filter(data=> data.code == this.currentSectionCode);
+      let studentSection: ISection[] = this.sectionList.filter(data => data.code == this.currentSectionCode);
       let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].students));
       let studentList = [...tempStudentList]
-      this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(attendanceData=>{
-        if(attendanceData != null){
+      this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(attendanceData => {
+        if (attendanceData != null) {
           console.log(attendanceData);
           this.studentRecords = attendanceData;
-          let fetchedStudentData: IStudentRecord[] = this.studentRecords.filter(data=> (data.record_date.substr(0,10) == currentDate.substr(0,10)) &&
+          let fetchedStudentData: IStudentRecord[] = this.studentRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
             (data.class_code == this.currentClassCode) && (data.section_code == this.currentSectionCode))
-          if(fetchedStudentData .length == 0){
+          if (fetchedStudentData.length == 0) {
             this.studentList = tempStudentList;
-          }else{
+          } else {
             this.absentRecords = fetchedStudentData[0].student_ids;
             for (let i = 0; i < studentList.length; i++) {
               for (let j = 0; j < fetchedStudentData[0].student_ids.length; j++) {
-                if(studentList[i].student_id == fetchedStudentData[0].student_ids[j]){
+                if (studentList[i].student_id == fetchedStudentData[0].student_ids[j]) {
                   studentList[i].attendance = false;
                 }
               }
@@ -176,19 +179,19 @@ export class StudentAttendancePage implements OnInit {
             this.studentList = studentList;
             this.sharedSvc.imageData = fetchedStudentData[0].image_base64;
           }
-        }else{
+        } else {
           this.studentList = tempStudentList;
         }
-      }).catch(err=>{
+      }).catch(err => {
         console.log(err)
       })
     }
   }
 
-  switchAttendance(student_id: number,attendance: boolean){
-    if(!attendance){
+  switchAttendance(student_id: number, attendance: boolean) {
+    if (!attendance) {
       this.absentRecords.push(student_id);
-    }else{
+    } else {
       const index = this.absentRecords.indexOf(student_id);
       if (index > -1) {
         this.absentRecords.splice(index, 1);
@@ -200,50 +203,68 @@ export class StudentAttendancePage implements OnInit {
    * This method is used to show a action sheet with list of action to choose the user.
    */
   async uploadphoto() {
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Select File Explorer',
-      buttons: [{
-        text: 'Load from File Explorer',
-        handler: () => {
-          this.sharedSvc.openGallery();
-        }
-      },
-      {
-        text: 'Use Camera',
-        handler: () => {
-          this.sharedSvc.openCamera();
-        }
-      },
-      {
-        text: 'Cancel',
-        role: 'cancel'
-      }
-      ]
-    });
-    await actionSheet.present();
+    // const actionSheet = await this.actionSheetCtrl.create({
+    //   header: 'Select File Explorer',
+    //   buttons: [{
+    //     text: 'Load from File Explorer',
+    //     handler: () => {
+    //       this.sharedSvc.openGallery();
+    //     }
+    //   },
+    //   {
+    //     text: 'Use Camera',
+    //     handler: () => {
+    //       this.sharedSvc.openCamera();
+    //     }
+    //   },
+    //   {
+    //     text: 'Cancel',
+    //     role: 'cancel'
+    //   }
+    //   ]
+    // });
+    // await actionSheet.present();
+    this.takeLocationPermission();
   }
 
-  deleteReceipt(){
+  takeLocationPermission(){
+    this.diagnostic.isLocationEnabled().then((isEnabled) => {
+      if (!isEnabled && this.platform.is('cordova')) {
+        //handle confirmation window code here and then call switchToLocationSettings
+        this.sharedSvc.showAlertCallBack("Warning", "For geo tagging with photo you must need to enable the location permission.").then(data => {
+          if (data) {
+            this.diagnostic.switchToLocationSettings();
+          } else {
+            this.sharedSvc.showMessage("Enable location permission manually")
+          }
+        })
+      } else {
+        this.sharedSvc.openCamera();
+      }
+    })
+  }
+
+  deleteReceipt() {
     this.sharedSvc.imageData = undefined;
   }
 
   saveRecord() {
-    if(this.sharedSvc.imageData != undefined){
-      this.sharedSvc.showAlert("Warning","Please upload a photo.")
-    }else{
+    if (this.sharedSvc.imageData == undefined) {
+      this.sharedSvc.showAlert("Warning", "Please upload a photo.")
+    } else {
       let studentAttendanceData: IStudentRecord = {
-          record_date: this.currentDate,
-          class_code: this.currentClassCode,
-          section_code: this.currentSectionCode,
-          student_ids: this.absentRecords,
-          sync_status: false,
-          image_base64: this.sharedSvc.imageData
+        record_date: this.currentDate,
+        class_code: this.currentClassCode,
+        section_code: this.currentSectionCode,
+        student_ids: this.absentRecords,
+        sync_status: false,
+        image_base64: this.sharedSvc.imageData
       }
       this.studentRecords.push(studentAttendanceData)
-      this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,this.studentRecords).then(data=>{
+
+      this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, this.studentRecords).then(data => {
         this.sharedSvc.showMessage("Record successfully saved offline.")
       })
     }
   }
-
 }

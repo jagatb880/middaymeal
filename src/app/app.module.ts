@@ -12,6 +12,7 @@ import { environment } from '../environments/environment';
 import { DatePipe } from '@angular/common';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,6 +36,7 @@ import { Camera } from '@ionic-native/camera/ngx';
     DatePipe,
     Camera,
     Geolocation,
+    Diagnostic,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })
