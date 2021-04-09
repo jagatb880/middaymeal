@@ -1,9 +1,21 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>login</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-
+<ion-content class="ion-padding">
+<div>
+  <p class="ptag">Sign In</p>
+</div>
+<div style="margin-top: 45px;">
+  <ion-label class="lbl">User name</ion-label>
+</div>
+<ion-item >
+  <!-- <ion-label>User name</ion-label> -->
+  <ion-input placeholder="youremail@gmail.com"></ion-input>
+</ion-item>
+<div class="dvscnd">
+  <ion-label class="lbl">Password</ion-label>
+</div>
+<ion-item >
+  <!-- <ion-label>User name</ion-label> -->
+  <ion-input placeholder="************"></ion-input>
+</ion-item>
+<p class="forgotpassword">Forgot password?</p>
+<ion-button expand="full" [routerLink]='["/dashboard"]'>Sign in</ion-button>
 </ion-content>

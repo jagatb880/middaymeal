@@ -10,6 +10,13 @@ import { Platform, AlertController } from '@ionic/angular';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
+  public appPages = [
+    { title: 'Sync from server', url: '/dashboard'},
+    { title: 'Sync to server', url: '/dashboard'},
+    { title: 'Student attendance', url: '/dashboard'},
+    { title: 'Teacher attendance', url: '/dashboard'},
+   
+  ];
 
   constructor(
     public networkService: NetworkService, private sharedSvc: SharedService,
