@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NetworkService } from 'src/app/services/network.service';
+import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -8,7 +10,7 @@ import { NetworkService } from 'src/app/services/network.service';
 })
 export class LoginPage implements OnInit {
 
-  constructor(private networkSvc: NetworkService) { }
+  constructor(private networkSvc: NetworkService, private navigator: NavController) { }
 
   ngOnInit() {
     if(this.networkSvc.online){
@@ -16,4 +18,7 @@ export class LoginPage implements OnInit {
     }
   }
 
+  goToDashboard(){
+    this.navigator.navigateRoot(['dashboard'])
+  }
 }
