@@ -154,6 +154,8 @@ export class StudentAttendancePage implements OnInit {
       this.currentDate = currentDate;
       this.absentRecords = [];
       let studentSection: ISection[] = this.sectionList.filter(data=> data.code == this.currentSectionCode);
+      let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].students));
+      let studentList = [...tempStudentList]
       this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(attendanceData=>{
         if(attendanceData != null){
           console.log(attendanceData);
@@ -161,21 +163,21 @@ export class StudentAttendancePage implements OnInit {
           let fetchedStudentData: IStudentRecord[] = this.studentRecords.filter(data=> (data.record_date.substr(0,10) == currentDate.substr(0,10)) &&
             (data.class_code == this.currentClassCode) && (data.section_code == this.currentSectionCode))
           if(fetchedStudentData .length == 0){
-            this.studentList = studentSection[0].students;
+            this.studentList = tempStudentList;
           }else{
             this.absentRecords = fetchedStudentData[0].student_ids;
-            for (let i = 0; i < studentSection[0].students.length; i++) {
+            for (let i = 0; i < studentList.length; i++) {
               for (let j = 0; j < fetchedStudentData[0].student_ids.length; j++) {
-                if(studentSection[0].students[i].student_id == fetchedStudentData[0].student_ids[j]){
-                  studentSection[0].students[i].attendance = false;
+                if(studentList[i].student_id == fetchedStudentData[0].student_ids[j]){
+                  studentList[i].attendance = false;
                 }
               }
             }
-            this.studentList = studentSection[0].students;
+            this.studentList = studentList;
             this.sharedSvc.imageData = fetchedStudentData[0].image_base64;
           }
         }else{
-          this.studentList = studentSection[0].students;
+          this.studentList = tempStudentList;
         }
       }).catch(err=>{
         console.log(err)
