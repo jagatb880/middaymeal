@@ -3,15 +3,16 @@ ion-content {
 }
 
 .body-content{
-    padding: 10px 10px 10px 10px;
+    padding: 5px 10px 5px 10px;
 }
 
 
 ion-select {
     width: 100% !important;
     max-width: 100% !important;
-    border: 1px solid white;
+    border: 1px solid #dedede;
     background-color:#ffffff;
+    border-radius: 5px;
 }
 
 ion-icon {
@@ -54,4 +55,55 @@ ion-icon {
     background-color: white;
     margin-left: 15px;
     margin-right: 15px;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+}
+
+.upload-receipt-icon {
+    width: 22px;
+}
+
+.upload-receipt-text {
+    margin-top: 3%;
+    font-size: 14px;
+    font-weight: 500
+}
+
+.receipt-photo {
+    margin-left: 5%;
+    margin-right: 5%;
+    border: 2px solid gray
+}
+
+.delete-receipt {
+    border-radius: 8px;
+    padding: 9px 0px 9px 0px !important;
+    float: left;
+    font-size: 12px;
+    background: #2264F6;
+    color: #ffffff;
+    margin-top: 4vh;
+    width: 100%;
+    text-align: center;
+}
+
+.upload_receipt-section {
+    margin-top: 3vh;
+    margin-left: 4vw;
+    margin-right: 4vw;
+}
+
+.upload-section {
+    display: flex;
+    float: left;
+    margin-right: 3cw;
+    margin-top: 4vw;
+    margin-left: 5vw;
+    border: 2px solid lightgray;
+    padding: 4px 4px 5px 3px;
+}
+
+.upload-section-col {
+    padding: 0px;
+    margin: 15px 10px
 }

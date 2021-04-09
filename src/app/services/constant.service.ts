@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { IDBKeyNames } from 'src/app/interfaces/dbKeyNames';
+import { IMessages } from 'src/app/interfaces/message';
 
 @Injectable({
   providedIn: 'root'

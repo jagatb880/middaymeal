@@ -3,8 +3,11 @@
  * @author Jagat Bandhu
  * @since 1.0.0
  */
-interface IClass {
+
+import {ISection} from '../interfaces/section'
+
+export interface IClass {
     name: string;
     code: number;
-    sections: any[]
+    sections: ISection[];
 }

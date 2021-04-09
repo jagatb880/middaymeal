@@ -3,7 +3,7 @@
  * @author Jagat Bandhu
  * @since 1.0.0
  */
-interface IStudent {
+export interface IStudent {
     name: string,
     addmission_no: number,
     student_id: number,

@@ -8,7 +8,7 @@
   <ion-row class="body-content">
     <ion-col size=6>
       <!-- <ion-item lines="none"> -->
-      <ion-select [(ngModel)]="currentClass" placeholder="Class list" (ionChange)="selectClass()">
+      <ion-select [(ngModel)]="currentClassCode" placeholder="Class list" (ionChange)="selectClass()">
         <!-- <ion-label position="fixed">Class List</ion-label> -->
         <ion-select-option *ngFor="let class of classList" [value]="class.code">
           {{class.name}}
@@ -18,7 +18,7 @@
     </ion-col>
     <ion-col size=6>
       <!-- <ion-item lines="none"> -->
-      <ion-select [(ngModel)]="currentSection" placeholder="Section List" (ionChange)="selectSection()">
+      <ion-select [disabled]="sectionList?.length == 0" [(ngModel)]="currentSectionCode" placeholder="Section List" (ionChange)="selectSection()">
         <!-- <ion-label position="fixed">Section List</ion-label> -->
         <ion-select-option *ngFor="let section of sectionList" [value]="section.code">
           {{section.name}}
@@ -27,11 +27,11 @@
       <!-- </ion-item> -->
     </ion-col>
   </ion-row>
-  <div class="date-box">
-    <ion-datetime displayFormat="DD-MM-YYYY" [(ngModel)]="currentDate" placeholder="Choose Date" (ionChange)="changeDate(currentDate)"
+  <div class="date-box" >
+    <ion-datetime [disabled]="!currentSectionCode" displayFormat="DD-MM-YYYY" [(ngModel)]="currentDate" placeholder="Choose Date" (ionChange)="changeDate(currentDate)"
     [max]="maxDate"></ion-datetime>
   </div>
-  <div style="margin:14px;">
+  <div style="margin:15px;">
     <ion-list *ngFor="let student of studentList" class="student-list-card">
         <div style="width: 70%; float:left;">
           <span class="student-name-text">{{student.name}}</span><br>
@@ -44,9 +44,27 @@
        </div>
     </ion-list>
   </div>
+  <div *ngIf="studentList.length>0" class="upload-section-col">
+    <ion-row>
+      <ion-col size=6>
+        <ion-button expand="block" color="primary" (click)="uploadphoto()">Upload Photo</ion-button>
+      </ion-col>
+      <ion-col size=6>
+        <ion-button *ngIf="sharedSvc.imageData != undefined" expand="block" color="primary" (click)="deleteReceipt()">Delete Photo</ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+  <ion-row class="upload_receipt-section">
+    <ion-col>
+      <div *ngIf="sharedSvc.imageData != undefined">
+        <ion-img class="receipt-photo" [src]="sharedSvc.imageData.src">
+        </ion-img>
+      </div>
+    </ion-col>
+  </ion-row>
 </ion-content>
 <ion-footer>
-  <div style="height: 12vw;">
-    <span class="save-btn">SAVE</span>
+  <div *ngIf="studentList.length>0" style="height: 12vw;">
+    <span class="save-btn" (click)="saveRecord()">SAVE</span>
   </div>
 </ion-footer>

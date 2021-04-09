@@ -3,8 +3,10 @@
  * @author Jagat Bandhu
  * @since 1.0.0
  */
-interface ISection {
+import {IStudent} from '../interfaces/student'
+
+export interface ISection {
     name: string;
     code: number;
-    students: any[]
+    students: IStudent[];
 }

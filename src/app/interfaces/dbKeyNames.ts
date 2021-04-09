@@ -3,7 +3,7 @@
  * @author Jagat Bandhu
  * @since 1.0.0
  */
-interface IDBKeyNames {
+export interface IDBKeyNames {
     studentData: string;
     studentAttendanceData: string;
     userId: string

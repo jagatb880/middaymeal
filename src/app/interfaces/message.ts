@@ -3,7 +3,7 @@
  * @author Jagat Bandhu
  * @since 1.0.0
  */
-interface IMessages {
+export interface IMessages {
     checkInternetConnection: string,
     serverError: string,
     networkError: string,
