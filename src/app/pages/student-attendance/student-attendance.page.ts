@@ -26,6 +26,7 @@ export class StudentAttendancePage implements OnInit {
   studentDataList: IClass[];
   studentRecord: IStudentRecord[];
   studentRecords: IStudentRecord[];
+  absentRecords: number[];
   constructor(private datepipe: DatePipe, private sharedSvc: SharedService, private constantSvc: ConstantService,
     private actionSheetCtrl: ActionSheetController, private storage: Storage) { }
 
@@ -35,7 +36,8 @@ export class StudentAttendancePage implements OnInit {
     this.currentClassCode = "";
     this.currentSectionCode = "";
     this.studentRecord = [];
-    this.studentRecords = []
+    this.studentRecords = [];
+    this.absentRecords = [];
     this.maxDate = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
 
     this.studentDataList = [
@@ -150,24 +152,45 @@ export class StudentAttendancePage implements OnInit {
   changeDate(currentDate) {
     if(currentDate != ""){
       this.currentDate = currentDate;
+      this.absentRecords = [];
+      let studentSection: ISection[] = this.sectionList.filter(data=> data.code == this.currentSectionCode);
       this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(attendanceData=>{
         if(attendanceData != null){
           console.log(attendanceData);
           this.studentRecords = attendanceData;
-          let fetchedStudentData = this.studentRecords.filter(data=> data.record_date.substr(0,10) == currentDate.substr(0,10))
-          if(fetchedStudentData.length == 0){
-            let studentSection: ISection[] = this.sectionList.filter(data=> data.code == this.currentSectionCode);
+          let fetchedStudentData: IStudentRecord[] = this.studentRecords.filter(data=> (data.record_date.substr(0,10) == currentDate.substr(0,10)) &&
+            (data.class_code == this.currentClassCode) && (data.section_code == this.currentSectionCode))
+          if(fetchedStudentData .length == 0){
             this.studentList = studentSection[0].students;
           }else{
-
+            this.absentRecords = fetchedStudentData[0].student_ids;
+            for (let i = 0; i < studentSection[0].students.length; i++) {
+              for (let j = 0; j < fetchedStudentData[0].student_ids.length; j++) {
+                if(studentSection[0].students[i].student_id == fetchedStudentData[0].student_ids[j]){
+                  studentSection[0].students[i].attendance = false;
+                }
+              }
+            }
+            this.studentList = studentSection[0].students;
+            this.sharedSvc.imageData = fetchedStudentData[0].image_base64;
           }
         }else{
-          let studentSection: ISection[] = this.sectionList.filter(data=> data.code == this.currentSectionCode);
           this.studentList = studentSection[0].students;
         }
       }).catch(err=>{
         console.log(err)
       })
+    }
+  }
+
+  switchAttendance(student_id: number,attendance: boolean){
+    if(!attendance){
+      this.absentRecords.push(student_id);
+    }else{
+      const index = this.absentRecords.indexOf(student_id);
+      if (index > -1) {
+        this.absentRecords.splice(index, 1);
+      }
     }
   }
 
@@ -211,7 +234,7 @@ export class StudentAttendancePage implements OnInit {
           record_date: this.currentDate,
           class_code: this.currentClassCode,
           section_code: this.currentSectionCode,
-          student_ids: [],
+          student_ids: this.absentRecords,
           sync_status: false,
           image_base64: this.sharedSvc.imageData
       }
