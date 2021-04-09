@@ -196,7 +196,6 @@ export class StudentAttendancePage implements OnInit {
 
   /**
    * This method is used to show a action sheet with list of action to choose the user.
-   * @memberof CrewNewExpensePage
    */
   async uploadphoto() {
     const actionSheet = await this.actionSheetCtrl.create({
