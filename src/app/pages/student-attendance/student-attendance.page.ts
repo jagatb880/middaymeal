@@ -262,10 +262,33 @@ export class StudentAttendancePage implements OnInit {
         image_base64: this.sharedSvc.imageData
       }
       this.studentRecords.push(studentAttendanceData)
-
-      this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, this.studentRecords).then(data => {
-        this.sharedSvc.showMessage("Record successfully saved offline.")
-        this.location.back();
+      this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then((fetchedData: IStudentRecord[])=>{
+        if(fetchedData == null){
+          this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, this.studentRecords).then(data => {
+            this.sharedSvc.showMessage("Record successfully saved offline.")
+            this.location.back();
+          })
+        }else{
+          let updateDataStatus: boolean = false;
+          for (let i = 0; i < fetchedData.length; i++) {
+            if(fetchedData[i].record_date.substr(0,10) == this.currentDate.substr(0,10) && fetchedData[i].class_code == this.currentClassCode &&
+              fetchedData[i].section_code == this.currentSectionCode){
+                fetchedData[i] = studentAttendanceData;
+                updateDataStatus = true;
+            }
+          }
+          if(updateDataStatus){
+            this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, fetchedData).then(data => {
+              this.sharedSvc.showMessage("Record successfully updated offline.")
+              this.location.back();
+            })
+          }else{
+            this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, this.studentRecords).then(data => {
+              this.sharedSvc.showMessage("Record successfully saved offline.")
+              this.location.back();
+            })
+          }
+        }
       })
     }
   }

@@ -90,7 +90,8 @@
       "cordova-plugin-androidx": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   }
 }

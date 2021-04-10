@@ -1,3 +1,16 @@
-ion-content {--ion-background-color: #ffffff;}
-.crd{height: 119px;--background: #2264F6;color: white;margin: 21px;}
-.crdcntn{text-align: center;margin-top: 27px;}
+ion-content {
+  --ion-background-color: #ffffff;
+}
+
+.crd {
+  --background: #2264F6;
+  color: white;
+  margin: 21px;
+}
+
+.crdcntn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 33vw;
+}
