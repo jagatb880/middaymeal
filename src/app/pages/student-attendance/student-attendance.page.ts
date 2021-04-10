@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { IClass } from '../../interfaces/class';
 import { ISection } from 'src/app/interfaces/section';
 import { IStudent } from 'src/app/interfaces/student';
@@ -29,7 +29,7 @@ export class StudentAttendancePage implements OnInit {
   studentRecords: IStudentRecord[];
   absentRecords: number[];
   constructor(private datepipe: DatePipe, private sharedSvc: SharedService, private diagnostic: Diagnostic,
-    private platform: Platform, private storage: Storage) {
+    private platform: Platform, private storage: Storage, private location: Location) {
       // this.platform.ready().then(() => {
       //   this.platform.resume.subscribe(() => {    
       //       this.takeLocationPermission();
@@ -42,6 +42,7 @@ export class StudentAttendancePage implements OnInit {
     this.sectionList = [];
     this.currentClassCode = "";
     this.currentSectionCode = "";
+    this.sharedSvc.imageData = undefined;
     this.studentRecord = [];
     this.studentRecords = [];
     this.absentRecords = [];
@@ -264,6 +265,7 @@ export class StudentAttendancePage implements OnInit {
 
       this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, this.studentRecords).then(data => {
         this.sharedSvc.showMessage("Record successfully saved offline.")
+        this.location.back();
       })
     }
   }

@@ -3,6 +3,7 @@ import { NetworkService } from './services/network.service';
 import { Location } from '@angular/common';
 import { SharedService } from './services/shared.service';
 import { Platform, AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,7 @@ export class AppComponent {
   ];
 
   constructor(
-    public networkService: NetworkService, private sharedSvc: SharedService,
+    public networkService: NetworkService, private router: Router,
     private location: Location, private alertCtrl: AlertController,
     private platform: Platform) {
     this.initializeApp();
@@ -41,9 +42,11 @@ export class AppComponent {
    */
   backButtonEvent() {
     this.platform.backButton.subscribe(async () => {
-      if (this.sharedSvc.rootPage) {
+      if (this.router.isActive('/dashboard', true)) {
         const alert = await this.alertCtrl.create({
-          header: 'CLOSE_APP',
+          header: 'Info',
+          message: 'Are you sure, you want to close this app?',
+          cssClass:'my-custom-class',
           buttons: [
             {
               text: 'NO',
