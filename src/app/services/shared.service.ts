@@ -20,29 +20,6 @@ export class SharedService {
   constructor(private alertCtrl: AlertController, private location: Location, private loadingCtrl: LoadingController,
     private toastCtrl: ToastController, private camera: Camera, private geolocation: Geolocation) { }
 
-
-  /**
-   * This method is used to show alert when their is no record found.
-   *
-   * @memberof SharedService
-   */
-  async showAlertForNoRecord() {
-    const alert = await this.alertCtrl.create({
-      header: 'INFO',
-      message: 'NO_RECORD_FOUND',
-      buttons: [
-        {
-          text: 'Ok',
-          handler: () => {
-            this.location.back();
-          }
-        }
-      ]
-    });
-
-    await alert.present();
-  }
-
   async showMessage(msg: string, duration: number = 2000): Promise<void> {
     const message = await this.toastCtrl.create({
       message: msg,
@@ -59,6 +36,32 @@ export class SharedService {
       buttons: buttons
     });
     return await alert.present();
+  }
+
+  showAlertCallBack(title: string, message: string, okBtn: string = 'OK', cancelBtn ? : string ): Promise < boolean > {
+    let promise: Promise < boolean > = new Promise(async (resolve, reject) => {
+      let confirm = await this.alertCtrl.create({
+        header: title,
+        message: message,
+        cssClass:'my-custom-class',
+        buttons: [{
+            text: cancelBtn,
+            role: 'cancel',
+            handler: () => {
+              resolve(false)
+            }
+          },
+          {
+            text: okBtn,
+            handler: () => {
+              resolve(true)
+            }
+          }
+        ]
+      });
+      confirm.present();
+    })
+    return promise;
   }
 
   async present() {
