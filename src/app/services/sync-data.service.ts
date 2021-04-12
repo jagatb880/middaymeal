@@ -10,7 +10,7 @@ export class SyncDataService {
 
   constructor(private http: HttpClient, private storage: Storage) { }
 
-  syncFromServer(){
+  syncFromServer(teacherCode){
     let promise = new Promise < any > ((resolve, reject) => {
 
       let URL: string = ConstantService.baseUrl +'studentClassSection'
@@ -18,9 +18,10 @@ export class SyncDataService {
         const httpOptions = {
           headers: new HttpHeaders({
             'Content-type': 'application/json',
+            'teacherCode': 'RM0200098112',
           })
         };
-        this.http.get(URL,  httpOptions)
+        this.http.post(URL, {},httpOptions)
         .subscribe(res => {
           resolve(res)
         }, (err) => {

@@ -4,6 +4,9 @@ import { Location } from '@angular/common';
 import { SharedService } from './services/shared.service';
 import { Platform, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { SyncDataService } from './services/sync-data.service';
+import { Storage } from '@ionic/storage';
+import { ConstantService } from './services/constant.service';
 
 @Component({
   selector: 'app-root',
@@ -12,17 +15,17 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
   public appPages = [
-    { title: 'Sync from server', url: '/dashboard'},
-    { title: 'Sync to server', url: '/dashboard'},
-    { title: 'Student attendance', url: '/dashboard'},
-    { title: 'Teacher attendance', url: '/dashboard'},
-   
+    { title: 'Sync from server'},
+    { title: 'Sync to server'},
+    { title: 'Student attendance'},
+    { title: 'Teacher attendance'},
   ];
 
   constructor(
     public networkService: NetworkService, private router: Router,
     private location: Location, private alertCtrl: AlertController,
-    private platform: Platform, public sharedSvc: SharedService) {
+    private platform: Platform, public sharedSvc: SharedService,
+    private syncData: SyncDataService, private storage: Storage) {
     this.initializeApp();
   }
 
@@ -30,7 +33,18 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.networkService.listenNetwork();
       this.backButtonEvent();
+      this.set_data_to_sidemenu();
     });
+  }
+
+  set_data_to_sidemenu(){
+    this.storage.get(ConstantService.dbKeyNames.userDetails).then(data=>{
+      if(data!= null)
+      this.sharedSvc.userFullName = data.firstName;
+      this.sharedSvc.userEmail = data.email;
+    }).catch(error=>{
+      console.log(error)
+    })
   }
 
   /**
@@ -64,5 +78,36 @@ export class AppComponent {
         this.location.back();
       }
     });
+  }
+
+  open(section){
+    switch(section) {
+      case 'Sync from server':
+        this.syncFromServer();
+        break;
+      case 'Sync to server':
+        break;
+      case 'Student attendance':
+        break;
+    }
+  }
+
+  syncFromServer() {
+    this.sharedSvc.showLoader("Syncing the data, please wait...")
+    this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
+      this.syncData.syncFromServer(userData.userName).then(response=>{
+        if(response)
+        this.sharedSvc.dismissLoader();
+        this.sharedSvc.showMessage("Data sync successfully done.")
+      }).catch(error=>{
+        console.log(error);
+        this.sharedSvc.dismissLoader()
+        this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
+      })
+    }).catch(error=>{
+      console.log(error);
+      this.sharedSvc.dismissLoader()
+      this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
+    })
   }
 }

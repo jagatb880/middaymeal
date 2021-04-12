@@ -1,12 +1,16 @@
 ion-menu ion-content {
     --background: var(--ion-item-background, var(--ion-background-color, #fff));
   }
+
+  .menu-header{
+    padding-top: 10%;
+    background-color:#2264F6;
+    color: white;
+  }
   
-  ion-menu.md ion-content {
-    --padding-start: 8px;
-    --padding-end: 8px;
-    --padding-top: 20px;
-    --padding-bottom: 20px;
+  .menu-list{
+    padding-left: 5%;
+    padding-top: 20%;
   }
   
   // ion-menu.md ion-list {

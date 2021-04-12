@@ -47,6 +47,10 @@ export class LoginPage implements OnInit {
         this.loginSvc.authenticate(this.loginData).then(acessToken=>{
           this.sharedSvc.dismissLoader();
           this.fetch_user_details(acessToken)
+        }).catch(error=>{
+          this.sharedSvc.dismissLoader()
+          console.log(error)
+          this.sharedSvc.showMessage("Somthing went wrong, try after some times.")
         })
       }
     }else{
