@@ -7,15 +7,15 @@
 </div>
 <ion-item >
   <!-- <ion-label>User name</ion-label> -->
-  <ion-input placeholder="youremail@gmail.com" type="email"></ion-input>
+  <ion-input placeholder="youremail@gmail.com" type="email" [(ngModel)]="loginData.username"></ion-input>
 </ion-item>
 <div class="dvscnd">
   <ion-label class="lbl">Password</ion-label>
 </div>
 <ion-item >
   <!-- <ion-label>User name</ion-label> -->
-  <ion-input placeholder="************" type="password"></ion-input>
+  <ion-input placeholder="************" type="password" [(ngModel)]="loginData.password"></ion-input>
 </ion-item>
 <p class="forgotpassword">Forgot password?</p>
-<ion-button expand="full" (click)="goToDashboard()">Sign in</ion-button>
+<ion-button expand="full" (click)="go_to_dashboard()">Sign in</ion-button>
 </ion-content>

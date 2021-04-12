@@ -22,7 +22,7 @@ export class AppComponent {
   constructor(
     public networkService: NetworkService, private router: Router,
     private location: Location, private alertCtrl: AlertController,
-    private platform: Platform) {
+    private platform: Platform, public sharedSvc: SharedService) {
     this.initializeApp();
   }
 

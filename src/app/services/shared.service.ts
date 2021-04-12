@@ -16,6 +16,8 @@ export class SharedService {
   // To store the page name
   public serviceStatus: string;
   public imageData: any;
+  public userFullName: string;
+  public userEmail: string;
 
   constructor(private alertCtrl: AlertController, private location: Location, private loadingCtrl: LoadingController,
     private toastCtrl: ToastController, private camera: Camera, private geolocation: Geolocation) { }
@@ -64,11 +66,11 @@ export class SharedService {
     return promise;
   }
 
-  async present() {
+  async showLoader(message) {
     this.isLoading = true;
     return await this.loadingCtrl.create({
       spinner: 'circles',
-      message: 'Downloading Please Wait. . ',
+      message: message,
     }).then(a => {
       a.present().then(() => {
         if (!this.isLoading) {
@@ -78,7 +80,7 @@ export class SharedService {
     });
   }
 
-  async dismiss() {
+  async dismissLoader() {
     this.isLoading = false;
     return await this.loadingCtrl.dismiss().then(() => (''));
   }

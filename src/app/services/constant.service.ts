@@ -7,7 +7,7 @@ import { IMessages } from 'src/app/interfaces/message';
 })
 export class ConstantService {
 
-  static baseUrl : string = 'https://';
+  static baseUrl : string = 'http://209.97.136.18:8080/MDM_Odisha/api/';
   constructor() { }
 
   static message: IMessages = { 
@@ -20,6 +20,8 @@ export class ConstantService {
   }
 
   static dbKeyNames: IDBKeyNames = {
+    token: 'token',
+    userDetails: 'userDetails',
     studentData: "studentData",
     studentAttendanceData: "studentAttendanceData",
     userId: 'userId'

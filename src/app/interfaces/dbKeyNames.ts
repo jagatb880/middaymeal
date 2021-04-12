@@ -4,6 +4,8 @@
  * @since 1.0.0
  */
 export interface IDBKeyNames {
+    token: string;
+    userDetails: any;
     studentData: string;
     studentAttendanceData: string;
     userId: string

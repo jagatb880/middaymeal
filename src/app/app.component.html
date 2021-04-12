@@ -7,8 +7,8 @@
           <ion-avatar>
             <img src="assets/icons/profile.png" style="margin-left: 110px;">
           </ion-avatar>
-          <p style="text-align: center;">hii debiprasad</p>
-          <p style="text-align: center;">hi@ionicframework.com</p>
+          <p style="text-align: center;">{{sharedSvc.userFullName}}</p>
+          <p style="text-align: center;">{{sharedSvc.userEmail}}</p>
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
             <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
               <ion-label>{{ p.title }}</ion-label>
