@@ -5,11 +5,10 @@
         <ion-list id="inbox-list" class="ion-no-padding">
           <div class="menu-header">
             <ion-avatar>
-              <img src="assets/icons/profile.png" style="margin-left: 110px;">
+              <img src="assets/icons/profile.png">
             </ion-avatar>
-            <p style="text-align: center;">{{sharedSvc.userFullName}}</p>
-            <p style="text-align: center;">{{sharedSvc.userEmail}}</p>
-            <div style="border-top:1px solid black"></div>
+            <p>{{sharedSvc.userFullName}}</p>
+            <p>{{sharedSvc.userEmail}}</p>
           </div>
           <div class="menu-list">
             <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">

@@ -80,6 +80,7 @@ export class StudentAttendancePage implements OnInit {
     if (currentDate != "") {
       this.currentDate = currentDate;
       this.absentRecords = [];
+      this.sharedSvc.imageData = undefined
       let studentSection: ISection[] = this.sectionList.filter(data => data.sectionName == this.currentSectionName);
       let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].student));
       let studentList: IStudent[] = [...tempStudentList]
