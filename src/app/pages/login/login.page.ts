@@ -43,8 +43,10 @@ export class LoginPage implements OnInit {
       } else if (this.loginData.password == "") {
         this.sharedSvc.showMessage(ConstantService.message.validPassword)
       } else {
-        this.loginSvc.authenticate(this.loginData).then(response=>{
-          console.log(response);
+      this.sharedSvc.showLoader("Authenticating user, please wait...")
+        this.loginSvc.authenticate(this.loginData).then(acessToken=>{
+          this.sharedSvc.dismissLoader();
+          this.fetch_user_details(acessToken)
         })
       }
     }else{
@@ -52,9 +54,9 @@ export class LoginPage implements OnInit {
     }
   }
 
-  go_to_dashboard(){
-    this.sharedSvc.showLoader("Authenticating user, please wait...")
-    this.loginSvc.get_user_details().then(userDetails=>{
+  fetch_user_details(token){
+    this.sharedSvc.showLoader("Fetching user details, please wait...")
+    this.loginSvc.get_user_details(token).then(userDetails=>{
       if(typeof userDetails == 'object'){
         this.storage.set(ConstantService.dbKeyNames.userDetails,userDetails['data']).then(data=>{
           this.sharedSvc.userFullName = data.firstName;

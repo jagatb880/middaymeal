@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { ConstantService } from './constant.service';
 import { HttpHeaders, HttpClient} from '@angular/common/http';
 import { Storage } from '@ionic/storage'
+import { ILoginData } from '../interfaces/login-data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
 
-  headers: any;
-  loginResponse: any;
+  acessToken: string;
   loginSuccess : boolean;
   constructor(private http: HttpClient, private storage: Storage) { }
 
@@ -19,51 +19,58 @@ export class LoginService {
    * @param Authorization(username and password are set in header)
    * @since 0.0.1
    */
-  authenticate(credentials): Promise < any > {
+  authenticate(credentials: ILoginData): Promise < any > {
     let promise = new Promise < any > ((resolve, reject) => {
 
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-type': 'application/x-www-form-urlencoded; charset=utf-8'
+        'Content-type': 'application/json',
       })
     };
 
     let URL: string = ConstantService.baseUrl +'login'
 
-    let params = new URLSearchParams();
-    params.append('username', credentials.username);
-    params.append('password', credentials.password);
-    this.http.post(URL, params.toString(), httpOptions)
+    let body = {
+      "userName":credentials.username,
+      "password":credentials.password
+    }
+    this.http.post(URL, body  , httpOptions)
     .subscribe(res => {
-            this.loginResponse = {
-              accessToken: res['access_token'],
-              tokenType : res['token_type'],
-              refreshToken: res['refresh_token'],
-              expires: res['expires_in']
-            }
-            this.loginSuccess = true;
-            resolve(res);
-          }, (err) => {
-            console.log(err)
-            reject(err);
+            this.storage.set(ConstantService.dbKeyNames.token,res['data']).then(response=>{
+              this.loginSuccess = true;
+              this.acessToken = res['data'];
+              resolve(this.acessToken );
+            }).catch(error=>{
+              console.log(error)
+              reject(error);
+            })
+          }, (error) => {
+            console.log(error)
+            reject(error);
           });
     });
     return promise
   }
 
-  get_user_details(){
+  get_user_details(acessToken){
     let promise = new Promise < any > ((resolve, reject) => {
 
     let URL: string = ConstantService.baseUrl +'userdetails'
-
+    let accessKey = [
+      {
+        "key":"token",
+        "value":acessToken
+      }
+    ]
       const httpOptions = {
         headers: new HttpHeaders({
           'Content-type': 'application/json',
-          'Authorization': 'Bearer [{"key":"token","value":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSTTAyMDAwOTgxMTIiLCJleHAiOjE2MTgyMDM2ODcsImlhdCI6MTYxODIwMDA4NywiYXV0aG9yaXRpZXMiOlsiUk9MRV9URUFDSEVSIl19.qqm9dGWgYVADhWBgHDqeRro6y7ThGwIFuui2MpC3Wak","description":""}]'
+          'Authorization': 'Bearer'+ JSON.stringify(accessKey)
         })
       };
       this.http.get(URL,  httpOptions)
       .subscribe(res => {
+
         resolve(res)
       }, (err) => {
         console.log(err)
