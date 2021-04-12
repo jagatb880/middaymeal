@@ -4,8 +4,12 @@
  * @since 1.0.0
  */
 export interface IStudent {
-    name: string,
-    addmission_no: number,
-    student_id: number,
-    attendance: boolean
+    studentId: number,
+    availmeal: boolean,
+    studentName: string,
+    adminssionNo: string,
+    studentDOB: string,
+    uniqueId: string,
+    attendance: boolean,
+    schoolCode: string;
 }

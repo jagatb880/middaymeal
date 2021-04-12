@@ -20,8 +20,8 @@ export class StudentAttendancePage implements OnInit {
   classList: IClass[];
   sectionList: ISection[];
   studentList: IStudent[];
-  currentClassCode: any;
-  currentSectionCode: any;
+  currentClassName: any;
+  currentSectionName: any;
   currentDate: any;
   maxDate: any;
   studentDataList: IClass[];
@@ -40,111 +40,34 @@ export class StudentAttendancePage implements OnInit {
   ngOnInit() {
     this.studentList = [];
     this.sectionList = [];
-    this.currentClassCode = "";
-    this.currentSectionCode = "";
+    this.currentClassName = "";
+    this.currentSectionName = "";
     this.sharedSvc.imageData = undefined;
     this.studentRecord = [];
     this.studentRecords = [];
     this.absentRecords = [];
     this.maxDate = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
+    this.fetchAllStudentData();
+  }
 
-    this.studentDataList = [{
-        "name": "Class-1",
-        "code": 1,
-        "sections": [{
-            "name": "Section-A",
-            "code": 1,
-            "students": [{
-                "name": "Pritish Ranjan Sahoo",
-                "student_id": 1,
-                "addmission_no": 13,
-                "attendance": true
-              },
-              {
-                "name": "Pritish Ranjan Sahoo",
-                "student_id": 2,
-                "addmission_no": 13,
-                "attendance": true
-              },
-              {
-                "name": "Pritish Ranjan Sahoo",
-                "student_id": 3,
-                "addmission_no": 13,
-                "attendance": true
-              },
-              {
-                "name": "Pritish Ranjan Sahoo",
-                "student_id": 4,
-                "addmission_no": 13,
-                "attendance": true
-              },
-              {
-                "name": "Pritish Ranjan Sahoo",
-                "student_id": 5,
-                "addmission_no": 13,
-                "attendance": true
-              },
-              {
-                "name": "Pritish Ranjan Sahoo",
-                "student_id": 6,
-                "addmission_no": 13,
-                "attendance": true
-              },
-              {
-                "name": "Pritish Ranjan Sahoo",
-                "student_id": 7,
-                "addmission_no": 13,
-                "attendance": true
-              },
-              {
-                "name": "Pritish Ranjan Sahoo",
-                "student_id": 8,
-                "addmission_no": 13,
-                "attendance": true
-              }
-            ]
-          },
-          {
-            "name": "Section-B",
-            "code": 2,
-            "students": [{
-                "name": "Hari Sankar Sahoo",
-                "student_id": 1,
-                "addmission_no": 13,
-                "attendance": true
-              },
-              {
-                "name": "Hari Sankar Sahoo",
-                "student_id": 2,
-                "addmission_no": 13,
-                "attendance": true
-              },
-            ]
-          },
-          {
-            "name": "Section-C",
-            "code": 3,
-            "students": []
-          }
-        ]
-      },
-      {
-        "name": "Class-2",
-        "code": 2,
-        "sections": []
+  fetchAllStudentData(){
+    this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
+      if(data)
+      this.studentDataList = data;
+      if (this.studentDataList.length > 0) {
+        this.classList = this.studentDataList
       }
-    ]
-    if (this.studentDataList.length > 0) {
-      this.classList = this.studentDataList
-    }
+    }).catch(error=>{
+      console.log(error)
+    })
   }
 
   selectClass() {
-    this.currentSectionCode = "";
+    this.currentSectionName = "";
     this.currentDate = "";
     this.sharedSvc.imageData = undefined;
-    let studentClass: IClass[] = this.studentDataList.filter(a => a.code == this.currentClassCode);
-    this.sectionList = studentClass[0].sections
+    let studentClass: IClass[] = this.studentDataList.filter(a => a.className == this.currentClassName);
+    this.sectionList = studentClass[0].section
   }
 
   selectSection() {
@@ -157,22 +80,22 @@ export class StudentAttendancePage implements OnInit {
     if (currentDate != "") {
       this.currentDate = currentDate;
       this.absentRecords = [];
-      let studentSection: ISection[] = this.sectionList.filter(data => data.code == this.currentSectionCode);
-      let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].students));
-      let studentList = [...tempStudentList]
+      let studentSection: ISection[] = this.sectionList.filter(data => data.sectionName == this.currentSectionName);
+      let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].student));
+      let studentList: IStudent[] = [...tempStudentList]
       this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(attendanceData => {
         if (attendanceData != null) {
           console.log(attendanceData);
           this.studentRecords = attendanceData;
           let fetchedStudentData: IStudentRecord[] = this.studentRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
-            (data.class_code == this.currentClassCode) && (data.section_code == this.currentSectionCode))
+            (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
           if (fetchedStudentData.length == 0) {
             this.studentList = tempStudentList;
           } else {
             this.absentRecords = fetchedStudentData[0].student_ids;
             for (let i = 0; i < studentList.length; i++) {
               for (let j = 0; j < fetchedStudentData[0].student_ids.length; j++) {
-                if (studentList[i].student_id == fetchedStudentData[0].student_ids[j]) {
+                if (studentList[i].studentId == fetchedStudentData[0].student_ids[j]) {
                   studentList[i].attendance = false;
                 }
               }
@@ -255,8 +178,8 @@ export class StudentAttendancePage implements OnInit {
     } else {
       let studentAttendanceData: IStudentRecord = {
         record_date: this.currentDate,
-        class_code: this.currentClassCode,
-        section_code: this.currentSectionCode,
+        class_name: this.currentClassName,
+        section_name: this.currentSectionName,
         student_ids: this.absentRecords,
         sync_status: false,
         image_base64: this.sharedSvc.imageData
@@ -271,8 +194,8 @@ export class StudentAttendancePage implements OnInit {
         }else{
           let updateDataStatus: boolean = false;
           for (let i = 0; i < fetchedData.length; i++) {
-            if(fetchedData[i].record_date.substr(0,10) == this.currentDate.substr(0,10) && fetchedData[i].class_code == this.currentClassCode &&
-              fetchedData[i].section_code == this.currentSectionCode){
+            if(fetchedData[i].record_date.substr(0,10) == this.currentDate.substr(0,10) && fetchedData[i].class_name == this.currentClassName &&
+              fetchedData[i].section_name == this.currentSectionName){
                 fetchedData[i] = studentAttendanceData;
                 updateDataStatus = true;
             }

@@ -11,38 +11,38 @@
   <ion-row class="body-content">
     <ion-col size=6>
       <!-- <ion-item lines="none"> -->
-      <ion-select [(ngModel)]="currentClassCode" placeholder="Class list" (ionChange)="selectClass()">
+      <ion-select [(ngModel)]="currentClassName" placeholder="Class list" (ionChange)="selectClass()">
         <!-- <ion-label position="fixed">Class List</ion-label> -->
-        <ion-select-option *ngFor="let class of classList" [value]="class.code">
-          {{class.name}}
+        <ion-select-option *ngFor="let class of classList" [value]="class.className">
+          {{class.className}}
         </ion-select-option>
       </ion-select>
       <!-- </ion-item> -->
     </ion-col>
     <ion-col size=6>
       <!-- <ion-item lines="none"> -->
-      <ion-select [disabled]="sectionList?.length == 0" [(ngModel)]="currentSectionCode" placeholder="Section List" (ionChange)="selectSection()">
+      <ion-select [disabled]="sectionList?.length == 0" [(ngModel)]="currentSectionName" placeholder="Section List" (ionChange)="selectSection()">
         <!-- <ion-label position="fixed">Section List</ion-label> -->
-        <ion-select-option *ngFor="let section of sectionList" [value]="section.code">
-          {{section.name}}
+        <ion-select-option *ngFor="let section of sectionList" [value]="section.sectionName">
+          {{section.sectionName}}
         </ion-select-option>
       </ion-select>
       <!-- </ion-item> -->
     </ion-col>
   </ion-row>
   <div class="date-box" >
-    <ion-datetime [disabled]="!currentSectionCode" displayFormat="DD-MM-YYYY" [(ngModel)]="currentDate" placeholder="Choose Date" (ionChange)="changeDate(currentDate)"
+    <ion-datetime [disabled]="!currentSectionName" displayFormat="DD-MM-YYYY" [(ngModel)]="currentDate" placeholder="Choose Date" (ionChange)="changeDate(currentDate)"
     [max]="maxDate"></ion-datetime>
   </div>
   <div style="margin:15px;">
     <ion-list *ngFor="let student of studentList" class="student-list-card">
         <div style="width: 70%; float:left;">
-          <span class="student-name-text">{{student.name}}</span><br>
-          <div class="roll-no-text">Roll No: {{student.student_id}}</div>
+          <span class="student-name-text">{{student.studentName}}</span><br>
+          <div class="roll-no-text">Roll No: {{student.studentId}}</div>
        </div>     
        <div style="width: 30%; float:right">
         <div style="float: right;margin-left: 30vw;margin-top: 2vw;">
-          <ion-toggle [(ngModel)]="student.attendance" (ionChange)="switchAttendance(student.student_id,student.attendance)"></ion-toggle>
+          <ion-toggle [(ngModel)]="student.attendance" (ionChange)="switchAttendance(student.studentId,student.attendance)"></ion-toggle>
         </div>
        </div>
     </ion-list>

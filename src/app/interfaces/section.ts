@@ -6,7 +6,6 @@
 import {IStudent} from '../interfaces/student'
 
 export interface ISection {
-    name: string;
-    code: number;
-    students: IStudent[];
+    sectionName: string;
+    student: IStudent[];
 }

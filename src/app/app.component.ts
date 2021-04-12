@@ -97,8 +97,14 @@ export class AppComponent {
     this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
       this.syncData.syncFromServer(userData.userName).then(response=>{
         if(response)
-        this.sharedSvc.dismissLoader();
-        this.sharedSvc.showMessage("Data sync successfully done.")
+        this.storage.set(ConstantService.dbKeyNames.studentData,response).then(data=>{
+          this.sharedSvc.dismissLoader();
+          this.sharedSvc.showMessage("Data sync successfully done.")
+        }).catch(error=>{
+          console.log(error);
+          this.sharedSvc.dismissLoader()
+          this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
+        })
       }).catch(error=>{
         console.log(error);
         this.sharedSvc.dismissLoader()

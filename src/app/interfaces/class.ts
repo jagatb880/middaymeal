@@ -7,7 +7,6 @@
 import {ISection} from '../interfaces/section'
 
 export interface IClass {
-    name: string;
-    code: number;
-    sections: ISection[];
+    className: string;
+    section: ISection[];
 }
