@@ -19,6 +19,7 @@ export class AppComponent {
     { title: 'Sync to server'},
     { title: 'Student attendance'},
     { title: 'Teacher attendance'},
+    { title: 'Logout'},
   ];
 
   constructor(
@@ -59,7 +60,7 @@ export class AppComponent {
       if (this.router.isActive('/dashboard', true)) {
         const alert = await this.alertCtrl.create({
           header: 'Info',
-          message: 'Are you sure, you want to close this app?',
+          message: 'Are you sure you want to close this app?',
           cssClass:'my-custom-class',
           buttons: [
             {
@@ -74,6 +75,8 @@ export class AppComponent {
           ]
         });
         await alert.present();
+      } else if (this.router.isActive('/login', true)) {
+        navigator['app'].exitApp();
       } else {
         this.location.back();
       }
@@ -86,9 +89,13 @@ export class AppComponent {
         this.syncFromServer();
         break;
       case 'Sync to server':
+        this.syncToServer();
         break;
       case 'Student attendance':
         break;
+      case 'Logout':
+        this.logout();
+        break
     }
   }
 
@@ -98,6 +105,7 @@ export class AppComponent {
       this.syncData.syncFromServer(userData.userName).then(response=>{
         if(response)
         this.storage.set(ConstantService.dbKeyNames.studentData,response).then(data=>{
+          if(data)
           this.sharedSvc.dismissLoader();
           this.sharedSvc.showMessage("Data sync successfully done.")
         }).catch(error=>{
@@ -115,5 +123,50 @@ export class AppComponent {
       this.sharedSvc.dismissLoader()
       this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
     })
+  }
+
+  syncToServer(){
+    this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(data=>{
+      if(data == null){
+        this.sharedSvc.showAlert("Warning","There is no data to sync")
+      }else{
+        this.sharedSvc.showLoader("Syncing data to server.")
+        this.syncData.syncToServer(data).then(success=>{
+          if(success){
+            this.sharedSvc.dismissLoader()
+            this.sharedSvc.showMessage("Data successfully synced to server")
+          }
+        }).catch(error=>{
+          console.log(error)
+          this.sharedSvc.dismissLoader()
+          this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
+        });
+      }
+    })
+  }
+
+  async logout() {
+    let confirm = await this.alertCtrl.create({
+      header: 'Info',
+      message: "Are you sure you want to logout?",
+      cssClass:'my-custom-class',
+      buttons: [{
+          text: 'No',
+          role: 'cancel',
+          handler: () => {}
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            this.storage.remove(ConstantService.dbKeyNames.token).then(()=>{
+              this.storage.remove(ConstantService.dbKeyNames.userDetails).then(()=>{
+                this.router.navigate(['login'])
+              })
+            })
+          }
+        }
+      ]
+    });
+    confirm.present();
   }
 }

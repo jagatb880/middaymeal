@@ -97,6 +97,7 @@ export class SharedService {
           encodingType: this.camera.EncodingType.JPEG,
           mediaType: this.camera.MediaType.PICTURE,
           targetWidth: 720,
+          cameraDirection: this.camera.Direction.BACK,
           correctOrientation: true
         };
         this.setCameraImageToPath(options).then(data=>{
@@ -140,13 +141,20 @@ export class SharedService {
     setCameraImageToPath(options): Promise < any > {
       let promise: Promise < any > = new Promise(async (resolve, reject) => {
         this.camera.getPicture(options).then((base64Data) => {
+          this.showLoader("Please wait...")
           this.geolocation.getCurrentPosition(options).then(resp => {
             this.imageData = {
               src: "data:image/jpeg;base64," + base64Data,
               meta_info: "Lat:" + resp.coords.latitude + "; Long:" + resp.coords.longitude + "; Accuracy :" + resp.coords.accuracy
             }
+            setTimeout(() => {
+              this.dismissLoader();
+            }, 1500);
             resolve(this.imageData)
           }).catch(error => {
+            setTimeout(() => {
+              this.dismissLoader();
+            }, 2000);
             this.imageData = {
               src: "data:image/jpeg;base64," + base64Data
             }

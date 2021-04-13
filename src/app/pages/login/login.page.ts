@@ -62,20 +62,41 @@ export class LoginPage implements OnInit {
     this.sharedSvc.showLoader("Fetching user details, please wait...")
     this.loginSvc.get_user_details(token).then(userDetails=>{
       if(typeof userDetails == 'object'){
-        this.storage.set(ConstantService.dbKeyNames.userDetails,userDetails['data']).then(data=>{
-          this.sharedSvc.userFullName = data.firstName;
-          this.sharedSvc.userEmail = data.email;
-          this.sharedSvc.dismissLoader()
-          this.navigator.navigateRoot(['dashboard'])
-        }, (err) => {
-          this.sharedSvc.dismissLoader()
-          console.log(err)
-          this.sharedSvc.showMessage("Somthing went wrong, try after some times.")
-        });
+        this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
+          if(userData == null){
+            this.saveUserDetails(userDetails['data'])
+          }else{
+            if(userData.userId == userDetails['data'].userId){
+              this.saveUserDetails(userDetails['data'])
+            }else{
+              this.sharedSvc.dismissLoader()
+              this.sharedSvc.showAlertCallBack("Warning","This is a different user, that might delete the previously saved offline data of another user. Are you sure you want to proceed?","Ok","Cancel").then(data=>{
+                if(data){
+                  this.storage.remove(ConstantService.dbKeyNames.studentAttendanceData).then(()=>{
+                    this.saveUserDetails(userDetails['data'])
+                  })
+                }
+              })
+            }
+          } 
+        })
       }else{
         this.sharedSvc.dismissLoader()
         this.sharedSvc.showMessage("Somthing went wrong, try after some times.")
       }
     })
+  }
+
+  saveUserDetails(userData){
+    this.storage.set(ConstantService.dbKeyNames.userDetails,userData).then(data=>{
+      this.sharedSvc.userFullName = data.firstName;
+      this.sharedSvc.userEmail = data.email;
+      this.sharedSvc.dismissLoader()
+      this.navigator.navigateRoot(['dashboard'])
+    }, (err) => {
+      this.sharedSvc.dismissLoader()
+      console.log(err)
+      this.sharedSvc.showMessage("Somthing went wrong, try after some times.")
+    });
   }
 }
