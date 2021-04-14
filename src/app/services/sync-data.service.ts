@@ -9,6 +9,8 @@ import { IStudentRecord } from '../interfaces/studentRecord';
 })
 export class SyncDataService {
 
+  syncFailedCount: number;
+  syncSuccessCount: number;
   constructor(private http: HttpClient, private storage: Storage) { }
 
   syncFromServer(teacherCode){
@@ -34,42 +36,85 @@ export class SyncDataService {
   }
 
   syncToServer(studentsData: IStudentRecord[]){
-    let falseSyncCount: boolean = false
-    let promise = new Promise < any > ((resolve, reject) => {
-      let URL: string = ConstantService.baseUrl +'studentAttendance'
-
-      const httpOptions = {
-        headers: new HttpHeaders({
-          'Content-type': 'application/json',
-        })
-      };
-      
-      studentsData.forEach((studentData: IStudentRecord) => {
-        if(!studentData.sync_status){
-
-          let data = {
-            "recordDate":studentData.record_date.substr(0,10),
-            "className":studentData.class_name,
-            "sectionName":studentData.section_name,
-            "studentIds":studentData.student_ids,
-            "syncStatus":false,
-            "image":studentData.image_base64,
-            "availMeal":true
-          }
-          
-          this.http.post(URL, data,httpOptions)
-            .subscribe(res => {
-              console.log(res)
-              const index = studentsData.indexOf(studentData);
-              studentsData[index].sync_status = true;
-              this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,studentsData);
-            }, (err) => {
-              falseSyncCount = true;
-              console.log(err)
-            });
+    let finalizedCount = 0;
+    let indexServerData = 0;
+    let syncedData = [];
+    this.syncFailedCount = 0;
+    this.syncSuccessCount = 0;
+    let promise = new Promise < any > (async (resolve, reject) => {
+      await studentsData.forEach(async (studentData: IStudentRecord) => {
+          if(!studentData.sync_status){
+            finalizedCount++;
           }
       });
-      resolve(true);
+
+      if (finalizedCount == 0) {
+        resolve(syncedData);
+      }
+      while (finalizedCount >= 0) {
+
+        if (finalizedCount == 0) {
+          resolve(studentsData);
+          break
+        }
+        finalizedCount--
+        try {
+          await this.sentDataToServer(studentsData,indexServerData);
+        } catch (err) {
+          console.log(err)
+          resolve(studentsData);
+        }
+        indexServerData++
+      }
+      // await studentsData.forEach(async (studentData: IStudentRecord) => {
+      //   if(!studentData.sync_status){
+      //     console.log(studentsData.indexOf(studentData))
+      //     let data = await this.sentDataToServer(studentData)
+      //     if(data){
+      //       console.log(studentsData.indexOf(studentData))
+      //       const index = await studentsData.indexOf(studentData);
+      //       studentsData[index].sync_status = true;
+      //     }
+      //   }
+      // });
+      // resolve(studentsData)
+    });
+    return promise;
+  }
+
+  sentDataToServer(studentsData: IStudentRecord[],indexServerData){
+    let promise = new Promise < any > ((resolve, reject) => {
+    let URL: string = ConstantService.baseUrl +'studentAttendance'
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-type': 'application/json',
+      })
+    };
+    let data = {
+      "recordDate":studentsData[indexServerData].record_date.substr(0,10),
+      "className":studentsData[indexServerData].class_name,
+      "sectionName":studentsData[indexServerData].section_name,
+      "studentIds":studentsData[indexServerData].student_ids,
+      "syncStatus":false,
+      "image":studentsData[indexServerData].image_base64,
+      "availMeal":true
+    }
+
+      this.http.post(URL, data,httpOptions)
+      .subscribe(async (res: any)=> {
+        console.log(res)
+          if(res.outcome){
+            this.syncSuccessCount++
+            studentsData[indexServerData].sync_status = true;
+          }else {
+            this.syncFailedCount++
+          }
+        resolve(true)
+      }, (err) => {
+        console.log(err)
+        reject(err)
+      });
     });
     return promise;
   }

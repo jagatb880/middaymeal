@@ -149,12 +149,12 @@ export class SharedService {
             }
             setTimeout(() => {
               this.dismissLoader();
-            }, 1500);
+            }, 500);
             resolve(this.imageData)
           }).catch(error => {
             setTimeout(() => {
               this.dismissLoader();
-            }, 2000);
+            }, 500);
             this.imageData = {
               src: "data:image/jpeg;base64," + base64Data
             }

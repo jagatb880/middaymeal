@@ -20,9 +20,6 @@ export class LoginPage implements OnInit {
     private sharedSvc: SharedService, private loginSvc: LoginService, private storage: Storage) { }
 
   ngOnInit() {
-    if(this.networkSvc.online){
-      console.log("Network is there")
-    }
     this.loginData = {
       username: '',
       password: ''

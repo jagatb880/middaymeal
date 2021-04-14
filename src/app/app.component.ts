@@ -26,7 +26,7 @@ export class AppComponent {
     public networkService: NetworkService, private router: Router,
     private location: Location, private alertCtrl: AlertController,
     private platform: Platform, public sharedSvc: SharedService,
-    private syncData: SyncDataService, private storage: Storage) {
+    private syncData: SyncDataService, private storage: Storage, private networkSvc: NetworkService) {
     this.initializeApp();
   }
 
@@ -100,14 +100,20 @@ export class AppComponent {
   }
 
   syncFromServer() {
-    this.sharedSvc.showLoader("Syncing the data, please wait...")
-    this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
-      this.syncData.syncFromServer(userData.userName).then(response=>{
-        if(response)
-        this.storage.set(ConstantService.dbKeyNames.studentData,response).then(data=>{
-          if(data)
-          this.sharedSvc.dismissLoader();
-          this.sharedSvc.showMessage("Data sync successfully done.")
+    if(this.networkSvc.online){
+      this.sharedSvc.showLoader("Syncing the data, please wait...")
+      this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
+        this.syncData.syncFromServer(userData.userName).then(response=>{
+          if(response)
+          this.storage.set(ConstantService.dbKeyNames.studentData,response).then(data=>{
+            if(data)
+            this.sharedSvc.dismissLoader();
+            this.sharedSvc.showMessage("Data sync successfully done.")
+          }).catch(error=>{
+            console.log(error);
+            this.sharedSvc.dismissLoader()
+            this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
+          })
         }).catch(error=>{
           console.log(error);
           this.sharedSvc.dismissLoader()
@@ -118,31 +124,35 @@ export class AppComponent {
         this.sharedSvc.dismissLoader()
         this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
       })
-    }).catch(error=>{
-      console.log(error);
-      this.sharedSvc.dismissLoader()
-      this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
-    })
+    }else{
+      this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
+    }
   }
 
   syncToServer(){
-    this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(data=>{
-      if(data == null){
-        this.sharedSvc.showAlert("Warning","There is no data to sync")
-      }else{
-        this.sharedSvc.showLoader("Syncing data to server.")
-        this.syncData.syncToServer(data).then(success=>{
-          if(success){
+    if(this.networkSvc.online){
+      this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(data=>{
+        if(data == null){
+          this.sharedSvc.showAlert("Info","There is no data to sync")
+        }else{
+          this.sharedSvc.showLoader("Syncing data to server.")
+          this.syncData.syncToServer(data).then(syncedData=>{
+            if(syncedData){
+              this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,syncedData).then(()=>{
+                this.sharedSvc.dismissLoader()
+                this.sharedSvc.showAlert("Info",this.syncData.syncSuccessCount +' no of records successfully synced and '+ this.syncData.syncFailedCount + " no of record failed to sync.")
+              })
+            }
+          }).catch(error=>{
+            console.log(error)
             this.sharedSvc.dismissLoader()
-            this.sharedSvc.showMessage("Data successfully synced to server")
-          }
-        }).catch(error=>{
-          console.log(error)
-          this.sharedSvc.dismissLoader()
-          this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
-        });
-      }
-    })
+            this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
+          });
+        }
+      })
+    }else{
+      this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
+    }
   }
 
   async logout() {
