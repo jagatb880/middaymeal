@@ -164,7 +164,9 @@ export class StudentAttendancePage implements OnInit {
           }
         })
       } else {
-        this.sharedSvc.openCamera();
+        this.sharedSvc.openCamera().then(data=>{
+          console.log("Reverse Geo Location"+this.sharedSvc.geocoderResult.subLocality+''+this.sharedSvc.geocoderResult.locality);
+        });
       }
     })
   }

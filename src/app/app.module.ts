@@ -13,6 +13,7 @@ import { DatePipe } from '@angular/common';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -37,6 +38,7 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
     Camera,
     Geolocation,
     Diagnostic,
+    NativeGeocoder,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })

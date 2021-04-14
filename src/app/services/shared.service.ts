@@ -3,6 +3,7 @@ import { AlertController, ToastController, LoadingController } from '@ionic/angu
 import { Location } from '@angular/common';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +19,11 @@ export class SharedService {
   public imageData: any;
   public userFullName: string;
   public userEmail: string;
+  public geocoderResult: any;
 
   constructor(private alertCtrl: AlertController, private location: Location, private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController, private camera: Camera, private geolocation: Geolocation) { }
+    private toastCtrl: ToastController, private camera: Camera, private geolocation: Geolocation,
+    private nativeGeocoder: NativeGeocoder) { }
 
   async showMessage(msg: string, duration: number = 2000): Promise<void> {
     const message = await this.toastCtrl.create({
@@ -142,15 +145,25 @@ export class SharedService {
       let promise: Promise < any > = new Promise(async (resolve, reject) => {
         this.camera.getPicture(options).then((base64Data) => {
           this.showLoader("Please wait...")
+          let geoCoderOptions: NativeGeocoderOptions = {
+            useLocale: true,
+            maxResults: 5
+          };
           this.geolocation.getCurrentPosition(options).then(resp => {
             this.imageData = {
               src: "data:image/jpeg;base64," + base64Data,
               meta_info: "Lat:" + resp.coords.latitude + "; Long:" + resp.coords.longitude + "; Accuracy :" + resp.coords.accuracy
             }
-            setTimeout(() => {
-              this.dismissLoader();
-            }, 500);
-            resolve(this.imageData)
+            this.nativeGeocoder.reverseGeocode(resp.coords.latitude, resp.coords.longitude, geoCoderOptions)
+              .then((result: NativeGeocoderResult[]) => {
+                this.geocoderResult = result[0];
+                setTimeout(() => {
+                  this.dismissLoader();
+                }, 500);
+                resolve(this.imageData)
+              })
+              .catch((error: any) => console.log(error));
+            
           }).catch(error => {
             setTimeout(() => {
               this.dismissLoader();
