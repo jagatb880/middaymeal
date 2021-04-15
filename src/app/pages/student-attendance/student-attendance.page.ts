@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { DatePipe, Location } from '@angular/common';
 import { IClass } from '../../interfaces/class';
 import { ISection } from 'src/app/interfaces/section';
@@ -31,7 +31,8 @@ export class StudentAttendancePage implements OnInit {
   photoCapturedDate: string;
   syncedDisabled: boolean;
   constructor(private datepipe: DatePipe, private sharedSvc: SharedService, private diagnostic: Diagnostic,
-    private platform: Platform, private storage: Storage, private location: Location) {
+    private platform: Platform, private storage: Storage, private location: Location,
+    private changeDeector: ChangeDetectorRef) {
       // this.platform.ready().then(() => {
       //   this.platform.resume.subscribe(() => {    
       //       this.takeLocationPermission();
@@ -184,6 +185,8 @@ export class StudentAttendancePage implements OnInit {
 
   deleteReceipt() {
     this.sharedSvc.imageData = undefined;
+    this.photoCapturedDate = undefined;
+    this.changeDeector.detectChanges();
   }
 
   saveRecord() {
