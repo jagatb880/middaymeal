@@ -49,6 +49,7 @@
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
     </platform>
     <platform name="ios">
+        <preference name="UseSwiftLanguageVersion" value="5" />
         <config-file parent="NSCameraUsageDescription" platform="ios" target="*-Info.plist">
             <string>You can take photos</string>
         </config-file>

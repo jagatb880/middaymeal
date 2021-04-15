@@ -60,6 +60,12 @@
   <ion-row class="upload_receipt-section">
     <ion-col>
       <div *ngIf="sharedSvc.imageData != undefined">
+        <div class="upload_text">
+          <p class="fstp">Lat:-8787878787</p>
+          <p class="fstp">Long:-8787878</p>
+          <p class="fstp">Address:-chandrsekharpur bbsr</p>
+          <p class="fstp">Date:-21.05.2021</p>
+        </div>
         <ion-img class="receipt-photo" [src]="sharedSvc.imageData.src">
         </ion-img>
       </div>

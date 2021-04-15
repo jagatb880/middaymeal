@@ -29,6 +29,7 @@
     "@ionic/angular": "^5.5.2",
     "@ionic/storage": "^2.2.0",
     "cordova-android": "^9.0.0",
+    "cordova-browser": "6.0.0",
     "cordova-ios": "^5.1.1",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-androidx": "^3.0.0",
@@ -93,11 +94,13 @@
       "cordova-plugin-androidx": {},
       "cordova-plugin-nativegeocoder": {
         "LOCATION_WHEN_IN_USE_DESCRIPTION": "Use geocoder service"
-      }
+      },
+      "cordova-plugin-add-swift-support": {}
     },
     "platforms": [
       "android",
-      "ios"
+      "ios",
+      "browser"
     ]
   }
 }
