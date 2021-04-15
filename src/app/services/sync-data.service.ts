@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ConstantService } from './constant.service';
 import { HttpHeaders, HttpClient} from '@angular/common/http';
-import { Storage } from '@ionic/storage'
 import { IStudentRecord } from '../interfaces/studentRecord';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class SyncDataService {
 
   syncFailedCount: number;
   syncSuccessCount: number;
-  constructor(private http: HttpClient, private storage: Storage) { }
+  constructor(private http: HttpClient, private datepipe: DatePipe) { }
 
   syncFromServer(teacherCode){
     let promise = new Promise < any > ((resolve, reject) => {
@@ -66,18 +66,6 @@ export class SyncDataService {
         }
         indexServerData++
       }
-      // await studentsData.forEach(async (studentData: IStudentRecord) => {
-      //   if(!studentData.sync_status){
-      //     console.log(studentsData.indexOf(studentData))
-      //     let data = await this.sentDataToServer(studentData)
-      //     if(data){
-      //       console.log(studentsData.indexOf(studentData))
-      //       const index = await studentsData.indexOf(studentData);
-      //       studentsData[index].sync_status = true;
-      //     }
-      //   }
-      // });
-      // resolve(studentsData)
     });
     return promise;
   }
@@ -92,7 +80,7 @@ export class SyncDataService {
       })
     };
     let data = {
-      "recordDate":studentsData[indexServerData].record_date.substr(0,10),
+      "recordDate":this.datepipe.transform(studentsData[indexServerData].record_date,"dd-MM-YYYY HH:mm:ss"),
       "className":studentsData[indexServerData].class_name,
       "sectionName":studentsData[indexServerData].section_name,
       "studentIds":studentsData[indexServerData].student_ids,

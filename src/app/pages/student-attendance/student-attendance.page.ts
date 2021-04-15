@@ -28,6 +28,8 @@ export class StudentAttendancePage implements OnInit {
   studentRecord: IStudentRecord[];
   studentRecords: IStudentRecord[];
   absentRecords: number[];
+  photoCapturedDate: string;
+  syncedDisabled: boolean;
   constructor(private datepipe: DatePipe, private sharedSvc: SharedService, private diagnostic: Diagnostic,
     private platform: Platform, private storage: Storage, private location: Location) {
       // this.platform.ready().then(() => {
@@ -46,6 +48,7 @@ export class StudentAttendancePage implements OnInit {
     this.studentRecord = [];
     this.studentRecords = [];
     this.absentRecords = [];
+    this.syncedDisabled = false;
     this.maxDate = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
     this.fetchAllStudentData();
   }
@@ -80,7 +83,10 @@ export class StudentAttendancePage implements OnInit {
     if (currentDate != "") {
       this.currentDate = currentDate;
       this.absentRecords = [];
-      this.sharedSvc.imageData = undefined
+      this.syncedDisabled = false;
+      this.sharedSvc.imageData = undefined;
+      this.sharedSvc.geocoderResult = undefined;
+      this.photoCapturedDate = undefined;
       let studentSection: ISection[] = this.sectionList.filter(data => data.sectionName == this.currentSectionName);
       let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].student));
       let studentList: IStudent[] = [...tempStudentList]
@@ -101,8 +107,11 @@ export class StudentAttendancePage implements OnInit {
                 }
               }
             }
-            this.studentList = studentList;
+            this.syncedDisabled = fetchedStudentData[0].sync_status;
             this.sharedSvc.imageData = fetchedStudentData[0].image_base64;
+            this.sharedSvc.geocoderResult = fetchedStudentData[0].geo_coder_info;
+            this.photoCapturedDate = this.datepipe.transform(this.currentDate,"dd-MM-YYYY HH:mm:ss");
+            this.studentList = studentList;
           }
         } else {
           this.studentList = tempStudentList;
@@ -153,6 +162,7 @@ export class StudentAttendancePage implements OnInit {
   }
 
   takeLocationPermission(){
+    this.photoCapturedDate = undefined;
     this.diagnostic.isLocationEnabled().then((isEnabled) => {
       if (!isEnabled && this.platform.is('cordova')) {
         //handle confirmation window code here and then call switchToLocationSettings
@@ -165,7 +175,8 @@ export class StudentAttendancePage implements OnInit {
         })
       } else {
         this.sharedSvc.openCamera().then(data=>{
-          console.log("Reverse Geo Location"+this.sharedSvc.geocoderResult.subLocality+''+this.sharedSvc.geocoderResult.locality);
+          this.photoCapturedDate = this.datepipe.transform(this.currentDate,"dd-MM-YYYY HH:mm:ss");
+          console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
         });
       }
     })
@@ -185,7 +196,8 @@ export class StudentAttendancePage implements OnInit {
         section_name: this.currentSectionName,
         student_ids: this.absentRecords,
         sync_status: false,
-        image_base64: this.sharedSvc.imageData
+        image_base64: this.sharedSvc.imageData,
+        geo_coder_info: this.sharedSvc.geocoderResult
       }
       this.studentRecords.push(studentAttendanceData)
       this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then((fetchedData: IStudentRecord[])=>{

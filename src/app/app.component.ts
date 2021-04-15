@@ -138,9 +138,15 @@ export class AppComponent {
           this.sharedSvc.showLoader("Syncing data to server.")
           this.syncData.syncToServer(data).then(syncedData=>{
             if(syncedData){
-              this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,syncedData).then(()=>{
+              this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,syncedData).then(async ()=>{
                 this.sharedSvc.dismissLoader()
-                this.sharedSvc.showAlert("Info",this.syncData.syncSuccessCount +' no of records successfully synced and '+ this.syncData.syncFailedCount + " no of record failed to sync.")
+                setTimeout(() => {
+                  if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0){
+                    this.sharedSvc.showAlert("Info","No Active record found for synced.")
+                  }else{
+                    this.sharedSvc.showAlert("Info",this.syncData.syncSuccessCount +' no of records successfully synced and '+ this.syncData.syncFailedCount + " no of record failed to sync.")
+                  }
+                }, 600);
               })
             }
           }).catch(error=>{

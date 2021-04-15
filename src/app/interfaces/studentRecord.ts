@@ -11,4 +11,5 @@ export interface IStudentRecord {
     student_ids: number[],
     sync_status: boolean,
     image_base64: string;
+    geo_coder_info: any;
 }

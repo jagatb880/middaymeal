@@ -17,7 +17,7 @@ export class NetworkService extends Network {
 
   listenNetwork() {
     this.onDisconnect().subscribe(() => {
-      this.sharedSvc.showMessage("Network disconnected!");
+      //this.sharedSvc.showMessage("Network disconnected!");
       this.online = false;
     });
 
