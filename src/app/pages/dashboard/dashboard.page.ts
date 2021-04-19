@@ -19,7 +19,7 @@ export class DashboardPage implements OnInit {
   studentAttendance(){
     this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
       if(data == null){
-        this.sharedSvc.showAlert("Warning","No student record found, please sync from server first.")
+        this.sharedSvc.showAlert(ConstantService.message.wentWrong,ConstantService.message.noStudentRecord)
       }else{
         this.router.navigate(['student-attendance'])
       }

@@ -5,9 +5,11 @@
  */
 export interface IDBKeyNames {
     token: string;
+    loginCredential: string;
     userDetails: any;
     studentData: string;
     studentAttendanceData: string;
-    userId: string
+    userId: string,
+    appVersion: string;
 }
 

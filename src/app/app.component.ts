@@ -94,7 +94,7 @@ export class AppComponent {
       case 'Student attendance':
         break;
       case 'Logout':
-        this.logout();
+        this.logout()
         break
     }
   }
@@ -112,17 +112,17 @@ export class AppComponent {
           }).catch(error=>{
             console.log(error);
             this.sharedSvc.dismissLoader()
-            this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
+            this.sharedSvc.showMessage(ConstantService.message.wentWrong)
           })
         }).catch(error=>{
           console.log(error);
           this.sharedSvc.dismissLoader()
-          this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
+          this.sharedSvc.showMessage(ConstantService.message.wentWrong)
         })
       }).catch(error=>{
         console.log(error);
         this.sharedSvc.dismissLoader()
-        this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
+        this.sharedSvc.showMessage(ConstantService.message.wentWrong)
       })
     }else{
       this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
@@ -136,23 +136,36 @@ export class AppComponent {
           this.sharedSvc.showAlert("Info","There is no data to sync")
         }else{
           this.sharedSvc.showLoader("Syncing data to server.")
-          this.syncData.syncToServer(data).then(syncedData=>{
-            if(syncedData){
-              this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,syncedData).then(async ()=>{
+          this.storage.get(ConstantService.dbKeyNames.token).then(token=>{
+            this.syncData.syncToServer(data,token).then(syncedData=>{
+              if(syncedData){
+                this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,syncedData).then(async (data)=>{
+                  this.sharedSvc.dismissLoader()
+                    setTimeout(() => {
+                      if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0){
+                        this.sharedSvc.showAlert("Info","No Active record found for synced.")
+                      }else{
+                        this.sharedSvc.showAlert("Info",this.syncData.syncSuccessCount +' no of records successfully synced and '+ this.syncData.syncFailedCount + " no of record failed to sync.")
+                      }
+                    }, 600);
+                })
+              }
+            }).catch(error=>{
+              if(error == false){
+                console.log(error)
                 this.sharedSvc.dismissLoader()
-                setTimeout(() => {
-                  if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0){
-                    this.sharedSvc.showAlert("Info","No Active record found for synced.")
-                  }else{
-                    this.sharedSvc.showAlert("Info",this.syncData.syncSuccessCount +' no of records successfully synced and '+ this.syncData.syncFailedCount + " no of record failed to sync.")
-                  }
-                }, 600);
-              })
-            }
+                this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+              }else{
+                console.log(error)
+                this.sharedSvc.dismissLoader()
+                this.sharedSvc.showMessage("Something went wrong, please please contact to admin")
+              }
+              
+            });
           }).catch(error=>{
             console.log(error)
             this.sharedSvc.dismissLoader()
-            this.sharedSvc.showMessage("Something went wrong, please try after sometime.")
+            this.sharedSvc.showMessage(ConstantService.message.wentWrong)
           });
         }
       })
@@ -174,10 +187,13 @@ export class AppComponent {
         {
           text: 'Yes',
           handler: () => {
-            this.storage.remove(ConstantService.dbKeyNames.token).then(()=>{
-              this.storage.remove(ConstantService.dbKeyNames.userDetails).then(()=>{
-                this.router.navigate(['login'])
-              })
+            this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
+              userData['loginStatus'] = false;
+              this.storage.set(ConstantService.dbKeyNames.userDetails,userData)
+              this.router.navigate(['login'])
+            }).catch(error=>{
+              console.log(error)
+              this.sharedSvc.showMessage(ConstantService.message.wentWrong)
             })
           }
         }

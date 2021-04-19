@@ -37,6 +37,7 @@ export class SharedService {
     const alert = await this.alertCtrl.create({
       header: header,
       cssClass:'my-custom-class',
+      backdropDismiss: false,
       message: msg,
       buttons: buttons
     });
@@ -49,6 +50,7 @@ export class SharedService {
         header: title,
         message: message,
         cssClass:'my-custom-class',
+        backdropDismiss: false,
         buttons: [{
             text: cancelBtn,
             role: 'cancel',

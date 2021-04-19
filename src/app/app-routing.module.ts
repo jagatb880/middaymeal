@@ -22,10 +22,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/student-attendance/student-attendance.module').then( m => m.StudentAttendancePageModule)
   },
   {
-    path: 'teacher-attendance',
-    loadChildren: () => import('./pages/teacher-attendance/teacher-attendance.module').then( m => m.TeacherAttendancePageModule)
-  },
-  {
     path: 'cch-attendance',
     loadChildren: () => import('./pages/cch-attendance/cch-attendance.module').then( m => m.CchAttendancePageModule)
   },

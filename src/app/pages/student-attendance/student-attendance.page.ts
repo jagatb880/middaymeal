@@ -50,7 +50,7 @@ export class StudentAttendancePage implements OnInit {
     this.studentRecords = [];
     this.absentRecords = [];
     this.syncedDisabled = false;
-    this.maxDate = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
+    this.maxDate = this.datepipe.transform(new Date(), ConstantService.message.maxDate)
     this.fetchAllStudentData();
   }
 
@@ -111,7 +111,7 @@ export class StudentAttendancePage implements OnInit {
             this.syncedDisabled = fetchedStudentData[0].sync_status;
             this.sharedSvc.imageData = fetchedStudentData[0].image_base64;
             this.sharedSvc.geocoderResult = fetchedStudentData[0].geo_coder_info;
-            this.photoCapturedDate = this.datepipe.transform(this.currentDate,"dd-MM-YYYY HH:mm:ss");
+            this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
             this.studentList = studentList;
           }
         } else {
@@ -167,16 +167,16 @@ export class StudentAttendancePage implements OnInit {
     this.diagnostic.isLocationEnabled().then((isEnabled) => {
       if (!isEnabled && this.platform.is('cordova')) {
         //handle confirmation window code here and then call switchToLocationSettings
-        this.sharedSvc.showAlertCallBack("Warning", "For geo tagging with photo you must need to enable the location permission.").then(data => {
+        this.sharedSvc.showAlertCallBack(ConstantService.message.wentWrong,ConstantService.message.geoTagForPhoto).then(data => {
           if (data) {
             this.diagnostic.switchToLocationSettings();
           } else {
-            this.sharedSvc.showMessage("Enable location permission manually")
+            this.sharedSvc.showMessage(ConstantService.message.enableGeoLocation)
           }
         })
       } else {
         this.sharedSvc.openCamera().then(data=>{
-          this.photoCapturedDate = this.datepipe.transform(this.currentDate,"dd-MM-YYYY HH:mm:ss");
+          this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
           console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
         });
       }
@@ -191,7 +191,7 @@ export class StudentAttendancePage implements OnInit {
 
   saveRecord() {
     if (this.sharedSvc.imageData == undefined) {
-      this.sharedSvc.showAlert("Warning", "Please upload a photo.")
+      this.sharedSvc.showAlert(ConstantService.message.warning, ConstantService.message.uploadPhoto)
     } else {
       let studentAttendanceData: IStudentRecord = {
         record_date: this.currentDate,
@@ -206,7 +206,7 @@ export class StudentAttendancePage implements OnInit {
       this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then((fetchedData: IStudentRecord[])=>{
         if(fetchedData == null){
           this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, this.studentRecords).then(data => {
-            this.sharedSvc.showMessage("Record successfully saved offline.")
+            this.sharedSvc.showMessage(ConstantService.message.recordSaved)
             this.location.back();
           })
         }else{
@@ -220,12 +220,12 @@ export class StudentAttendancePage implements OnInit {
           }
           if(updateDataStatus){
             this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, fetchedData).then(data => {
-              this.sharedSvc.showMessage("Record successfully updated offline.")
+              this.sharedSvc.showMessage(ConstantService.message.recordUpdate)
               this.location.back();
             })
           }else{
             this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, this.studentRecords).then(data => {
-              this.sharedSvc.showMessage("Record successfully saved offline.")
+              this.sharedSvc.showMessage(ConstantService.message.recordSaved)
               this.location.back();
             })
           }

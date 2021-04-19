@@ -35,7 +35,7 @@ export class SyncDataService {
       return promise
   }
 
-  syncToServer(studentsData: IStudentRecord[]){
+  syncToServer(studentsData: IStudentRecord[], acessToken: string){
     let finalizedCount = 0;
     let indexServerData = 0;
     let syncedData = [];
@@ -55,14 +55,15 @@ export class SyncDataService {
 
         if (finalizedCount == 0) {
           resolve(studentsData);
-          break
+          break;
         }
         finalizedCount--
         try {
-          await this.sentDataToServer(studentsData,indexServerData);
+          await this.sentDataToServer(studentsData,indexServerData,acessToken);
         } catch (err) {
           console.log(err)
-          resolve(studentsData);
+          reject(false);
+          break;
         }
         indexServerData++
       }
@@ -70,13 +71,21 @@ export class SyncDataService {
     return promise;
   }
 
-  sentDataToServer(studentsData: IStudentRecord[],indexServerData){
+  sentDataToServer(studentsData: IStudentRecord[],indexServerData,acessToken){
     let promise = new Promise < any > ((resolve, reject) => {
     let URL: string = ConstantService.baseUrl +'studentAttendance'
+
+    let accessKey = [
+      {
+        "key":"token",
+        "value":acessToken
+      }
+    ]
 
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-type': 'application/json',
+        'Authorization': 'Bearer'+ JSON.stringify(accessKey)
       })
     };
     let data = {
@@ -101,7 +110,7 @@ export class SyncDataService {
         resolve(true)
       }, (err) => {
         console.log(err)
-        reject(err)
+        reject(false)
       });
     });
     return promise;

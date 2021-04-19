@@ -14,6 +14,8 @@ export class AuthGuard implements CanActivate {
       const user= await this.loginSvc.get_user();
       if (user == null) {
         return this.router.parseUrl("/login");
+      } else if(user != null && user.loginStatus == false){
+        return this.router.parseUrl("/login");
       }
       return true;
     }

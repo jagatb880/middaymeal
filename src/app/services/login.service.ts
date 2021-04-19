@@ -38,8 +38,7 @@ export class LoginService {
     .subscribe(res => {
             this.storage.set(ConstantService.dbKeyNames.token,res['data']).then(response=>{
               this.loginSuccess = true;
-              this.acessToken = res['data'];
-              resolve(this.acessToken );
+              resolve(res);
             }).catch(error=>{
               console.log(error)
               reject(error);
