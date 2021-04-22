@@ -19,6 +19,7 @@ export interface IMessages {
     cancel: string,
     differentUserLoginMsg: string,
     noStudentRecord: string,
+    noCCHRecord: string,
     maxDate: string,
     dateTimeFormat: string,
     geoTagForPhoto: string,

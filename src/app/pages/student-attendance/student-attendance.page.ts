@@ -25,7 +25,6 @@ export class StudentAttendancePage implements OnInit {
   currentDate: any;
   maxDate: any;
   studentDataList: IClass[];
-  studentRecord: IStudentRecord[];
   studentRecords: IStudentRecord[];
   absentRecords: number[];
   photoCapturedDate: string;
@@ -33,11 +32,6 @@ export class StudentAttendancePage implements OnInit {
   constructor(private datepipe: DatePipe, private sharedSvc: SharedService, private diagnostic: Diagnostic,
     private platform: Platform, private storage: Storage, private location: Location,
     private changeDeector: ChangeDetectorRef) {
-      // this.platform.ready().then(() => {
-      //   this.platform.resume.subscribe(() => {    
-      //       this.takeLocationPermission();
-      //   });
-      //  });
     }
 
   ngOnInit() {
@@ -46,7 +40,6 @@ export class StudentAttendancePage implements OnInit {
     this.currentClassName = "";
     this.currentSectionName = "";
     this.sharedSvc.imageData = undefined;
-    this.studentRecord = [];
     this.studentRecords = [];
     this.absentRecords = [];
     this.syncedDisabled = false;

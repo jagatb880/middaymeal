@@ -4,13 +4,14 @@
  * @since 1.0.0
  */
 export interface IDBKeyNames {
-    token: string;
-    loginCredential: string;
-    userDetails: any;
-    studentData: string;
-    studentAttendanceData: string;
+    token: string,
+    loginCredential: string,
+    userDetails: any,
+    studentData: string,
+    studentAttendanceData: string,
     userId: string,
     appVersion: string,
-    cchData: string
+    cchData: string,
+    cchAttendanceData: string
 }
 

@@ -19,9 +19,19 @@ export class DashboardPage implements OnInit {
   studentAttendance(){
     this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
       if(data == null){
-        this.sharedSvc.showAlert(ConstantService.message.wentWrong,ConstantService.message.noStudentRecord)
+        this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noStudentRecord)
       }else{
         this.router.navigate(['student-attendance'])
+      }
+    })
+  }
+
+  cchAttendance(){
+    this.storage.get(ConstantService.dbKeyNames.cchData).then(data=>{
+      if(data == null){
+        this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noCCHRecord)
+      }else{
+        this.router.navigate(['cch-attendance'])
       }
     })
   }

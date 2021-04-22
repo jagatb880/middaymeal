@@ -26,6 +26,7 @@ export class ConstantService {
     cancel: 'Cancel',
     differentUserLoginMsg:'This is a different user, that might delete the previously saved offline data of another user. Are you sure you want to proceed?',
     noStudentRecord: 'No student record found, please sync from server first.',
+    noCCHRecord: 'No cch record found, please sync from server first.',
     maxDate: 'yyyy-MM-dd',
     dateTimeFormat: 'dd-MM-YYYY HH:mm:ss',
     geoTagForPhoto: 'For geo tagging with photo you must need to enable the location permission.',
@@ -50,6 +51,7 @@ export class ConstantService {
     studentAttendanceData: "studentAttendanceData",
     userId: 'userId',
     appVersion: 'appVersion',
-    cchData: 'cchData'
+    cchData: 'cchData',
+    cchAttendanceData: 'cchAttendanceData'
   }
 }

@@ -103,7 +103,6 @@ export class AppComponent {
     if(this.networkSvc.online){
       this.sharedSvc.showLoader("Syncing the data, please wait...")
       this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
-        debugger;
         this.syncData.syncFromServer(userData.username).then(response=>{
           if(response)
           this.storage.set(ConstantService.dbKeyNames.studentData,response).then(data=>{
