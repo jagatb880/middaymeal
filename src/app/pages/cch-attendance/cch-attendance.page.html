@@ -16,11 +16,11 @@
     <ion-list *ngFor="let cchData of cchList" class="cch-list-card">
         <div style="width: 70%; float:left;">
           <span class="cch-name-text">{{cchData.cchName}}</span><br>
-          <div class="roll-no-text">CCH Code: {{cchData.aadharNo}}</div>
+          <div class="roll-no-text">CCH Code: {{cchData.cchId}}</div>
        </div>     
        <div style="width: 30%; float:right">
         <div style="float: right;margin-left: 30vw;margin-top: 2vw;">
-          <ion-toggle [disabled]="syncedDisabled" [(ngModel)]="cchData.attendance" (ionChange)="switchAttendance(cchData.aadharNo,cchData.attendance)"></ion-toggle>
+          <ion-toggle [disabled]="syncedDisabled" [(ngModel)]="cchData.attendance" (ionChange)="switchAttendance(cchData.cchId,cchData.attendance)"></ion-toggle>
         </div>
        </div>
     </ion-list>

@@ -4,6 +4,7 @@
  * @since 1.0.0
  */
 export interface ICCHData {
+    cchId: number,
     address: string,
     cchName: string,
     gender: string,
