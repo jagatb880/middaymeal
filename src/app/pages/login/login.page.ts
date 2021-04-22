@@ -44,6 +44,7 @@ export class LoginPage implements OnInit {
         this.loginSvc.authenticate(this.loginData).then(response=>{
           if(response['data'] != null){
             this.sharedSvc.dismissLoader();
+            this.sharedSvc.accessToken = response['data'];
             this.storage.set(ConstantService.dbKeyNames.loginCredential,this.loginData).then(async (data)=>{
               let appVersionStatus = await this.checkAppversion(response['version'])
               if(appVersionStatus){

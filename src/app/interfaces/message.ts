@@ -48,5 +48,7 @@ export interface IMessages {
     syncDataToServer: string,
     noActiveRecord: string,
     syncedRecord: string,
-    failedRecord: string
+    failedRecord: string,
+    syncedRecordForCch: string,
+    failedRecordForCch: string
 }

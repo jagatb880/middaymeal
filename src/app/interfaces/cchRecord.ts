@@ -5,6 +5,7 @@
  * @since 1.0.0
  */
 export interface ICCHRecord {
+    schoolId: string,
     record_date: string,
     cch_ids: number[],
     sync_status: boolean,

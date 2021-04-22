@@ -36,7 +36,7 @@ export class LoginService {
     }
     this.http.post(URL, body  , httpOptions)
     .subscribe(res => {
-            this.storage.set(ConstantService.dbKeyNames.token,res['data']).then(response=>{
+            this.storage.set(ConstantService.dbKeyNames.token,res['data']).then(data=>{
               this.loginSuccess = true;
               resolve(res);
             }).catch(error=>{

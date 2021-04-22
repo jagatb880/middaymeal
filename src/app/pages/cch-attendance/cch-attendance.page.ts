@@ -95,6 +95,7 @@ export class CchAttendancePage implements OnInit {
       record_date: this.currentDate,
       cch_ids: this.absentRecords,
       sync_status: false,
+      schoolId: String(this.sharedSvc.schoolId)
     }
     this.cchRecords.push(cchAttendanceData)
     this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then((fetchedData: ICCHRecord[])=>{

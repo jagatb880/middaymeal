@@ -20,6 +20,8 @@ export class SharedService {
   public userFullName: string;
   public userEmail: string;
   public geocoderResult: any;
+  public schoolId: number;
+  public accessToken: string;
 
   constructor(private alertCtrl: AlertController, private location: Location, private loadingCtrl: LoadingController,
     private toastCtrl: ToastController, private camera: Camera, private geolocation: Geolocation,
