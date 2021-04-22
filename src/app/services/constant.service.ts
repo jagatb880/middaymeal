@@ -49,6 +49,7 @@ export class ConstantService {
     studentData: "studentData",
     studentAttendanceData: "studentAttendanceData",
     userId: 'userId',
-    appVersion: 'appVersion'
+    appVersion: 'appVersion',
+    cchData: 'cchData'
   }
 }

@@ -103,12 +103,12 @@ export class AppComponent {
     if(this.networkSvc.online){
       this.sharedSvc.showLoader("Syncing the data, please wait...")
       this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
-        this.syncData.syncFromServer(userData.userName).then(response=>{
+        debugger;
+        this.syncData.syncFromServer(userData.username).then(response=>{
           if(response)
           this.storage.set(ConstantService.dbKeyNames.studentData,response).then(data=>{
             if(data)
-            this.sharedSvc.dismissLoader();
-            this.sharedSvc.showMessage("Data sync successfully done.")
+            this.cchDataSyncFromServer(userData.schoolId)
           }).catch(error=>{
             console.log(error);
             this.sharedSvc.dismissLoader()
@@ -172,6 +172,26 @@ export class AppComponent {
     }else{
       this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
     }
+  }
+
+  cchDataSyncFromServer(schoolId){
+    this.storage.get(ConstantService.dbKeyNames.token).then(token=>{
+      this.syncData.syncCchDataFromServer(schoolId,token).then(data=>{
+        if(data)
+        this.storage.set(ConstantService.dbKeyNames.cchData,data[0].cch_details).then(()=>{
+          this.sharedSvc.dismissLoader();
+          this.sharedSvc.showMessage("Data sync successfully done.")
+        }).catch(error=>{
+          console.log(error)
+          this.sharedSvc.dismissLoader()
+          this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+        })
+      }).catch(error=>{
+        console.log(error)
+        this.sharedSvc.dismissLoader()
+        this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+      })
+    })
   }
 
   async logout() {

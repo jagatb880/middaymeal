@@ -10,6 +10,7 @@ export interface IDBKeyNames {
     studentData: string;
     studentAttendanceData: string;
     userId: string,
-    appVersion: string;
+    appVersion: string,
+    cchData: string
 }
 

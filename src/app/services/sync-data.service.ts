@@ -21,7 +21,36 @@ export class SyncDataService {
         const httpOptions = {
           headers: new HttpHeaders({
             'Content-type': 'application/json',
-            'teacherCode': 'RM0200098112',
+            'teacherCode': teacherCode,
+          })
+        };
+        this.http.post(URL, {},httpOptions)
+        .subscribe(res => {
+          resolve(res)
+        }, (err) => {
+          console.log(err)
+          reject(err);
+        });
+      });
+      return promise
+  }
+
+  syncCchDataFromServer(schoolId,acessToken){
+    let promise = new Promise < any > ((resolve, reject) => {
+
+      let URL: string = ConstantService.baseUrl +'cchDetails'
+      let accessKey = [
+        {
+          "key":"token",
+          "value":acessToken
+        }
+      ]
+  
+        const httpOptions = {
+          headers: new HttpHeaders({
+            'Content-type': 'application/json',
+            'schoolId': String(schoolId),
+            'Authorization': 'Bearer'+ JSON.stringify(accessKey)
           })
         };
         this.http.post(URL, {},httpOptions)
