@@ -40,7 +40,22 @@ export class ConstantService {
     newUpdate: 'New Update',
     updateMsg: 'You must update the app!',
     updateInfoMsg: 'This app need to be updated!',
-    appPlayStoreUrl: 'https://play.google.com/store/apps/details?id=com.adventz.navratnaprayas'
+    appPlayStoreUrl: 'https://play.google.com/store/apps/details?id=com.adventz.navratnaprayas',
+    logoutWarning: 'Are you sure you want to logout?',
+    dataSyncMsg: 'Data sync successfully done.',
+    somethingWentWrong: 'Something went wrong, please contact to admin',
+    closeAppWarning: 'Are you sure you want to close this app?',
+    syncFromServer: 'Sync from server',
+    syncToServer: 'Sync to server',
+    sudentAttendance: 'Student attendance',
+    cchAttendance: 'Cch attendance',
+    logout: 'Logout',
+    syncDataMsg: 'Syncing the data, please wait...',
+    noDataToSync: 'There is no data to sync.',
+    syncDataToServer: 'Syncing data to server.',
+    noActiveRecord: 'No Active record found for synced.',
+    syncedRecord: ' no of records successfully synced and ',
+    failedRecord: ' no of record failed to synced.'
   }
 
   static dbKeyNames: IDBKeyNames = {

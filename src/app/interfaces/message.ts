@@ -33,5 +33,20 @@ export interface IMessages {
     newUpdate: string,
     updateMsg: string,
     updateInfoMsg: string,
-    appPlayStoreUrl: string
+    appPlayStoreUrl: string,
+    logoutWarning: string,
+    dataSyncMsg: string,
+    somethingWentWrong: string,
+    closeAppWarning: string,
+    syncFromServer: string,
+    syncToServer: string,
+    sudentAttendance: string,
+    cchAttendance: string,
+    logout: string,
+    syncDataMsg: string,
+    noDataToSync: string,
+    syncDataToServer: string,
+    noActiveRecord: string,
+    syncedRecord: string,
+    failedRecord: string
 }

@@ -15,11 +15,11 @@ import { ConstantService } from './services/constant.service';
 })
 export class AppComponent {
   public appPages = [
-    { title: 'Sync from server'},
-    { title: 'Sync to server'},
-    { title: 'Student attendance'},
-    { title: 'Teacher attendance'},
-    { title: 'Logout'},
+    { title: ConstantService.message.syncFromServer},
+    { title: ConstantService.message.syncToServer},
+    { title: ConstantService.message.sudentAttendance},
+    { title: ConstantService.message.cchAttendance},
+    { title: ConstantService.message.logout},
   ];
 
   constructor(
@@ -59,8 +59,8 @@ export class AppComponent {
     this.platform.backButton.subscribe(async () => {
       if (this.router.isActive('/dashboard', true)) {
         const alert = await this.alertCtrl.create({
-          header: 'Info',
-          message: 'Are you sure you want to close this app?',
+          header: ConstantService.message.info,
+          message: ConstantService.message.closeAppWarning,
           cssClass:'my-custom-class',
           buttons: [
             {
@@ -85,15 +85,17 @@ export class AppComponent {
 
   open(section){
     switch(section) {
-      case 'Sync from server':
+      case ConstantService.message.syncFromServer:
         this.syncFromServer();
         break;
-      case 'Sync to server':
+      case ConstantService.message.syncToServer:
         this.syncToServer();
         break;
-      case 'Student attendance':
+      case ConstantService.message.sudentAttendance:
         break;
-      case 'Logout':
+      case ConstantService.message.cchAttendance:
+        break;
+      case ConstantService.message.logout:
         this.logout()
         break
     }
@@ -101,7 +103,7 @@ export class AppComponent {
 
   syncFromServer() {
     if(this.networkSvc.online){
-      this.sharedSvc.showLoader("Syncing the data, please wait...")
+      this.sharedSvc.showLoader(ConstantService.message.syncDataMsg)
       this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
         this.syncData.syncFromServer(userData.username).then(response=>{
           if(response)
@@ -132,9 +134,9 @@ export class AppComponent {
     if(this.networkSvc.online){
       this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(data=>{
         if(data == null){
-          this.sharedSvc.showAlert("Info","There is no data to sync")
+          this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noDataToSync)
         }else{
-          this.sharedSvc.showLoader("Syncing data to server.")
+          this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
           this.storage.get(ConstantService.dbKeyNames.token).then(token=>{
             this.syncData.syncToServer(data,token).then(syncedData=>{
               if(syncedData){
@@ -142,9 +144,10 @@ export class AppComponent {
                   this.sharedSvc.dismissLoader()
                     setTimeout(() => {
                       if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0){
-                        this.sharedSvc.showAlert("Info","No Active record found for synced.")
+                        this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noActiveRecord)
                       }else{
-                        this.sharedSvc.showAlert("Info",this.syncData.syncSuccessCount +' no of records successfully synced and '+ this.syncData.syncFailedCount + " no of record failed to sync.")
+                        this.sharedSvc.showAlert(ConstantService.message.info,this.syncData.syncSuccessCount + 
+                          ConstantService.message.syncedRecord + this.syncData.syncFailedCount + ConstantService.message.failedRecord)
                       }
                     }, 600);
                 })
@@ -157,7 +160,7 @@ export class AppComponent {
               }else{
                 console.log(error)
                 this.sharedSvc.dismissLoader()
-                this.sharedSvc.showMessage("Something went wrong, please please contact to admin")
+                this.sharedSvc.showMessage(ConstantService.message.somethingWentWrong)
               }
               
             });
@@ -179,7 +182,7 @@ export class AppComponent {
         if(data)
         this.storage.set(ConstantService.dbKeyNames.cchData,data[0].cch_details).then(()=>{
           this.sharedSvc.dismissLoader();
-          this.sharedSvc.showMessage("Data sync successfully done.")
+          this.sharedSvc.showMessage(ConstantService.message.dataSyncMsg)
         }).catch(error=>{
           console.log(error)
           this.sharedSvc.dismissLoader()
@@ -195,8 +198,8 @@ export class AppComponent {
 
   async logout() {
     let confirm = await this.alertCtrl.create({
-      header: 'Info',
-      message: "Are you sure you want to logout?",
+      header: ConstantService.message.info,
+      message: ConstantService.message.logoutWarning,
       cssClass:'my-custom-class',
       buttons: [{
           text: 'No',
