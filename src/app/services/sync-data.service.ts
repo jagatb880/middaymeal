@@ -202,7 +202,7 @@ export class SyncDataService {
         })
       };
       let data = {
-        "currdate":this.datepipe.transform(cchsRecord[indexServerData].record_date,"dd-MM-YYYY"),
+        "currDate":this.datepipe.transform(cchsRecord[indexServerData].record_date,"dd-MM-YYYY"),
         "schoolId":cchsRecord[indexServerData].schoolId,
         "cchId":cchsRecord[indexServerData].cch_ids
       }

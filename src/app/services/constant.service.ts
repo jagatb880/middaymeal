@@ -55,9 +55,9 @@ export class ConstantService {
     syncDataToServer: 'Syncing data to server.',
     noActiveRecord: 'No Active record found for synced.',
     syncedRecord: 'Student record synced: ',
-    failedRecord: 'Student record failed to sync: ',
+    failedRecord: 'Student record not synced: ',
     syncedRecordForCch: 'Cch record synced: ',
-    failedRecordForCch: 'Cch record failed to sync: '
+    failedRecordForCch: 'Cch record not synced: '
   }
 
   static dbKeyNames: IDBKeyNames = {

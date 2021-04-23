@@ -207,19 +207,23 @@ export class AppComponent {
         cchDatas.forEach((cchData: ICCHRecord) => {
           cchDataForSync.push(cchData)
         });
-        this.syncData.syncToServerCchData(cchDataForSync,token).then(data=>{
-          this.sharedSvc.dismissLoader()
-          setTimeout(() => {
-            if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0 &&
-              this.syncData.syncSuccessCountForCch == 0 && this.syncData.syncFailedCountForCch == 0){
-              this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noActiveRecord)
-            }else{
-              this.sharedSvc.showAlert("Info",ConstantService.message.syncedRecord+this.syncData.syncSuccessCount+'<br>'+
-              ConstantService.message.failedRecord+this.syncData.syncFailedCount+'<br>'+
-              ConstantService.message.syncedRecordForCch+this.syncData.syncSuccessCountForCch+'<br>'+
-              ConstantService.message.failedRecordForCch+this.syncData.syncFailedCountForCch)
-            }
-          }, 600); 
+        this.syncData.syncToServerCchData(cchDataForSync,token).then(syncedData=>{
+          if(syncedData){
+            this.storage.set(ConstantService.dbKeyNames.cchAttendanceData,syncedData).then(async (data)=>{
+            this.sharedSvc.dismissLoader()
+              setTimeout(() => {
+                if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0 &&
+                  this.syncData.syncSuccessCountForCch == 0 && this.syncData.syncFailedCountForCch == 0){
+                  this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noActiveRecord)
+                }else{
+                  this.sharedSvc.showAlert("Info",ConstantService.message.syncedRecord+this.syncData.syncSuccessCount+'<br>'+
+                  ConstantService.message.failedRecord+this.syncData.syncFailedCount+'<br>'+
+                  ConstantService.message.syncedRecordForCch+this.syncData.syncSuccessCountForCch+'<br>'+
+                  ConstantService.message.failedRecordForCch+this.syncData.syncFailedCountForCch)
+                }
+              }, 600); 
+            })
+          }
         }).catch(error=>{
           console.log(error)
           this.sharedSvc.dismissLoader()
