@@ -6,6 +6,7 @@
 export interface IMessages {
     checkInternetConnection: string,
     noInternetConnection: string,
+    internetOrLocationOff: string,
     serverError: string,
     networkError: string,
     pleaseWait: string, 

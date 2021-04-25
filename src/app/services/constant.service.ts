@@ -13,6 +13,7 @@ export class ConstantService {
   static message: IMessages = { 
     checkInternetConnection: 'Please check your internet connection.',
     noInternetConnection: 'No internet connection',
+    internetOrLocationOff: 'Internet or GPS Location is off.',
     serverError:"Error connecting to server ! Please try after some time.",
     networkError: 'Server error.',
     pleaseWait: 'Please wait..', 

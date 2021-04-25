@@ -174,8 +174,11 @@ export class StudentAttendancePage implements OnInit {
             this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
             console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
           }).catch(error=>{
-            this.sharedSvc.imageData = undefined;
-            this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noInternetConnection)
+            setTimeout(() => {
+              console.log(error)
+              this.sharedSvc.imageData = undefined;
+              this.sharedSvc.showAlert(ConstantService.message.somethingWentWrong,ConstantService.message.internetOrLocationOff)
+            }, 1000);
           });
         }
       })

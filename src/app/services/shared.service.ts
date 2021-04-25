@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -25,9 +26,9 @@ export class SharedService {
 
   constructor(private alertCtrl: AlertController, private location: Location, private loadingCtrl: LoadingController,
     private toastCtrl: ToastController, private camera: Camera, private geolocation: Geolocation,
-    private nativeGeocoder: NativeGeocoder) { }
+    private nativeGeocoder: NativeGeocoder, private diagnostic: Diagnostic) {}
 
-  async showMessage(msg: string, duration: number = 2000): Promise<void> {
+  async showMessage(msg: string, duration: number = 2000): Promise < void > {
     const message = await this.toastCtrl.create({
       message: msg,
       duration: duration
@@ -35,10 +36,10 @@ export class SharedService {
     await message.present();
   }
 
-  async showAlert(header: string, msg: string, buttons: Array<any> = ['OK']): Promise<void> {
+  async showAlert(header: string, msg: string, buttons: Array < any > = ['OK']): Promise < void > {
     const alert = await this.alertCtrl.create({
       header: header,
-      cssClass:'my-custom-class',
+      cssClass: 'my-custom-class',
       backdropDismiss: false,
       message: msg,
       buttons: buttons
@@ -46,12 +47,12 @@ export class SharedService {
     return await alert.present();
   }
 
-  showAlertCallBack(title: string, message: string, okBtn: string = 'OK', cancelBtn ? : string ): Promise < boolean > {
+  showAlertCallBack(title: string, message: string, okBtn: string = 'OK', cancelBtn ? : string): Promise < boolean > {
     let promise: Promise < boolean > = new Promise(async (resolve, reject) => {
       let confirm = await this.alertCtrl.create({
         header: title,
         message: message,
-        cssClass:'my-custom-class',
+        cssClass: 'my-custom-class',
         backdropDismiss: false,
         buttons: [{
             text: cancelBtn,
@@ -93,102 +94,106 @@ export class SharedService {
   }
 
   /**
-     * This method is used to camera option to take the receipt photo
-     * @memberof SharedService
-     */
-    openCamera(): Promise < any > {
-      let promise: Promise < any > = new Promise(async (resolve, reject) => {
-        const options: CameraOptions = {
-          quality: 90, // picture quality
-          destinationType: this.camera.DestinationType.DATA_URL,
-          encodingType: this.camera.EncodingType.JPEG,
-          mediaType: this.camera.MediaType.PICTURE,
-          targetWidth: 720,
-          cameraDirection: this.camera.Direction.BACK,
-          correctOrientation: true
+   * This method is used to camera option to take the receipt photo
+   * @memberof SharedService
+   */
+  openCamera(): Promise < any > {
+    let promise: Promise < any > = new Promise(async (resolve, reject) => {
+      const options: CameraOptions = {
+        quality: 90, // picture quality
+        destinationType: this.camera.DestinationType.DATA_URL,
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType: this.camera.MediaType.PICTURE,
+        targetWidth: 720,
+        cameraDirection: this.camera.Direction.BACK,
+        correctOrientation: true
+      };
+      this.setCameraImageToPath(options).then(data => {
+        resolve(data)
+      }).catch(error => {
+        reject(error)
+      })
+    });
+    return promise;
+  }
+
+  /**
+   * This method will allow the user to acces the gallery of the mobile to choose the image for profile image.
+   *
+   * @memberof SharedService
+   */
+  //  openGallery(): Promise < any > {
+  //   let promise: Promise < any > = new Promise(async (resolve, reject) => {
+  //     const options: CameraOptions = {
+  //       quality: 90,
+  //       sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+  //       destinationType: this.camera.DestinationType.DATA_URL,
+  //       encodingType: this.camera.EncodingType.JPEG,
+  //       mediaType: this.camera.MediaType.PICTURE,
+  //       targetWidth: 600,
+  //       targetHeight: 800
+  //     };
+  //     this.setCameraImageToPath(options).then(data=>{
+  //       resolve(data)
+  //     }).catch(error=>{
+  //       reject(error)
+  //     })
+  //   });
+  //   return promise;
+  // }
+
+
+  /**
+   * This method get the base64 data from camera, set to the imageUrl to show updated image in view.
+   * Push the image after conertion to file in fileImage variable for further use.
+   *
+   * @param {*} file
+   * @memberof SharedService
+   */
+  setCameraImageToPath(options): Promise < any > {
+    let promise: Promise < any > = new Promise(async (resolve, reject) => {
+      this.camera.getPicture(options).then((base64Data) => {
+        this.showLoader("Please wait...")
+        let geoCoderOptions: NativeGeocoderOptions = {
+          useLocale: true,
+          maxResults: 5
         };
-        this.setCameraImageToPath(options).then(data=>{
-          resolve(data)
-        }).catch(error=>{
-          reject(error)
-        })
-      });
-      return promise;
-    }
 
-    /**
-      * This method will allow the user to acces the gallery of the mobile to choose the image for profile image.
-      *
-      * @memberof SharedService
-      */
-    //  openGallery(): Promise < any > {
-    //   let promise: Promise < any > = new Promise(async (resolve, reject) => {
-    //     const options: CameraOptions = {
-    //       quality: 90,
-    //       sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-    //       destinationType: this.camera.DestinationType.DATA_URL,
-    //       encodingType: this.camera.EncodingType.JPEG,
-    //       mediaType: this.camera.MediaType.PICTURE,
-    //       targetWidth: 600,
-    //       targetHeight: 800
-    //     };
-    //     this.setCameraImageToPath(options).then(data=>{
-    //       resolve(data)
-    //     }).catch(error=>{
-    //       reject(error)
-    //     })
-    //   });
-    //   return promise;
-    // }
-
-
-    /**
-     * This method get the base64 data from camera, set to the imageUrl to show updated image in view.
-     * Push the image after conertion to file in fileImage variable for further use.
-     *
-     * @param {*} file
-     * @memberof SharedService
-     */
-    setCameraImageToPath(options): Promise < any > {
-      let promise: Promise < any > = new Promise(async (resolve, reject) => {
-        this.camera.getPicture(options).then((base64Data) => {
-          this.showLoader("Please wait...")
-          let geoCoderOptions: NativeGeocoderOptions = {
-            useLocale: true,
-            maxResults: 5
-          };
-          this.geolocation.getCurrentPosition(options).then(resp => {
-            this.imageData = {
-              src: "data:image/jpeg;base64," + base64Data,
-              meta_info: "Lat:" + resp.coords.latitude + "; Long:" + resp.coords.longitude + "; Accuracy :" + resp.coords.accuracy
-            }
-            this.nativeGeocoder.reverseGeocode(resp.coords.latitude, resp.coords.longitude, geoCoderOptions)
-              .then((result: NativeGeocoderResult[]) => {
-                this.geocoderResult = result[0];
-                setTimeout(() => {
+        this.diagnostic.isLocationEnabled().then((isEnabled) => {
+          if(isEnabled){
+            this.geolocation.getCurrentPosition(options).then(resp => {
+              this.imageData = {
+                src: "data:image/jpeg;base64," + base64Data,
+                meta_info: "Lat:" + resp.coords.latitude + "; Long:" + resp.coords.longitude + "; Accuracy :" + resp.coords.accuracy
+              }
+              this.nativeGeocoder.reverseGeocode(resp.coords.latitude, resp.coords.longitude, geoCoderOptions)
+                .then((result: NativeGeocoderResult[]) => {
+                  this.geocoderResult = result[0];
+                  setTimeout(() => {
+                    this.dismissLoader();
+                    resolve(this.imageData)
+                  }, 500);
+                }).catch((error) => {
                   this.dismissLoader();
-                }, 500);
-                resolve(this.imageData)
-              })
-              .catch((error: any) => {
-                this.dismissLoader();
-                console.log(error);
-                reject(error)
-              });
-          }).catch(error => {
-            setTimeout(() => {
+                  console.log(error);
+                  reject(error)
+                });
+            }).catch(error => {
               this.dismissLoader();
-            }, 500);
-            this.imageData = {
-              src: "data:image/jpeg;base64," + base64Data
-            }
-            resolve(this.imageData)
-          });
-        }, (err) => {
-          reject(err)
+              console.log(error);
+              reject(error)
+            });
+          }else{
+            this.dismissLoader();
+            reject('error')
+          }
         });
+      }, (error) => {
+        this.dismissLoader();
+        console.log(error);
+        reject(error)
       });
-      return promise;
-    }
-
+    });
+    return promise;
+  }
 }
