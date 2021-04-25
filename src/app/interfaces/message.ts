@@ -5,6 +5,7 @@
  */
 export interface IMessages {
     checkInternetConnection: string,
+    noInternetConnection: string,
     serverError: string,
     networkError: string,
     pleaseWait: string, 
@@ -12,6 +13,7 @@ export interface IMessages {
     validPassword: string,
     authentication: string,
     wentWrong: string,
+    wentWrongContactAdmin: string,
     fetchUserDetails: string,
     warning: string,
     info: string,

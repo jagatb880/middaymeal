@@ -109,6 +109,8 @@ export class SharedService {
         };
         this.setCameraImageToPath(options).then(data=>{
           resolve(data)
+        }).catch(error=>{
+          reject(error)
         })
       });
       return promise;
@@ -119,23 +121,25 @@ export class SharedService {
       *
       * @memberof SharedService
       */
-     openGallery(): Promise < any > {
-      let promise: Promise < any > = new Promise(async (resolve, reject) => {
-        const options: CameraOptions = {
-          quality: 90,
-          sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-          destinationType: this.camera.DestinationType.DATA_URL,
-          encodingType: this.camera.EncodingType.JPEG,
-          mediaType: this.camera.MediaType.PICTURE,
-          targetWidth: 600,
-          targetHeight: 800
-        };
-        this.setCameraImageToPath(options).then(data=>{
-          resolve(data)
-        })
-      });
-      return promise;
-    }
+    //  openGallery(): Promise < any > {
+    //   let promise: Promise < any > = new Promise(async (resolve, reject) => {
+    //     const options: CameraOptions = {
+    //       quality: 90,
+    //       sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+    //       destinationType: this.camera.DestinationType.DATA_URL,
+    //       encodingType: this.camera.EncodingType.JPEG,
+    //       mediaType: this.camera.MediaType.PICTURE,
+    //       targetWidth: 600,
+    //       targetHeight: 800
+    //     };
+    //     this.setCameraImageToPath(options).then(data=>{
+    //       resolve(data)
+    //     }).catch(error=>{
+    //       reject(error)
+    //     })
+    //   });
+    //   return promise;
+    // }
 
 
     /**
@@ -166,8 +170,11 @@ export class SharedService {
                 }, 500);
                 resolve(this.imageData)
               })
-              .catch((error: any) => console.log(error));
-            
+              .catch((error: any) => {
+                this.dismissLoader();
+                console.log(error);
+                reject(error)
+              });
           }).catch(error => {
             setTimeout(() => {
               this.dismissLoader();

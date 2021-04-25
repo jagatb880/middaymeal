@@ -9,6 +9,7 @@ import { Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { ConstantService } from 'src/app/services/constant.service';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+import { NetworkService } from 'src/app/services/network.service';
 
 @Component({
   selector: 'app-student-attendance',
@@ -31,7 +32,7 @@ export class StudentAttendancePage implements OnInit {
   syncedDisabled: boolean;
   constructor(private datepipe: DatePipe, private sharedSvc: SharedService, private diagnostic: Diagnostic,
     private platform: Platform, private storage: Storage, private location: Location,
-    private changeDeector: ChangeDetectorRef) {
+    private networkSvc: NetworkService, private changeDeector: ChangeDetectorRef) {
     }
 
   ngOnInit() {
@@ -156,24 +157,31 @@ export class StudentAttendancePage implements OnInit {
   }
 
   takeLocationPermission(){
-    this.photoCapturedDate = undefined;
-    this.diagnostic.isLocationEnabled().then((isEnabled) => {
-      if (!isEnabled && this.platform.is('cordova')) {
-        //handle confirmation window code here and then call switchToLocationSettings
-        this.sharedSvc.showAlertCallBack(ConstantService.message.wentWrong,ConstantService.message.geoTagForPhoto).then(data => {
-          if (data) {
-            this.diagnostic.switchToLocationSettings();
-          } else {
-            this.sharedSvc.showMessage(ConstantService.message.enableGeoLocation)
-          }
-        })
-      } else {
-        this.sharedSvc.openCamera().then(data=>{
-          this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
-          console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
-        });
-      }
-    })
+    if(this.networkSvc.online){
+      this.photoCapturedDate = undefined;
+      this.diagnostic.isLocationEnabled().then((isEnabled) => {
+        if (!isEnabled && this.platform.is('cordova')) {
+          //handle confirmation window code here and then call switchToLocationSettings
+          this.sharedSvc.showAlertCallBack(ConstantService.message.somethingWentWrong,ConstantService.message.geoTagForPhoto).then(data => {
+            if (data) {
+              this.diagnostic.switchToLocationSettings();
+            } else {
+              this.sharedSvc.showMessage(ConstantService.message.enableGeoLocation)
+            }
+          })
+        } else {
+          this.sharedSvc.openCamera().then(data=>{
+            this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
+            console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
+          }).catch(error=>{
+            this.sharedSvc.imageData = undefined;
+            this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noInternetConnection)
+          });
+        }
+      })
+    }else{
+      this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
+    }
   }
 
   deleteReceipt() {

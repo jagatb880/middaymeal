@@ -11,7 +11,8 @@ export class ConstantService {
   constructor() { }
 
   static message: IMessages = { 
-    checkInternetConnection: "Please check your internet connection.",
+    checkInternetConnection: 'Please check your internet connection.',
+    noInternetConnection: 'No internet connection',
     serverError:"Error connecting to server ! Please try after some time.",
     networkError: 'Server error.',
     pleaseWait: 'Please wait..', 
@@ -19,6 +20,7 @@ export class ConstantService {
     validPassword:'Please enter Password.',
     authentication: 'Authenticating user, please wait...',
     wentWrong: 'Somthing went wrong, try after some times.',
+    somethingWentWrong: 'Somthing went Wrong!',
     fetchUserDetails: 'Fetching user details, please wait...',
     warning: 'Warning',
     info: 'Info',
@@ -29,7 +31,7 @@ export class ConstantService {
     noCCHRecord: 'No cch record found, please sync from server first.',
     maxDate: 'yyyy-MM-dd',
     dateTimeFormat: 'dd-MM-YYYY HH:mm:ss',
-    geoTagForPhoto: 'For geo tagging with photo you must need to enable the location permission.',
+    geoTagForPhoto: 'For Geo-Tagged Photo, GPS in mobile must be turned on.',
     enableGeoLocation: 'Enable location permission manually',
     uploadPhoto: 'Please upload a photo.',
     recordSaved: 'Record successfully saved offline.',
@@ -43,7 +45,7 @@ export class ConstantService {
     appPlayStoreUrl: 'https://play.google.com/store/apps/details?id=com.adventz.navratnaprayas',
     logoutWarning: 'Are you sure you want to logout?',
     dataSyncMsg: 'Data sync successfully done.',
-    somethingWentWrong: 'Something went wrong, please contact to admin',
+    wentWrongContactAdmin: 'Something went wrong, please contact to admin',
     closeAppWarning: 'Are you sure you want to close this app?',
     syncFromServer: 'Sync from server',
     syncToServer: 'Sync to server',

@@ -160,7 +160,7 @@ export class AppComponent {
             }else{
               console.log(error)
               this.sharedSvc.dismissLoader()
-              this.sharedSvc.showMessage(ConstantService.message.somethingWentWrong)
+              this.sharedSvc.showMessage(ConstantService.message.wentWrongContactAdmin)
             }
             
           });
@@ -195,14 +195,7 @@ export class AppComponent {
     this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(cchDatas=>{
       if(cchDatas == null){
         this.sharedSvc.dismissLoader()
-        setTimeout(() => {
-          if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0){
-            this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noActiveRecord)
-          }else{
-            this.sharedSvc.showAlert(ConstantService.message.info,this.syncData.syncSuccessCount + 
-              ConstantService.message.syncedRecord + this.syncData.syncFailedCount + ConstantService.message.failedRecord)
-          }
-        }, 600);  
+        this.showSyncedCountMsg();  
       }else{
         cchDatas.forEach((cchData: ICCHRecord) => {
           cchDataForSync.push(cchData)
@@ -211,17 +204,7 @@ export class AppComponent {
           if(syncedData){
             this.storage.set(ConstantService.dbKeyNames.cchAttendanceData,syncedData).then(async (data)=>{
             this.sharedSvc.dismissLoader()
-              setTimeout(() => {
-                if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0 &&
-                  this.syncData.syncSuccessCountForCch == 0 && this.syncData.syncFailedCountForCch == 0){
-                  this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noActiveRecord)
-                }else{
-                  this.sharedSvc.showAlert("Info",ConstantService.message.syncedRecord+this.syncData.syncSuccessCount+'<br>'+
-                  ConstantService.message.failedRecord+this.syncData.syncFailedCount+'<br>'+
-                  ConstantService.message.syncedRecordForCch+this.syncData.syncSuccessCountForCch+'<br>'+
-                  ConstantService.message.failedRecordForCch+this.syncData.syncFailedCountForCch)
-                }
-              }, 600); 
+              this.showSyncedCountMsg();
             })
           }
         }).catch(error=>{
@@ -235,6 +218,20 @@ export class AppComponent {
       this.sharedSvc.dismissLoader()
       this.sharedSvc.showMessage(ConstantService.message.wentWrong)
     });
+  }
+
+  showSyncedCountMsg(){
+    setTimeout(() => {
+      if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0 &&
+        this.syncData.syncSuccessCountForCch == 0 && this.syncData.syncFailedCountForCch == 0){
+        this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noActiveRecord)
+      }else{
+        this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.syncedRecord+this.syncData.syncSuccessCount+'<br>'+
+        ConstantService.message.failedRecord+this.syncData.syncFailedCount+'<br>'+
+        ConstantService.message.syncedRecordForCch+this.syncData.syncSuccessCountForCch+'<br>'+
+        ConstantService.message.failedRecordForCch+this.syncData.syncFailedCountForCch)
+      }
+    }, 600); 
   }
 
   async logout() {
