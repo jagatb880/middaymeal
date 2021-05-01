@@ -64,6 +64,7 @@ export class StudentAttendancePage implements OnInit {
     this.currentSectionName = "";
     this.currentDate = "";
     this.sharedSvc.imageData = undefined;
+    this.photoCapturedDate = undefined;
     let studentClass: IClass[] = this.studentDataList.filter(a => a.className == this.currentClassName);
     this.sectionList = studentClass[0].section
   }
@@ -71,6 +72,7 @@ export class StudentAttendancePage implements OnInit {
   selectSection() {
     this.currentDate = "";
     this.sharedSvc.imageData = undefined;
+    this.photoCapturedDate = undefined;
     this.studentList = [];
   }
 
