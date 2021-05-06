@@ -159,7 +159,7 @@ export class StudentAttendancePage implements OnInit {
   }
 
   takeLocationPermission(){
-    if(this.networkSvc.online){
+    //if(this.networkSvc.online){
       this.photoCapturedDate = undefined;
       this.diagnostic.isLocationEnabled().then((isEnabled) => {
         if (!isEnabled && this.platform.is('cordova')) {
@@ -184,9 +184,9 @@ export class StudentAttendancePage implements OnInit {
           });
         }
       })
-    }else{
-      this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
-    }
+    // }else{
+    //   this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
+    // }
   }
 
   deleteReceipt() {

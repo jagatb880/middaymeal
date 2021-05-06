@@ -172,8 +172,9 @@ export class AppComponent {
 
   studentDataSyncFromServer(){
     this.sharedSvc.showLoader(ConstantService.message.syncDataMsg)
-    this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
-      this.syncData.syncFromServer(userData.username).then(response=>{
+    this.storage.get(ConstantService.dbKeyNames.userDetails).then(userDatas=>{
+      let index = userDatas.findIndex(userData=> userData.username == this.sharedSvc.userName)
+      this.syncData.syncFromServer(userDatas[index].username).then(response=>{
         if(response)
         this.storage.set(ConstantService.dbKeyNames.studentData,response).then(data=>{
           this.sharedSvc.dismissLoader();
@@ -197,18 +198,11 @@ export class AppComponent {
 
   cchDataSyncFromServer(){
     this.sharedSvc.showLoader(ConstantService.message.syncDataMsg)
-    this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
-      this.sharedSvc.schoolId = userData.schoolId
-      this.syncData.syncCchDataFromServer(userData.schoolId,this.sharedSvc.accessToken).then(data=>{
-        if(data)
-        this.storage.set(ConstantService.dbKeyNames.cchData,data[0].cch_details).then(()=>{
-          this.sharedSvc.dismissLoader();
-          this.sharedSvc.showMessage(ConstantService.message.dataSyncMsg)
-        }).catch(error=>{
-          console.log(error)
-          this.sharedSvc.dismissLoader()
-          this.sharedSvc.showMessage(ConstantService.message.wentWrong)
-        })
+    this.syncData.syncCchDataFromServer(this.sharedSvc.schoolId,this.sharedSvc.accessToken).then(data=>{
+      if(data)
+      this.storage.set(ConstantService.dbKeyNames.cchData,data[0].cch_details).then(()=>{
+        this.sharedSvc.dismissLoader();
+        this.sharedSvc.showMessage(ConstantService.message.dataSyncMsg)
       }).catch(error=>{
         console.log(error)
         this.sharedSvc.dismissLoader()
@@ -312,11 +306,12 @@ export class AppComponent {
           this.sharedSvc.publishDataUpdate(true)
         }
       })
-    })
-    this.storage.get(ConstantService.dbKeyNames.token).then(token=>{
-      if(token != null){
-        this.sharedSvc.accessToken = token
-      }
+      this.storage.get(ConstantService.dbKeyNames.token).then(tokens=>{
+        if(tokens != null){
+          let result = tokens.find(token=> token.username == this.sharedSvc.userName)
+          this.sharedSvc.accessToken = result.token
+        }
+      })
     })
   }
 }
