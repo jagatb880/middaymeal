@@ -3,7 +3,7 @@ import { ConstantService } from './constant.service';
 import { HttpHeaders, HttpClient} from '@angular/common/http';
 import { Storage } from '@ionic/storage'
 import { ILoginData } from '../interfaces/login-data';
-import { error } from 'protractor';
+import { SharedService } from './shared.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,11 +12,10 @@ export class LoginService {
 
   acessToken: string;
   loginSuccess: boolean;
-  constructor(private http: HttpClient, private storage: Storage) {}
+  constructor(private http: HttpClient, private storage: Storage, private sharedSvc: SharedService) {}
 
   /**
    * This method will authenticate the username and password by calling the rest api for authentication
-   * @author Jagat Bandhu (jagat@sdrc.co.in)
    * @param Authorization(username and password are set in header)
    * @since 0.0.1
    */
@@ -103,7 +102,8 @@ export class LoginService {
   get_user() {
     let promise = new Promise < any > ((resolve, reject) => {
       this.storage.get(ConstantService.dbKeyNames.userDetails).then(userDetails => {
-        resolve(userDetails)
+        let result = userDetails.find(userDetail=> userDetail.username == this.sharedSvc.userName)
+        resolve(result)
       }, (err) => {
         console.log(err)
         reject(err)
