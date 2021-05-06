@@ -6,7 +6,6 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Subject } from 'rxjs';
-import { NetworkService } from './network.service';
 
 
 @Injectable({
@@ -35,7 +34,7 @@ export class SharedService {
 
   constructor(private alertCtrl: AlertController, private location: Location, private loadingCtrl: LoadingController,
     private toastCtrl: ToastController, private camera: Camera, private geolocation: Geolocation,
-    private nativeGeocoder: NativeGeocoder, private diagnostic: Diagnostic, private networkSvc: NetworkService) {}
+    private nativeGeocoder: NativeGeocoder, private diagnostic: Diagnostic) {}
 
   async showMessage(msg: string, duration: number = 2000): Promise < void > {
     const message = await this.toastCtrl.create({
@@ -106,7 +105,7 @@ export class SharedService {
    * This method is used to camera option to take the receipt photo
    * @memberof SharedService
    */
-  openCamera(): Promise < any > {
+  openCamera(networkStatus): Promise < any > {
     let promise: Promise < any > = new Promise(async (resolve, reject) => {
       const options: CameraOptions = {
         quality: 90, // picture quality
@@ -117,7 +116,7 @@ export class SharedService {
         cameraDirection: this.camera.Direction.BACK,
         correctOrientation: true
       };
-      this.setCameraImageToPath(options).then(data => {
+      this.setCameraImageToPath(options,networkStatus).then(data => {
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -159,7 +158,7 @@ export class SharedService {
    * @param {*} file
    * @memberof SharedService
    */
-  setCameraImageToPath(options): Promise < any > {
+  setCameraImageToPath(options,networkStatus): Promise < any > {
     let promise: Promise < any > = new Promise(async (resolve, reject) => {
       this.camera.getPicture(options).then((base64Data) => {
         this.showLoader("Please wait...")
@@ -177,7 +176,7 @@ export class SharedService {
               }
               this.latitude = resp.coords.latitude;
               this.longitude = resp.coords.longitude
-              if (this.networkSvc.online) {
+              if (networkStatus) {
               this.nativeGeocoder.reverseGeocode(resp.coords.latitude, resp.coords.longitude, geoCoderOptions)
                 .then((result: NativeGeocoderResult[]) => {
                   this.geocoderResult = result[0];
