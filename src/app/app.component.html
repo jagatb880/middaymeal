@@ -12,7 +12,7 @@
           </div>
           <div class="menu-list">
             <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
-              <ion-item routerDirection="root" lines="none" detail="false" routerLinkActive="selected" (click)="open(p.title)">
+              <ion-item *ngIf="p.show" routerDirection="root" lines="none" detail="false" routerLinkActive="selected" (click)="open(p.title)">
                 <ion-label>{{ p.title }}</ion-label>
               </ion-item>
             </ion-menu-toggle>

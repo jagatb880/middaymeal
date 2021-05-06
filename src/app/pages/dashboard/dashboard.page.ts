@@ -11,7 +11,8 @@ import { SharedService } from 'src/app/services/shared.service';
 })
 export class DashboardPage implements OnInit {
 
-  constructor(private router: Router,private storage: Storage, private sharedSvc: SharedService) { }
+  getUserRole: any;
+  constructor(private router: Router,private storage: Storage, public sharedSvc: SharedService) { }
 
   ngOnInit() {
   }

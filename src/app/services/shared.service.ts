@@ -5,6 +5,9 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+import { Subject } from 'rxjs';
+import { NetworkService } from './network.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -23,10 +26,16 @@ export class SharedService {
   public geocoderResult: any;
   public schoolId: number;
   public accessToken: string;
+  public teacherRole: boolean;
+  public userName: string
+  public latitude: number
+  public longitude: number
+
+  private dataUpdate = new Subject();
 
   constructor(private alertCtrl: AlertController, private location: Location, private loadingCtrl: LoadingController,
     private toastCtrl: ToastController, private camera: Camera, private geolocation: Geolocation,
-    private nativeGeocoder: NativeGeocoder, private diagnostic: Diagnostic) {}
+    private nativeGeocoder: NativeGeocoder, private diagnostic: Diagnostic, private networkSvc: NetworkService) {}
 
   async showMessage(msg: string, duration: number = 2000): Promise < void > {
     const message = await this.toastCtrl.create({
@@ -166,6 +175,9 @@ export class SharedService {
                 src: "data:image/jpeg;base64," + base64Data,
                 meta_info: "Lat:" + resp.coords.latitude + "; Long:" + resp.coords.longitude + "; Accuracy :" + resp.coords.accuracy
               }
+              this.latitude = resp.coords.latitude;
+              this.longitude = resp.coords.longitude
+              if (this.networkSvc.online) {
               this.nativeGeocoder.reverseGeocode(resp.coords.latitude, resp.coords.longitude, geoCoderOptions)
                 .then((result: NativeGeocoderResult[]) => {
                   this.geocoderResult = result[0];
@@ -178,6 +190,13 @@ export class SharedService {
                   console.log(error);
                   reject(error)
                 });
+              }else{
+                this.geocoderResult = undefined
+                setTimeout(() => {
+                  this.dismissLoader();
+                  resolve(this.imageData)
+                }, 500);
+              }
             }).catch(error => {
               this.dismissLoader();
               console.log(error);
@@ -196,4 +215,13 @@ export class SharedService {
     });
     return promise;
   }
+
+  publishDataUpdate(data: any) {
+    this.dataUpdate.next(data);
+  }
+    
+  observeDataUpdate(): Subject<any> {
+    return this.dataUpdate;
+  }
+    
 }

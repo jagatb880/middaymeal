@@ -50,8 +50,8 @@ export class ConstantService {
     closeAppWarning: 'Are you sure you want to close this app?',
     syncFromServer: 'Sync from server',
     syncToServer: 'Sync to server',
-    sudentAttendance: 'Student attendance',
-    cchAttendance: 'Cch attendance',
+    sudentAttendance: 'Student Attendance',
+    cchAttendance: 'Cch Attendance',
     logout: 'Logout',
     syncDataMsg: 'Syncing the data, please wait...',
     noDataToSync: 'There is no data to sync.',
@@ -64,6 +64,7 @@ export class ConstantService {
   }
 
   static dbKeyNames: IDBKeyNames = {
+    logginUserUsername: 'logginUserUsername',
     token: 'token',
     loginCredential: 'loginCredential',
     userDetails: 'userDetails',

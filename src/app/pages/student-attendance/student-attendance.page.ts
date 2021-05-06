@@ -30,7 +30,7 @@ export class StudentAttendancePage implements OnInit {
   absentRecords: number[];
   photoCapturedDate: string;
   syncedDisabled: boolean;
-  constructor(private datepipe: DatePipe, private sharedSvc: SharedService, private diagnostic: Diagnostic,
+  constructor(private datepipe: DatePipe, public sharedSvc: SharedService, private diagnostic: Diagnostic,
     private platform: Platform, private storage: Storage, private location: Location,
     private networkSvc: NetworkService, private changeDeector: ChangeDetectorRef) {
     }
@@ -159,7 +159,7 @@ export class StudentAttendancePage implements OnInit {
   }
 
   takeLocationPermission(){
-    if(this.networkSvc.online){
+    //if(this.networkSvc.online){
       this.photoCapturedDate = undefined;
       this.diagnostic.isLocationEnabled().then((isEnabled) => {
         if (!isEnabled && this.platform.is('cordova')) {
@@ -184,9 +184,9 @@ export class StudentAttendancePage implements OnInit {
           });
         }
       })
-    }else{
-      this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
-    }
+    // }else{
+    //   this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
+    // }
   }
 
   deleteReceipt() {

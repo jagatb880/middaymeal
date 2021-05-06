@@ -60,7 +60,12 @@
   <ion-row class="upload_receipt-section">
     <ion-col>
       <div *ngIf="photoCapturedDate != undefined">
-        <div class="upload_text">
+        <div *ngIf="sharedSvc.geocoderResult == undefined" class="upload_text">
+          <p class="fstp">Lat:-{{sharedSvc.latitude}}</p>
+          <p class="fstp">Long:-{{sharedSvc.longitude}}</p>
+          <p class="fstp">Date:-{{photoCapturedDate}}</p>
+        </div>
+        <div *ngIf="sharedSvc.geocoderResult != undefined" class="upload_text">
           <p class="fstp">Lat:-{{sharedSvc.geocoderResult.latitude}}</p>
           <p class="fstp">Long:-{{sharedSvc.geocoderResult.longitude}}</p>
           <p class="fstp">Address:-{{sharedSvc.geocoderResult.subLocality}}, {{sharedSvc.geocoderResult.locality}}</p>
