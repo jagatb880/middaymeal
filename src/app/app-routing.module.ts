@@ -29,6 +29,10 @@ const routes: Routes = [
     path: 'meal-management',
     loadChildren: () => import('./pages/meal-management/meal-management.module').then( m => m.MealManagementPageModule)
   },
+  {
+    path: 'forgotpassword',
+    loadChildren: () => import('./pages/forgotpassword/forgotpassword.module').then( m => m.ForgotpasswordPageModule)
+  },
 ];
 
 @NgModule({
