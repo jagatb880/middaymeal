@@ -30,7 +30,7 @@ export class StudentAttendancePage implements OnInit {
   absentRecords: number[];
   photoCapturedDate: string;
   syncedDisabled: boolean;
-  constructor(private datepipe: DatePipe, private sharedSvc: SharedService, private diagnostic: Diagnostic,
+  constructor(private datepipe: DatePipe, public sharedSvc: SharedService, private diagnostic: Diagnostic,
     private platform: Platform, private storage: Storage, private location: Location,
     private networkSvc: NetworkService, private changeDeector: ChangeDetectorRef) {
     }

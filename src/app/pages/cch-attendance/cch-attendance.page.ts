@@ -20,7 +20,7 @@ export class CchAttendancePage implements OnInit {
   currentDate: any;
   cchRecords: ICCHRecord[];
   maxDate: string
-  constructor(private storage: Storage, private sharedSvc: SharedService, private datepipe: DatePipe,
+  constructor(private storage: Storage, public sharedSvc: SharedService, private datepipe: DatePipe,
     private location: Location) { }
 
   ngOnInit() {

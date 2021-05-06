@@ -17,7 +17,7 @@ export class LoginPage implements OnInit {
   user: ILoginData;
   loginData: ILoginData;
   constructor(private networkSvc: NetworkService, private navigator: NavController,
-    private sharedSvc: SharedService, private loginSvc: LoginService, private storage: Storage) { }
+    public sharedSvc: SharedService, private loginSvc: LoginService, private storage: Storage) {}
 
   ngOnInit() {
     this.loginData = {
@@ -34,80 +34,112 @@ export class LoginPage implements OnInit {
    *
    */
   async login() {
-    if(this.networkSvc.online){
+    if (this.networkSvc.online) {
       if (this.loginData.username == "") {
         this.sharedSvc.showMessage(ConstantService.message.validUserName)
       } else if (this.loginData.password == "") {
         this.sharedSvc.showMessage(ConstantService.message.validPassword)
       } else {
-      this.sharedSvc.showLoader(ConstantService.message.authentication)
-        this.loginSvc.authenticate(this.loginData).then(response=>{
-          if(response['data'] != null){
+        this.sharedSvc.showLoader(ConstantService.message.authentication)
+        this.loginSvc.authenticate(this.loginData).then(response => {
+          if (response['data'] != null) {
+            this.sharedSvc.userName = this.loginData.username;
             this.sharedSvc.dismissLoader();
             this.sharedSvc.accessToken = response['data'];
-            this.storage.set(ConstantService.dbKeyNames.loginCredential,this.loginData).then(async (data)=>{
-              let appVersionStatus = await this.checkAppversion(response['version'])
-              if(appVersionStatus){
-                await this.fetch_user_details(response['data'])
+            this.storage.get(ConstantService.dbKeyNames.loginCredential).then(loginCredentialList=>{
+              let credentialList = []
+              if(loginCredentialList == null){
+                credentialList.push(this.loginData)
               }else{
-                await this.sharedSvc.showAlertCallBack(ConstantService.message.newUpdate,
-                  ConstantService.message.updateInfoMsg,ConstantService.message.update).then(data=>{
-                  if(data){
-                    window.open(ConstantService.message.appPlayStoreUrl,"_system")
-                  }else{
-                    this.sharedSvc.showMessage(ConstantService.message.updateMsg)
-                  }
-                })
+                credentialList = loginCredentialList
+                let result: any = loginCredentialList.filter(userData => userData.username == this.sharedSvc.userName)
+                if (result == 0) {
+                  loginCredentialList.push(this.loginData)
+                } else {
+                  let result: any = loginCredentialList.findIndex(token => token.username == this.sharedSvc.userName)
+                  loginCredentialList[result] = this.loginData
+                }
               }
-            }).catch(error=>{
+              this.storage.set(ConstantService.dbKeyNames.loginCredential, credentialList).then(async (data) => {
+                let appVersionStatus = await this.checkAppversion(response['version'])
+                if (appVersionStatus) {
+                  await this.fetch_user_details(response['data'])
+                } else {
+                  await this.sharedSvc.showAlertCallBack(ConstantService.message.newUpdate,
+                    ConstantService.message.updateInfoMsg, ConstantService.message.update).then(data => {
+                    if (data) {
+                      window.open(ConstantService.message.appPlayStoreUrl, "_system")
+                    } else {
+                      this.sharedSvc.showMessage(ConstantService.message.updateMsg)
+                    }
+                  })
+                }
+              }).catch(error => {
+                this.sharedSvc.dismissLoader();
+                console.log(error)
+                this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+              });
+            }).catch(error => {
               this.sharedSvc.dismissLoader();
               console.log(error)
               this.sharedSvc.showMessage(ConstantService.message.wentWrong)
             });
-          }else{
+          } else {
             this.sharedSvc.dismissLoader();
             this.sharedSvc.showMessage(response['message'])
           }
-        }).catch(error=>{
+        }).catch(error => {
           this.sharedSvc.dismissLoader()
           console.log(error)
           this.sharedSvc.showMessage(ConstantService.message.wentWrong)
         })
       }
-    }else{
+    } else {
       if (this.loginData.username == "") {
         this.sharedSvc.showMessage(ConstantService.message.validUserName)
       } else if (this.loginData.password == "") {
         this.sharedSvc.showMessage(ConstantService.message.validPassword)
       } else {
-        this.storage.get(ConstantService.dbKeyNames.loginCredential).then((credential: ILoginData)=>{
-          if(credential != null){
-            if(credential.username == this.loginData.username && credential.password == this.loginData.password){
-              this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
+        this.storage.get(ConstantService.dbKeyNames.loginCredential).then((credentialList: ILoginData[]) => {
+          if (credentialList != null) {
+            let result: any = credentialList.find(credential=> credential.username == this.loginData.username && credential.password == this.loginData.password)
+            if (result != 0) {
+              this.storage.get(ConstantService.dbKeyNames.userDetails).then(userDetails => {
+                let userDatas = []
+                userDatas = userDetails
+                this.sharedSvc.userName = result.username
+                let index: any = userDetails.findIndex(userData=> userData.username == this.sharedSvc.userName)
                 this.sharedSvc.dismissLoader()
-                if(userData != null && this.loginData.username == userData.userName){
-                  this.sharedSvc.userFullName = userData.firstName;
-                  this.sharedSvc.userEmail = userData.email;
-                  userData['loginStatus']=true;
-                  this.storage.set(ConstantService.dbKeyNames.userDetails,userData).then(data=>{
+                if (userDatas[index] != null && this.loginData.username == userDatas[index].username) {
+                  this.sharedSvc.userName = userDatas[index].username;
+                  this.sharedSvc.schoolId = userDatas[index].schoolId;
+                  this.sharedSvc.userFullName = userDatas[index].firstName;
+                  this.sharedSvc.userEmail = userDatas[index].email;
+                  if(userDatas[index].roleCode == 'ROLE_TEACHER')
+                  this.sharedSvc.teacherRole = true
+                  else
+                  this.sharedSvc.teacherRole = false
+                  this.sharedSvc.publishDataUpdate(true)
+                  userDatas[index]['loginStatus'] = true;
+                  this.storage.set(ConstantService.dbKeyNames.userDetails, userDatas).then(data => {
                     this.navigator.navigateRoot(['dashboard'])
-                  }).catch(error=>{
+                  }).catch(error => {
                     console.log(error)
                     this.sharedSvc.showMessage(ConstantService.message.wentWrong)
                   })
-                }else{
+                } else {
                   this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
                 }
-              }).catch(error=>{
+              }).catch(error => {
                 this.sharedSvc.dismissLoader()
                 console.log(error)
                 this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
               })
-            }else{
+            } else {
               this.sharedSvc.dismissLoader()
               this.sharedSvc.showMessage(ConstantService.message.wrongCredential)
             }
-          }else{
+          } else {
             this.sharedSvc.showMessage(ConstantService.message.noCredentialFound)
           }
         })
@@ -115,62 +147,121 @@ export class LoginPage implements OnInit {
     }
   }
 
-  fetch_user_details(token){
+  fetch_user_details(token) {
     this.sharedSvc.showLoader(ConstantService.message.fetchUserDetails)
-    this.loginSvc.get_user_details(token).then(userDetails=>{
-      if(typeof userDetails == 'object'){
-        this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
-          if(userData == null){
+    this.loginSvc.get_user_details(token).then(userDetails => {
+      if (typeof userDetails == 'object') {
+        this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData => {
+          if (userData == null) {
             this.saveUserDetails(userDetails['data'])
-          }else{
-            if(userData.userId == userDetails['data'].userId){
+          } else {
+            if (userData.userId == userDetails['data'].userId) {
               this.saveUserDetails(userDetails['data'])
-            }else{
+            } else {
               this.sharedSvc.dismissLoader()
-              this.sharedSvc.showAlertCallBack(ConstantService.message.wentWrong,ConstantService.message.differentUserLoginMsg,
-                ConstantService.message.ok,ConstantService.message.cancel).then(data=>{
-                if(data){
-                  this.storage.remove(ConstantService.dbKeyNames.studentAttendanceData).then(()=>{
+              this.sharedSvc.showAlertCallBack(ConstantService.message.wentWrong, ConstantService.message.differentUserLoginMsg,
+                ConstantService.message.ok, ConstantService.message.cancel).then(data => {
+                if (data) {
+                  this.storage.remove(ConstantService.dbKeyNames.studentAttendanceData).then(() => {
                     this.saveUserDetails(userDetails['data'])
                   })
                 }
               })
             }
-          } 
+          }
         })
-      }else{
+      } else {
         this.sharedSvc.dismissLoader()
         this.sharedSvc.showMessage(ConstantService.message.wentWrong)
       }
     })
   }
 
-  saveUserDetails(userData){
-    userData['loginStatus'] = true;
-    this.storage.set(ConstantService.dbKeyNames.userDetails,userData).then(data=>{
-      this.sharedSvc.userFullName = data.firstName;
-      this.sharedSvc.userEmail = data.email;
+  saveUserDetails(userData) {
+    let userDatas = []
+    this.storage.get(ConstantService.dbKeyNames.userDetails).then(userDetails => {
+      if (userDetails != null && userDetails.length >= 1) {
+        userDatas = userDetails
+        let result: any = userDatas.filter(userData => userData.username == this.sharedSvc.userName)
+        if (result == 0) {
+          userDatas.push(userData)
+        } else {
+          let result: any = userDatas.findIndex(token => token.username == this.sharedSvc.userName)
+          userDatas[result] = userData
+        }
+        userData['loginStatus'] = true;
+        this.sharedSvc.userFullName = userData.firstName;
+        this.sharedSvc.userEmail = userData.email;
+        this.sharedSvc.schoolId = userData.schoolId
+        if (userData.roleCode == 'ROLE_TEACHER')
+          this.sharedSvc.teacherRole = true
+        else
+          this.sharedSvc.teacherRole = false
+        this.sharedSvc.publishDataUpdate(true)
+        this.storage.set(ConstantService.dbKeyNames.userDetails, userDatas).then(data => {
+          this.sharedSvc.dismissLoader()
+          this.navigator.navigateRoot(['dashboard'])
+        }, (err) => {
+          this.sharedSvc.dismissLoader()
+          console.log(err)
+          this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+        });
+      } else {
+        userData['loginStatus'] = true;
+        userDatas.push(userData)
+        this.storage.set(ConstantService.dbKeyNames.userDetails, userDatas).then(data => {
+          this.sharedSvc.userFullName = data[0].firstName;
+          this.sharedSvc.userEmail = data[0].email;
+          this.sharedSvc.schoolId = userData.schoolId
+          if (userData.roleCode == 'ROLE_TEACHER')
+            this.sharedSvc.teacherRole = true
+          else
+            this.sharedSvc.teacherRole = false
+          this.sharedSvc.publishDataUpdate(true)
+          this.sharedSvc.dismissLoader()
+          this.navigator.navigateRoot(['dashboard'])
+        }, (err) => {
+          this.sharedSvc.dismissLoader()
+          console.log(err)
+          this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+        });
+      }
+    }).catch(error => {
       this.sharedSvc.dismissLoader()
-      this.navigator.navigateRoot(['dashboard'])
-    }, (err) => {
-      this.sharedSvc.dismissLoader()
-      console.log(err)
+      console.log(error)
       this.sharedSvc.showMessage(ConstantService.message.wentWrong)
-    });
+    })
+
+
+
+    this.storage.get(ConstantService.dbKeyNames.userDetails).then(userDatas => {
+      if (userDatas != null) {
+        userDatas.forEach(userData => {
+          if (userData.username == this.sharedSvc.userName) {
+            this.sharedSvc.userName = userData.username
+            this.sharedSvc.schoolId = userData.schoolId
+            if (userData.roleCode == 'ROLE_TEACHER')
+              this.sharedSvc.teacherRole = true
+            else
+              this.sharedSvc.teacherRole = false
+          }
+        });
+      }
+    })
   }
 
-  checkAppversion(dbVersion){
+  checkAppversion(dbVersion) {
     let promise = new Promise < any > ((resolve, reject) => {
-      this.storage.get(ConstantService.dbKeyNames.appVersion).then(appVersion=>{
-        if(appVersion == null){
-          this.storage.set(ConstantService.dbKeyNames.appVersion,dbVersion).then(data=>{
+      this.storage.get(ConstantService.dbKeyNames.appVersion).then(appVersion => {
+        if (appVersion == null) {
+          this.storage.set(ConstantService.dbKeyNames.appVersion, dbVersion).then(data => {
             resolve(true);
           })
-        }else{
-          if(dbVersion > appVersion){
+        } else {
+          if (dbVersion > appVersion) {
             resolve(false);
-          }else if(dbVersion < appVersion){
-            this.storage.set(ConstantService.dbKeyNames.appVersion,dbVersion).then(data=>{
+          } else if (dbVersion < appVersion) {
+            this.storage.set(ConstantService.dbKeyNames.appVersion, dbVersion).then(data => {
               resolve(true);
             })
           } else {
@@ -179,6 +270,6 @@ export class LoginPage implements OnInit {
         }
       })
     })
-  return promise
+    return promise
   }
 }

@@ -5,6 +5,8 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+import { Subject } from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +25,10 @@ export class SharedService {
   public geocoderResult: any;
   public schoolId: number;
   public accessToken: string;
+  public teacherRole: boolean;
+  public userName: string
+
+  private dataUpdate = new Subject();
 
   constructor(private alertCtrl: AlertController, private location: Location, private loadingCtrl: LoadingController,
     private toastCtrl: ToastController, private camera: Camera, private geolocation: Geolocation,
@@ -196,4 +202,13 @@ export class SharedService {
     });
     return promise;
   }
+
+  publishDataUpdate(data: any) {
+    this.dataUpdate.next(data);
+  }
+    
+  observeDataUpdate(): Subject<any> {
+    return this.dataUpdate;
+  }
+    
 }

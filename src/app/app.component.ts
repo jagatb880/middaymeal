@@ -15,13 +15,7 @@ import { ICCHRecord } from './interfaces/cchRecord';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  public appPages = [
-    { title: ConstantService.message.syncFromServer},
-    { title: ConstantService.message.syncToServer},
-    { title: ConstantService.message.sudentAttendance},
-    { title: ConstantService.message.cchAttendance},
-    { title: ConstantService.message.logout},
-  ];
+  public appPages = [];
 
   constructor(
     public networkService: NetworkService, private router: Router,
@@ -37,6 +31,15 @@ export class AppComponent {
       this.backButtonEvent();
       this.set_data_to_sidemenu();
       this.set_school_id();
+      this.sharedSvc.observeDataUpdate().subscribe(data=>{
+        this.appPages = [
+          { title: ConstantService.message.syncFromServer, show: true},
+          { title: ConstantService.message.syncToServer, show: true},
+          { title: ConstantService.message.sudentAttendance, show: this.sharedSvc.teacherRole},
+          { title: ConstantService.message.cchAttendance, show: !this.sharedSvc.teacherRole},
+          { title: ConstantService.message.logout, show: true},
+        ];
+      })
     });
   }
 
@@ -94,8 +97,22 @@ export class AppComponent {
         this.syncToServer();
         break;
       case ConstantService.message.sudentAttendance:
+        this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
+          if(data == null){
+            this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noStudentRecord)
+          }else{
+            this.router.navigate(['student-attendance'])
+          }
+        })
         break;
       case ConstantService.message.cchAttendance:
+        this.storage.get(ConstantService.dbKeyNames.cchData).then(data=>{
+          if(data == null){
+            this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noCCHRecord)
+          }else{
+            this.router.navigate(['cch-attendance'])
+          }
+        })
         break;
       case ConstantService.message.logout:
         this.logout()
@@ -105,28 +122,10 @@ export class AppComponent {
 
   syncFromServer() {
     if(this.networkSvc.online){
-      this.sharedSvc.showLoader(ConstantService.message.syncDataMsg)
-      this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
-        this.syncData.syncFromServer(userData.username).then(response=>{
-          if(response)
-          this.storage.set(ConstantService.dbKeyNames.studentData,response).then(data=>{
-            if(data)
-            this.cchDataSyncFromServer(userData.schoolId)
-          }).catch(error=>{
-            console.log(error);
-            this.sharedSvc.dismissLoader()
-            this.sharedSvc.showMessage(ConstantService.message.wentWrong)
-          })
-        }).catch(error=>{
-          console.log(error);
-          this.sharedSvc.dismissLoader()
-          this.sharedSvc.showMessage(ConstantService.message.wentWrong)
-        })
-      }).catch(error=>{
-        console.log(error);
-        this.sharedSvc.dismissLoader()
-        this.sharedSvc.showMessage(ConstantService.message.wentWrong)
-      })
+      if(this.sharedSvc.teacherRole)
+      this.studentDataSyncFromServer()
+      else
+      this.cchDataSyncFromServer()
     }else{
       this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
     }
@@ -171,13 +170,45 @@ export class AppComponent {
     }
   }
 
-  cchDataSyncFromServer(schoolId){
-    this.sharedSvc.schoolId = schoolId
-    this.syncData.syncCchDataFromServer(schoolId,this.sharedSvc.accessToken).then(data=>{
-      if(data)
-      this.storage.set(ConstantService.dbKeyNames.cchData,data[0].cch_details).then(()=>{
-        this.sharedSvc.dismissLoader();
-        this.sharedSvc.showMessage(ConstantService.message.dataSyncMsg)
+  studentDataSyncFromServer(){
+    this.sharedSvc.showLoader(ConstantService.message.syncDataMsg)
+    this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
+      this.syncData.syncFromServer(userData.username).then(response=>{
+        if(response)
+        this.storage.set(ConstantService.dbKeyNames.studentData,response).then(data=>{
+          this.sharedSvc.dismissLoader();
+          this.sharedSvc.showMessage(ConstantService.message.dataSyncMsg)
+        }).catch(error=>{
+          console.log(error);
+          this.sharedSvc.dismissLoader()
+          this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+        })
+      }).catch(error=>{
+        console.log(error);
+        this.sharedSvc.dismissLoader()
+        this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+      })
+    }).catch(error=>{
+      console.log(error);
+      this.sharedSvc.dismissLoader()
+      this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+    })
+  }
+
+  cchDataSyncFromServer(){
+    this.sharedSvc.showLoader(ConstantService.message.syncDataMsg)
+    this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
+      this.sharedSvc.schoolId = userData.schoolId
+      this.syncData.syncCchDataFromServer(userData.schoolId,this.sharedSvc.accessToken).then(data=>{
+        if(data)
+        this.storage.set(ConstantService.dbKeyNames.cchData,data[0].cch_details).then(()=>{
+          this.sharedSvc.dismissLoader();
+          this.sharedSvc.showMessage(ConstantService.message.dataSyncMsg)
+        }).catch(error=>{
+          console.log(error)
+          this.sharedSvc.dismissLoader()
+          this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+        })
       }).catch(error=>{
         console.log(error)
         this.sharedSvc.dismissLoader()
@@ -247,9 +278,10 @@ export class AppComponent {
         {
           text: 'Yes',
           handler: () => {
-            this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
-              userData['loginStatus'] = false;
-              this.storage.set(ConstantService.dbKeyNames.userDetails,userData)
+            this.storage.get(ConstantService.dbKeyNames.userDetails).then(userDatas=>{
+              let result: any = userDatas.findIndex(token => token.username == this.sharedSvc.userName)
+              userDatas[result]['loginStatus'] = false;
+              this.storage.set(ConstantService.dbKeyNames.userDetails,userDatas)
               this.router.navigate(['login'])
             }).catch(error=>{
               console.log(error)
@@ -263,10 +295,23 @@ export class AppComponent {
   }
 
   set_school_id(){
-    this.storage.get(ConstantService.dbKeyNames.userDetails).then(userData=>{
-      if(userData != null){
-        this.sharedSvc.schoolId = userData.schoolId
-      }
+    this.storage.get(ConstantService.dbKeyNames.logginUserUsername).then(userName=>{
+      if(userName != null)
+      this.sharedSvc.userName = userName;
+      this.storage.get(ConstantService.dbKeyNames.userDetails).then(userDatas=>{
+        if(userDatas != null){
+          let index: any = userDatas.findIndex(userData=> userData.username == this.sharedSvc.userName)
+          this.sharedSvc.userName = userDatas[index].username;
+          this.sharedSvc.schoolId = userDatas[index].schoolId;
+          this.sharedSvc.userFullName = userDatas[index].firstName;
+          this.sharedSvc.userEmail = userDatas[index].email;
+          if(userDatas[index].roleCode == 'ROLE_TEACHER')
+          this.sharedSvc.teacherRole = true
+          else
+          this.sharedSvc.teacherRole = false
+          this.sharedSvc.publishDataUpdate(true)
+        }
+      })
     })
     this.storage.get(ConstantService.dbKeyNames.token).then(token=>{
       if(token != null){
