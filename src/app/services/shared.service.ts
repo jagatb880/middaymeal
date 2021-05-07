@@ -174,8 +174,6 @@ export class SharedService {
                 src: "data:image/jpeg;base64," + base64Data,
                 meta_info: "Lat:" + resp.coords.latitude + "; Long:" + resp.coords.longitude + "; Accuracy :" + resp.coords.accuracy
               }
-              this.latitude = resp.coords.latitude;
-              this.longitude = resp.coords.longitude
               if (networkStatus) {
               this.nativeGeocoder.reverseGeocode(resp.coords.latitude, resp.coords.longitude, geoCoderOptions)
                 .then((result: NativeGeocoderResult[]) => {
@@ -190,7 +188,11 @@ export class SharedService {
                   reject(error)
                 });
               }else{
-                this.geocoderResult = undefined
+                let geoCode = {
+                  'latitude': resp.coords.latitude,
+                  'longitude': resp.coords.longitude
+                }
+                this.geocoderResult = geoCode;
                 setTimeout(() => {
                   this.dismissLoader();
                   resolve(this.imageData)

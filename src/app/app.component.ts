@@ -238,7 +238,7 @@ export class AppComponent {
         studentDatas.forEach((cchData: ICCHRecord) => {
           studentDataForSync.push(cchData)
         });
-        this.syncData.syncToServerCchData(studentDataForSync,token).then(syncedData=>{
+        this.syncData.syncToServer(studentDataForSync,token).then(syncedData=>{
           if(syncedData){
             this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,syncedData).then(async (data)=>{
             this.sharedSvc.dismissLoader()
