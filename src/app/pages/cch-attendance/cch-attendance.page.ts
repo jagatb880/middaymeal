@@ -62,7 +62,7 @@ export class CchAttendancePage implements OnInit {
             this.absentRecords = fetchedCchData[0].cch_ids;
             for (let i = 0; i < cchList.length; i++) {
               for (let j = 0; j < fetchedCchData[0].cch_ids.length; j++) {
-                if (cchList[i].aadharNo == fetchedCchData[0].cch_ids[j]) {
+                if (cchList[i].cchId == fetchedCchData[0].cch_ids[j]) {
                   cchList[i].attendance = false;
                 }
               }

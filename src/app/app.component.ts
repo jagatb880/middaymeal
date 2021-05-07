@@ -111,7 +111,7 @@ export class AppComponent {
           if(data == null){
             this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noCCHRecord)
           }else{
-            this.router.navigate(['cch-attendance'])
+            this.router.navigate(['student-attendance'])
           }
         })
         break;
@@ -137,41 +137,49 @@ export class AppComponent {
 
   syncToServer(){
     if(this.networkSvc.online){
-      this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(data=>{
-        if(data == null){
-          this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(cchData=>{
-            if(cchData == null){
-              this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noDataToSync)
-            }else{
-              this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
-              this.syncCchDataToServer(this.sharedSvc.accessToken)
-            }
-          });
-        }else{
-          this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
-          this.syncData.syncToServer(data,this.sharedSvc.accessToken).then(syncedData=>{
-            if(syncedData){
-              this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,syncedData).then(async (data)=>{
-                this.syncCchDataToServer(this.sharedSvc.accessToken)
-              })
-            }
-          }).catch(error=>{
-            if(error == false){
-              console.log(error)
-              this.sharedSvc.dismissLoader()
-              this.sharedSvc.showMessage(ConstantService.message.wentWrong)
-            }else{
-              console.log(error)
-              this.sharedSvc.dismissLoader()
-              this.sharedSvc.showMessage(ConstantService.message.wentWrongContactAdmin)
-            }
-            
-          });
-        }
-      })
+      if(this.sharedSvc.teacherRole)
+      this.syncStudentDataToServer(this.sharedSvc.accessToken)
+      else
+      this.syncCchDataToServer(this.sharedSvc.accessToken)
     }else{
       this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
     }
+    // if(this.networkSvc.online){
+    //   this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(data=>{
+    //     if(data == null){
+    //       this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(cchData=>{
+    //         if(cchData == null){
+    //           this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noDataToSync)
+    //         }else{
+    //           this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
+    //           this.syncCchDataToServer(this.sharedSvc.accessToken)
+    //         }
+    //       });
+    //     }else{
+    //       this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
+    //       this.syncData.syncToServer(data,this.sharedSvc.accessToken).then(syncedData=>{
+    //         if(syncedData){
+    //           this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,syncedData).then(async (data)=>{
+    //             this.syncCchDataToServer(this.sharedSvc.accessToken)
+    //           })
+    //         }
+    //       }).catch(error=>{
+    //         if(error == false){
+    //           console.log(error)
+    //           this.sharedSvc.dismissLoader()
+    //           this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+    //         }else{
+    //           console.log(error)
+    //           this.sharedSvc.dismissLoader()
+    //           this.sharedSvc.showMessage(ConstantService.message.wentWrongContactAdmin)
+    //         }
+            
+    //       });
+    //     }
+    //   })
+    // }else{
+    //   this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
+    // }
   }
 
   studentDataSyncFromServer(){
@@ -219,7 +227,46 @@ export class AppComponent {
     })
   }
 
+  syncStudentDataToServer(token: string){
+    this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
+    let studentDataForSync = []
+    this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(studentDatas=>{
+      if(studentDatas == null){
+        this.sharedSvc.dismissLoader()
+        this.showSyncedCountMsg();  
+      }else{
+        studentDatas.forEach((cchData: ICCHRecord) => {
+          studentDataForSync.push(cchData)
+        });
+        this.syncData.syncToServerCchData(studentDataForSync,token).then(syncedData=>{
+          if(syncedData){
+            this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,syncedData).then(async (data)=>{
+            this.sharedSvc.dismissLoader()
+              setTimeout(() => {
+                if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0){
+                  this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noActiveRecord)
+                }else{
+                  this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.syncedRecord+this.syncData.syncSuccessCount+'<br>'+
+                  ConstantService.message.failedRecord+this.syncData.syncFailedCount)
+                }
+              }, 600); 
+            })
+          }
+        }).catch(error=>{
+          console.log(error)
+          this.sharedSvc.dismissLoader()
+          this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+        })
+      }
+    }).catch(error=>{
+      console.log(error)
+      this.sharedSvc.dismissLoader()
+      this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+    });
+  }
+
   syncCchDataToServer(token: string){
+    this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
     let cchDataForSync = []
     this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(cchDatas=>{
       if(cchDatas == null){
@@ -251,12 +298,10 @@ export class AppComponent {
 
   showSyncedCountMsg(){
     setTimeout(() => {
-      if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0 &&
-        this.syncData.syncSuccessCountForCch == 0 && this.syncData.syncFailedCountForCch == 0){
+      if(this.syncData.syncSuccessCountForCch == 0 && this.syncData.syncFailedCountForCch == 0){
         this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noActiveRecord)
       }else{
-        this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.syncedRecord+this.syncData.syncSuccessCount+'<br>'+
-        ConstantService.message.failedRecord+this.syncData.syncFailedCount+'<br>'+
+        this.sharedSvc.showAlert(ConstantService.message.info,
         ConstantService.message.syncedRecordForCch+this.syncData.syncSuccessCountForCch+'<br>'+
         ConstantService.message.failedRecordForCch+this.syncData.syncFailedCountForCch)
       }
