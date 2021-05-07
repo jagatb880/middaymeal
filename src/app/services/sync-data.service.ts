@@ -73,9 +73,11 @@ export class SyncDataService {
     let syncedData = [];
     this.syncFailedCount = 0;
     this.syncSuccessCount = 0;
+    let studentDataIndex = []
     let promise = new Promise < any > (async (resolve, reject) => {
-      await studentsData.forEach(async (studentData: IStudentRecord) => {
+      await studentsData.forEach(async (studentData: IStudentRecord, index) => {
           if(!studentData.sync_status){
+            studentDataIndex.push(index)
             finalizedCount++;
           }
       });
@@ -91,7 +93,7 @@ export class SyncDataService {
         }
         finalizedCount--
         try {
-          await this.sentDataToServer(studentsData,indexServerData,acessToken);
+          await this.sentDataToServer(studentsData,studentDataIndex[indexServerData],acessToken);
         } catch (err) {
           console.log(err)
           reject(false);
@@ -154,9 +156,11 @@ export class SyncDataService {
     let syncedData = [];
     this.syncFailedCountForCch = 0;
     this.syncSuccessCountForCch = 0;
+    let cchDataIndex = []
     let promise = new Promise < any > (async (resolve, reject) => {
-      await cchsData.forEach(async (cchData: ICCHRecord) => {
+      await cchsData.forEach(async (cchData: ICCHRecord, index) => {
           if(!cchData.sync_status){
+            cchDataIndex.push(index)
             finalizedCount++;
           }
       });
@@ -172,7 +176,7 @@ export class SyncDataService {
         }
         finalizedCount--
         try {
-          await this.sentToServerCchData(cchsData,indexServerData,acessToken);
+          await this.sentToServerCchData(cchsData,cchDataIndex[indexServerData],acessToken);
         } catch (err) {
           console.log(err)
           reject(false);
