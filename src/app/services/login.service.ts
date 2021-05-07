@@ -99,11 +99,42 @@ export class LoginService {
     return promise
   }
 
+  change_password(cpObject){
+    let promise = new Promise < any > ((resolve, reject) => {
+
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-type': 'application/json',
+        })
+      };
+
+      let URL: string = ConstantService.baseUrl + 'changePassword'
+
+      let body = {
+        "userName": cpObject.userName,
+        "password": cpObject.password,
+        "newPassword": cpObject.newPassword
+      }
+      this.http.post(URL, body, httpOptions)
+        .subscribe(res => {
+          resolve(res)
+        }, (error) => {
+          console.log(error)
+          reject(error);
+        });
+    });
+    return promise
+  }
+
   get_user() {
     let promise = new Promise < any > ((resolve, reject) => {
       this.storage.get(ConstantService.dbKeyNames.userDetails).then(userDetails => {
-        let result = userDetails.find(userDetail=> userDetail.username == this.sharedSvc.userName)
-        resolve(result)
+        if(userDetails != null){
+          let result = userDetails.find(userDetail=> userDetail.username == this.sharedSvc.userName)
+          resolve(result)
+        }else{
+          resolve(userDetails)
+        }
       }, (err) => {
         console.log(err)
         reject(err)

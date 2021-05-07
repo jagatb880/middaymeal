@@ -30,7 +30,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/meal-management/meal-management.module').then( m => m.MealManagementPageModule)
   },
   {
-    path: 'forgotpassword',
+    path: 'change-password',
     loadChildren: () => import('./pages/forgotpassword/forgotpassword.module').then( m => m.ForgotpasswordPageModule)
   },
 ];

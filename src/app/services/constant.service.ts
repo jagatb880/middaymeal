@@ -52,6 +52,7 @@ export class ConstantService {
     syncToServer: 'Sync to server',
     sudentAttendance: 'Student Attendance',
     cchAttendance: 'Cch Attendance',
+    changePassword: 'Change Password',
     logout: 'Logout',
     syncDataMsg: 'Syncing the data, please wait...',
     noDataToSync: 'There is no data to sync.',

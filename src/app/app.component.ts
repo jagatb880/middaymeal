@@ -37,6 +37,7 @@ export class AppComponent {
           { title: ConstantService.message.syncToServer, show: true},
           { title: ConstantService.message.sudentAttendance, show: this.sharedSvc.teacherRole},
           { title: ConstantService.message.cchAttendance, show: !this.sharedSvc.teacherRole},
+          { title: ConstantService.message.changePassword, show: true},
           { title: ConstantService.message.logout, show: true},
         ];
       })
@@ -113,6 +114,9 @@ export class AppComponent {
             this.router.navigate(['cch-attendance'])
           }
         })
+        break;
+      case ConstantService.message.changePassword:
+        this.router.navigate(['change-password'])
         break;
       case ConstantService.message.logout:
         this.logout()

@@ -45,6 +45,7 @@ export interface IMessages {
     syncToServer: string,
     sudentAttendance: string,
     cchAttendance: string,
+    changePassword: string,
     logout: string,
     syncDataMsg: string,
     noDataToSync: string,
