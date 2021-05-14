@@ -6,10 +6,23 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./meal-management.page.scss'],
 })
 export class MealManagementPage implements OnInit {
-
-  constructor() { }
+  all:boolean
+  attendance: any;
+  constructor() { 
+  }
 
   ngOnInit() {
   }
+  togle(){
+    if(!this.attendance)
+    {
+      this.all =false;
+      console.log(this.all);
+    }
+    else{
+      this.all = true;
+      console.log(this.all);
+    }
 
+  }
 }
