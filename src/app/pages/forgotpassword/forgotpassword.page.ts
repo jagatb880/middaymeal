@@ -20,6 +20,8 @@ export class ForgotpasswordPage implements OnInit {
   newPassword: string;
   confirmPassword: string;
 
+  validationRegex = '"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$"'
+
   constructor(private sharedSvc: SharedService, private networkSvc: NetworkService,
     private loginSvc: LoginService, private location: Location, private storage: Storage) { }
 
@@ -53,6 +55,8 @@ export class ForgotpasswordPage implements OnInit {
         this.sharedSvc.showMessage("Enter the old password")
       }else if(this.newPassword == ""){
         this.sharedSvc.showMessage("Enter the new password")
+      }else if(!this.validation(this.newPassword)){
+        this.sharedSvc.showMessage("Not validating the password criteria")
       }else if(this.confirmPassword == ""){
         this.sharedSvc.showMessage("Enter the confirm new password")
       }else if(this.newPassword != this.confirmPassword){
@@ -93,6 +97,20 @@ export class ForgotpasswordPage implements OnInit {
       }
     }else{
       this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
+    }
+  }
+
+  validation(password){
+    let pattern = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$");
+    let result = pattern.test(password)
+    return result
+  }
+
+  checkValidation(){
+    if(this.newPassword == ""){
+      this.sharedSvc.showMessage("Enter the new password")
+    }else if(!this.validation(this.newPassword)){
+      this.sharedSvc.showMessage("Not validating the password criteria")
     }
   }
 }
