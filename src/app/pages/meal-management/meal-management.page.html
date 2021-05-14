@@ -1,97 +1,103 @@
 <ion-header>
-  <ion-toolbar style="--background: #2264F6;">
-    <ion-title style="color: white;padding: 0;">Meals Not Happening</ion-title>
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-menu-button style="color: white;"></ion-menu-button>
+      <ion-back-button></ion-back-button>
     </ion-buttons>
+    <ion-title style="color: white;padding: 0;">Meals Management</ion-title>
+    <u>
+      <ion-datetime class="date-picker" displayFormat="DDDD DD, MMM YYYY" [(ngModel)]="currentDate"
+        (ionChange)="changeDate(currentDate)" [max]="maxDate"></ion-datetime>
+    </u>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div  class="dvcrd">
+  <ion-row class="rw">
+    <ion-col size="5">
+      <p class="notag">Meals Not Happening</p>
+    </ion-col>
+    <ion-col size="2">
+      <div class="toggle">
+        <ion-toggle [(ngModel)]="mealSwitch" (ionChange)="togle(mealStatus)"></ion-toggle>
+      </div>
+    </ion-col>
+    <ion-col size="5">
+      <p class="yestag">Meals Happening</p>
+    </ion-col>
+  </ion-row>
+  <div class="dvcrd">
     <ion-card class="crd">
       <ion-row>
-        <ion-col size="2">
+        <ion-col size="3" class="ion-no-padding">
         </ion-col>
-        <ion-col size="10">
+        <ion-col size="9" class="ion-no-padding">
           <p class="fstp">Menu<span class="fstspn"> : Rice, Dal & egg Curry</span></p>
         </ion-col>
       </ion-row>
     </ion-card>
   </div>
-  <ion-row class="rw">
-    <ion-col size="7">
-      <p class="ptag">No</p>
-    </ion-col>
-    <ion-col size="2">
-      <div class="toggle">
-        <ion-toggle [(ngModel)]="attendance" (ionChange)="togle(all)"></ion-toggle>
-      </div>
-    </ion-col>
-    <ion-col size="3">
-      <p>Yes</p>
-    </ion-col>
-  </ion-row>
-
-  <div *ngIf="!all">
-      <p class="upperp">Reason</p>
-      <ion-item class="slctitm">
-        <ion-select placeholder="Cooking Staff Not Present" interface="popover"   >
-          <ion-select-option value="Self">Self</ion-select-option>
-          <ion-select-option value="Spouse">Spouse</ion-select-option>
-          <ion-select-option value="Child">Child</ion-select-option>
-          <ion-select-option value="Other">Other</ion-select-option>
-          <ion-select-option value="Partner">Partner</ion-select-option>
-          <ion-select-option value="N/A">N/A</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <p class="upperp1">Remarks</p>
-        <div class="dvvv">
-          <ion-textarea placeholder="Cooking Staff Not Present"></ion-textarea>
-        </div>
+  <div *ngIf="!mealStatus">
+    <p class="upperp">Reason</p>
+    <ion-item class="slctitm">
+      <ion-select [(ngModel)]="currentReason" placeholder="Select Reason" (ionChange)="selectReason()">
+        <ion-select-option *ngFor="let reason of reasonList" [value]="reason.reasonId">
+          {{reason.reason}}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <p class="upperp1">Remarks</p>
+    <div class="dvvv">
+      <ion-textarea placeholder="Cooking Staff Not Present"></ion-textarea>
+    </div>
   </div>
 
-  <div *ngIf="all">
-    <ion-row class="rw">
-      <ion-col size="4">
-        <p class="tabu" >Ration procurement</p>
-        <div class="triangle-down"></div>
-      </ion-col>
-      <ion-col size="4">
-        <p class="tabu" >Meal Preaparation</p>
-        <div class="triangle-down"></div>
-      </ion-col>
-      <ion-col size="4">
-        <p class="tabu" >Meal <br>Distribution</p>
-        <div class="triangle-down"></div>
-      </ion-col>
-    </ion-row>
-     <p class="upperp3">Capture image</p>
-     <div class="lst">
+  <div *ngIf="mealStatus">
+    <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="procurement">
+        <ion-label>Ration <br>Procurement</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="preaparation">
+        <ion-label>Meal <br>Preaparation</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="distribution">
+        <ion-label>Meal <br>Distribution</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <p class="upperp3">Capture image</p>
+    <div class="lst">
       <!-- <ion-icon name="camera-outline"></ion-icon> -->
       <img src="assets/icon/3941805.png">
-     </div>
-     <p  id="remark">Remarks</p>
-        <div class="dvvv">
-          <ion-textarea ></ion-textarea>
-        </div>
+    </div>
+    <p id="remark">Remarks</p>
+    <div class="dvvv">
+      <ion-textarea></ion-textarea>
+    </div>
   </div>
 </ion-content>
-<ion-footer >
-  <div  style="height: 12vw;" *ngIf="!all">
-    <span class="save-btn" >SUBMIT</span>
+<ion-footer>
+  <div style="height: 12vw;" *ngIf="!mealStatus" (click)="mealNotSubmit()">
+    <span class="save-btn">SUBMIT</span>
   </div>
-  <ion-row *ngIf="all" class="rwwwwww">
-    <ion-col size="6" class="cl">
-      <div  style="height: 12vw;" >
-        <span class="save-btn1" >Previous</span>
-      </div>
-    </ion-col>
-    <ion-col size="6">
-      <div  style="height: 12vw;" >
-        <span class="save-btn1" >Next</span>
+  <ion-row *ngIf="selectedSegment == 'procurement' && mealStatus">
+    <ion-col size="12" class="next-btn" (click)="goToPreaparation()">
+      <div style="height: 12vw;">
+        <span class="next-btn-text">Next</span>
       </div>
     </ion-col>
   </ion-row>
-  
+  <ion-row *ngIf="selectedSegment == 'preaparation' && mealStatus">
+    <ion-col size="6" class="previous-btn" (click)="goToProcurement()">
+      <div style="height: 12vw;">
+        <span class="previous-btn-text">Previous</span>
+      </div>
+    </ion-col>
+    <ion-col size="6" class="next-btn" (click)="goToDistribution()">
+      <div style="height: 12vw;">
+        <span class="pre-next-btn-text">Next</span>
+      </div>
+    </ion-col>
+  </ion-row>
+  <div style="height: 12vw;" *ngIf="selectedSegment == 'distribution' && mealStatus" (click)="mealSubmit()">
+    <span class="save-btn">SUBMIT</span>
+  </div>
 </ion-footer>
