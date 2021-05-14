@@ -26,7 +26,9 @@ export class DashboardPage implements OnInit {
       }
     })
   }
-
+  mealmanagement(){
+    this.router.navigate(['meal-management'])
+  }
   cchAttendance(){
     this.storage.get(ConstantService.dbKeyNames.cchData).then(data=>{
       if(data == null){

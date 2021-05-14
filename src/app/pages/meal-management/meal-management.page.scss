@@ -1,0 +1,49 @@
+ion-content {
+    --ion-background-color: #ffffff;
+  }
+.dvcrd{background: #2264F6;padding: 19px;
+    .crd{margin: 0px 30px 0px 30px;background: white;}
+    .fstp{color: #1d84ad;font-size: 14px;font-weight: 800;}
+    .fstspn{color: black;font-weight: normal;}
+}  
+.rw{color: black;font-size: 11px;
+    .ptag{text-align: end;}
+    ion-toggle{--background: white;--handle-background: #dc9100;--handle-box-shadow: none;}
+}  
+.upperp{color: #427bfb;margin: 0;padding-left: 24px;font-weight: 500;margin-bottom: 8px;}
+.upperp1{color: #427bfb;margin: 0;padding-left: 24px;font-weight: 500;margin-top: 21px;}
+.slctitm{--background: white;color: black;margin: 0 22px;border: 1px solid;border-radius: 7px;}
+ion-select {max-width: 100%; padding: 0; width: 100%;font-size: 12px;} 
+ion-textarea{color: black;border: 1px solid black;height: 108px;border-radius: 7px;background: #f8f8f8;}
+.dvvv{margin: 0 22px;}    
+.save-btn {position: absolute;top: 30%;left: 45%;color: #2264F6;font-size: 16px;font-weight: 600;letter-spacing: 1px;}
+.lst{color: black;height: 108px;border-radius: 7px;background: #f5f5f5;margin: 0 22px;}
+img{height: 18%;margin: 37px 0 0 151px;}
+.upperp3{color: #9b9b9b;margin: 0;padding-left: 24px;font-weight: 500;margin-bottom: 8px;}
+#remark{color: #6b6b6b;margin: 0;padding-left: 24px;font-weight: 500;margin-top: 21px;}
+.rw{color: black;
+    padding-left: 12px;
+    font-size: 14px;}
+    .tabu{
+        text-align: center;
+    }
+    .tabu:hover {
+        color: #1c1ce8;
+        font-weight: 600;
+        background-color:#e6edff
+    } 
+    
+    .tabu ::after{
+        width: 0;
+        height: 0;
+        border-left: 13px solid transparent;
+        border-right: 15px solid transparent;
+        border-top: 20px solid #555;
+        position: relative;
+        left: 40px;
+        /* top: 0; */
+        bottom: 10px;
+    }
+.save-btn1{position: absolute;top: 20%;left: 30%;color: white;font-size: 16px;font-weight: 600;letter-spacing: 1px;} 
+.cl{background: #fe1e54;}
+.rwwwwww{height: 12vw;}   
