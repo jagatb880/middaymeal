@@ -30,6 +30,7 @@ export class ConstantService {
     differentUserLoginMsg:'This is a different user, that might delete the previously saved offline data of another user. Are you sure you want to proceed?',
     noStudentRecord: 'No student record found, please sync from server first.',
     noCCHRecord: 'No cch record found, please sync from server first.',
+    noMealManagementRecord: "No record found for meal management, please sync from server first",
     maxDate: 'yyyy-MM-dd',
     dateTimeFormat: 'dd-MM-YYYY HH:mm:ss',
     geoTagForPhoto: 'For Geo-Tagged Photo, GPS in mobile must be turned on.',
@@ -52,6 +53,7 @@ export class ConstantService {
     syncToServer: 'Sync to server',
     sudentAttendance: 'Student Attendance',
     cchAttendance: 'Cch Attendance',
+    mealManagement: 'Meal Management',
     changePassword: 'Change Password',
     logout: 'Logout',
     syncDataMsg: 'Syncing the data, please wait...',
@@ -74,6 +76,8 @@ export class ConstantService {
     userId: 'userId',
     appVersion: 'appVersion',
     cchData: 'cchData',
-    cchAttendanceData: 'cchAttendanceData'
+    cchAttendanceData: 'cchAttendanceData',
+    mealManagementData: 'mealManagementData',
+    mealManagementRecord: 'mealManagementRecord'
   }
 }

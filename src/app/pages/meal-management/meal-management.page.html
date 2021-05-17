@@ -31,7 +31,7 @@
         <ion-col size="3" class="ion-no-padding">
         </ion-col>
         <ion-col size="9" class="ion-no-padding">
-          <p class="fstp">Menu<span class="fstspn"> : Rice, Dal & egg Curry</span></p>
+          <p class="fstp">Menu<span class="fstspn"> : {{menuOnDate}}</span></p>
         </ion-col>
       </ion-row>
     </ion-card>
@@ -39,7 +39,7 @@
   <div *ngIf="!mealStatus">
     <p class="upperp">Reason</p>
     <ion-item class="slctitm">
-      <ion-select [(ngModel)]="currentReason" placeholder="Select Reason" (ionChange)="selectReason()">
+      <ion-select [(ngModel)]="currentReason" placeholder="Select Reason" (ionChange)="selectReason()" multiple="true">
         <ion-select-option *ngFor="let reason of reasonList" [value]="reason.reasonId">
           {{reason.reason}}
         </ion-select-option>

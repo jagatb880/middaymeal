@@ -37,6 +37,7 @@ export class AppComponent {
           { title: ConstantService.message.syncToServer, show: true},
           { title: ConstantService.message.sudentAttendance, show: this.sharedSvc.teacherRole},
           { title: ConstantService.message.cchAttendance, show: !this.sharedSvc.teacherRole},
+          { title: ConstantService.message.mealManagement, show: !this.sharedSvc.teacherRole},
           { title: ConstantService.message.changePassword, show: true},
           { title: ConstantService.message.logout, show: true},
         ];
@@ -111,7 +112,16 @@ export class AppComponent {
           if(data == null){
             this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noCCHRecord)
           }else{
-            this.router.navigate(['student-attendance'])
+            this.router.navigate(['cch-attendance'])
+          }
+        })
+        break;
+      case ConstantService.message.mealManagement:
+        this.storage.get(ConstantService.dbKeyNames.mealManagementData).then(data=>{
+          if(data == null){
+            this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noMealManagementRecord)
+          }else{
+            this.router.navigate(['meal-management'])
           }
         })
         break;
@@ -213,6 +223,25 @@ export class AppComponent {
     this.syncData.syncCchDataFromServer(this.sharedSvc.schoolId,this.sharedSvc.accessToken).then(data=>{
       if(data)
       this.storage.set(ConstantService.dbKeyNames.cchData,data[0].cch_details).then(()=>{
+        // this.sharedSvc.dismissLoader();
+        // this.sharedSvc.showMessage(ConstantService.message.dataSyncMsg)
+        this.mealManagementSyncFromServer()
+      }).catch(error=>{
+        console.log(error)
+        this.sharedSvc.dismissLoader()
+        this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+      })
+    }).catch(error=>{
+      console.log(error)
+      this.sharedSvc.dismissLoader()
+      this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+    })
+  }
+
+  mealManagementSyncFromServer(){
+    this.syncData.mealManagementDataFromServer(this.sharedSvc.schoolId,this.sharedSvc.accessToken).then(data=>{
+      if(data)
+      this.storage.set(ConstantService.dbKeyNames.mealManagementData,data[0]).then(()=>{
         this.sharedSvc.dismissLoader();
         this.sharedSvc.showMessage(ConstantService.message.dataSyncMsg)
       }).catch(error=>{

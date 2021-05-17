@@ -67,6 +67,35 @@ export class SyncDataService {
       return promise
   }
 
+  mealManagementDataFromServer(schoolId,acessToken){
+    let promise = new Promise < any > ((resolve, reject) => {
+
+      let URL: string = ConstantService.baseUrl +'mealManagement'
+      let accessKey = [
+        {
+          "key":"token",
+          "value":acessToken
+        }
+      ]
+  
+        const httpOptions = {
+          headers: new HttpHeaders({
+            'Content-type': 'application/json',
+            //'schoolId': String(schoolId),
+            'Authorization': 'Bearer'+ JSON.stringify(accessKey)
+          })
+        };
+        this.http.get(URL,httpOptions)
+        .subscribe(res => {
+          resolve(res)
+        }, (err) => {
+          console.log(err)
+          reject(err);
+        });
+      });
+      return promise
+  }
+
   syncToServer(studentsData: IStudentRecord[], acessToken: string){
     let finalizedCount = 0;
     let indexServerData = 0;

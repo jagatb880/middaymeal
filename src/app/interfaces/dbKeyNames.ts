@@ -13,6 +13,8 @@ export interface IDBKeyNames {
     appVersion: string,
     cchData: string,
     cchAttendanceData: string,
-    logginUserUsername: string
+    logginUserUsername: string,
+    mealManagementData: string,
+    mealManagementRecord: string
 }
 
