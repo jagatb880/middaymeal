@@ -56,5 +56,7 @@ export interface IMessages {
     syncedRecord: string,
     failedRecord: string,
     syncedRecordForCch: string,
-    failedRecordForCch: string
+    failedRecordForCch: string,
+    syncedRecordForMM: string,
+    failedRecordForMM: string
 }

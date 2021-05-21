@@ -63,7 +63,9 @@ export class ConstantService {
     syncedRecord: 'Student record synced: ',
     failedRecord: 'Student record not synced: ',
     syncedRecordForCch: 'Cch record synced: ',
-    failedRecordForCch: 'Cch record not synced: '
+    failedRecordForCch: 'Cch record not synced: ',
+    syncedRecordForMM: 'Meal record synced: ',
+    failedRecordForMM: 'Meal record not synced: '
   }
 
   static dbKeyNames: IDBKeyNames = {

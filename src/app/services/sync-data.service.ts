@@ -14,6 +14,8 @@ export class SyncDataService {
   syncSuccessCount: number = 0;
   syncFailedCountForCch: number = 0;
   syncSuccessCountForCch: number = 0;
+  syncFailedCountForMMData: number = 0;
+  syncSuccessCountForMMData: number = 0;
   constructor(private http: HttpClient, private datepipe: DatePipe) { }
 
   syncFromServer(teacherCode){
@@ -248,6 +250,104 @@ export class SyncDataService {
             cchsRecord[indexServerData].sync_status = true;
           }else {
             this.syncFailedCountForCch++
+          }
+          resolve(true)
+        }, (err) => {
+          console.log(err)
+          reject(false)
+        });
+      });
+      return promise;
+  }
+
+  syncToServerMealManagementData(mealManagementData: any[], acessToken: string, schoolId: any){
+    let finalizedCount = 0;
+    let indexServerData = 0;
+    let syncedData = [];
+    this.syncFailedCountForMMData = 0;
+    this.syncSuccessCountForMMData = 0;
+    let mealManagementDataIndex = []
+    let promise = new Promise < any > (async (resolve, reject) => {
+      await mealManagementData.forEach(async (mealManagementData: any, index) => {
+          if(!mealManagementData.sync_status){
+            mealManagementDataIndex.push(index)
+            finalizedCount++;
+          }
+      });
+
+      if (finalizedCount == 0) {
+        resolve(syncedData);
+      }
+      while (finalizedCount >= 0) {
+
+        if (finalizedCount == 0) {
+          resolve(mealManagementData);
+          break;
+        }
+        finalizedCount--
+        try {
+          await this.sentToServerMealManagementData(mealManagementData,mealManagementDataIndex[indexServerData],acessToken,schoolId);
+        } catch (err) {
+          console.log(err)
+          reject(false);
+          break;
+        }
+        indexServerData++
+      }
+    });
+    return promise;
+  }
+
+  sentToServerMealManagementData(mealManagementRecord: any[],indexServerData,acessToken,schoolId){
+    let promise = new Promise < any > ((resolve, reject) => {
+      let URL: string = ConstantService.baseUrl +'mealManagementDetails'
+  
+      let accessKey = [
+        {
+          "key":"token",
+          "value":acessToken
+        }
+      ]
+  
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-type': 'application/json',
+          'Authorization': 'Bearer'+ JSON.stringify(accessKey)
+        })
+      };
+      let key1 = null;
+      let key2 = null;
+      if(mealManagementRecord[indexServerData].status){
+        key1 = {
+          "stage1Image": mealManagementRecord[indexServerData].stage1Image,
+          "stage1Remark": mealManagementRecord[indexServerData].stage1Remark,
+          "stage2Image": mealManagementRecord[indexServerData].stage2Image,
+          "stage2Remark": mealManagementRecord[indexServerData].stage2Remark,
+          "stage3Image": mealManagementRecord[indexServerData].stage3Image,
+          "stage3Remark": mealManagementRecord[indexServerData].stage3Remark,
+        }
+      }else{
+        key2 = {
+          "reasonId": mealManagementRecord[indexServerData].reasonId,
+          "remarks": mealManagementRecord[indexServerData].remarks
+        }
+      }
+      let data = {
+        "schoolId": schoolId,
+        "date":this.datepipe.transform(mealManagementRecord[indexServerData].date,"dd-MM-YYYY"),
+        "status": mealManagementRecord[indexServerData].status,
+        "key1": key1,
+        "key2": key2
+      }
+  
+        this.http.post(URL, data,httpOptions)
+        .subscribe(async (res: any)=> {
+          console.log(res)
+          if(res.outcome){
+            this.syncSuccessCountForMMData++
+            mealManagementRecord[indexServerData].sync_status = true;
+          }else {
+            this.syncFailedCountForMMData++
           }
           resolve(true)
         }, (err) => {

@@ -18,7 +18,7 @@
     </ion-col>
     <ion-col size="2">
       <div class="toggle">
-        <ion-toggle [(ngModel)]="mealSwitch" (ionChange)="togle(mealStatus)"></ion-toggle>
+        <ion-toggle [(ngModel)]="mealSwitch" (ionChange)="toggle(mealStatus)" [disabled]="syncDisabled"></ion-toggle>
       </div>
     </ion-col>
     <ion-col size="5">
@@ -39,7 +39,7 @@
   <div *ngIf="!mealStatus">
     <p class="upperp">Reason</p>
     <ion-item class="slctitm">
-      <ion-select [(ngModel)]="currentReason" placeholder="Select Reason" (ionChange)="selectReason()" multiple="true">
+      <ion-select [(ngModel)]="currentReason" placeholder="Select Reason" (ionChange)="selectReason()" multiple="true"  [disabled]="syncDisabled">
         <ion-select-option *ngFor="let reason of reasonList" [value]="reason.reasonId">
           {{reason.reason}}
         </ion-select-option>
@@ -47,45 +47,72 @@
     </ion-item>
     <p class="upperp1">Remarks</p>
     <div class="dvvv">
-      <ion-textarea placeholder="Cooking Staff Not Present"></ion-textarea>
+      <ion-textarea placeholder="Write your remark" [(ngModel)]="noMealRemark" [disabled]="syncDisabled"></ion-textarea>
     </div>
   </div>
 
   <div *ngIf="mealStatus">
-    <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)">
+    <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)" [disabled]="syncDisabled">
       <ion-segment-button value="procurement">
         <ion-label>Ration <br>Procurement</ion-label>
       </ion-segment-button>
-      <ion-segment-button value="preaparation">
-        <ion-label>Meal <br>Preaparation</ion-label>
+      <ion-segment-button value="preparation" [disabled]="procurementImage == undefined">
+        <ion-label>Meal <br>preparation</ion-label>
       </ion-segment-button>
-      <ion-segment-button value="distribution">
+      <ion-segment-button value="distribution"[disabled]="preparationImage == undefined">
         <ion-label>Meal <br>Distribution</ion-label>
       </ion-segment-button>
     </ion-segment>
-    <p class="upperp3">Capture image</p>
-    <div class="lst">
-      <!-- <ion-icon name="camera-outline"></ion-icon> -->
-      <img src="assets/icon/3941805.png">
+    <div *ngIf="selectedSegment == 'procurement'">
+      <p class="upperp3">Capture image</p>
+      <div class="lst" (click)="uploadphoto()">
+        <ion-img *ngIf="procurementImage != undefind" style="height: 230px;object-fit: fill;" [src]="procurementImage.src"  [disabled]="syncDisabled">
+        </ion-img>
+        <img *ngIf="procurementImage == undefind" src="assets/icon/3941805.png">
+      </div>
+      <p id="remark">Remarks</p>
+      <div class="dvvv">
+        <ion-textarea [(ngModel)]="procurementRemark" [disabled]="syncDisabled"></ion-textarea>
+      </div>
     </div>
-    <p id="remark">Remarks</p>
-    <div class="dvvv">
-      <ion-textarea></ion-textarea>
+    <div *ngIf="selectedSegment == 'preparation'">
+      <p class="upperp3">Capture image</p>
+      <div class="lst" (click)="uploadphoto()">
+        <ion-img *ngIf="preparationImage != undefind" style="height: 230px;object-fit: fill;" [src]="preparationImage.src"  [disabled]="syncDisabled">
+        </ion-img>
+        <img *ngIf="preparationImage == undeind" src="assets/icon/3941805.png">
+      </div>
+      <p id="remark">Remarks</p>
+      <div class="dvvv">
+        <ion-textarea [(ngModel)]="preparationRemark" [disabled]="syncDisabled"></ion-textarea>
+      </div>
+    </div>
+    <div *ngIf="selectedSegment == 'distribution'">
+      <p class="upperp3">Capture image</p>
+      <div class="lst" (click)="uploadphoto()">
+        <ion-img *ngIf="distributionImage != undefind" style="height: 230px;object-fit: fill;" [src]="distributionImage.src"  [disabled]="syncDisabled">
+        </ion-img>
+        <img *ngIf="distributionImage == undefind" src="assets/icon/3941805.png">
+      </div>
+      <p id="remark">Remarks</p>
+      <div class="dvvv">
+        <ion-textarea [(ngModel)]="distributionRemark" [disabled]="syncDisabled"></ion-textarea>
+      </div>
     </div>
   </div>
 </ion-content>
 <ion-footer>
-  <div style="height: 12vw;" *ngIf="!mealStatus" (click)="mealNotSubmit()">
+  <div style="height: 12vw;" *ngIf="!mealStatus" (click)="mealSubmit()">
     <span class="save-btn">SUBMIT</span>
   </div>
   <ion-row *ngIf="selectedSegment == 'procurement' && mealStatus">
-    <ion-col size="12" class="next-btn" (click)="goToPreaparation()">
+    <ion-col size="12" class="next-btn" (click)="goToPreparation()">
       <div style="height: 12vw;">
         <span class="next-btn-text">Next</span>
       </div>
     </ion-col>
   </ion-row>
-  <ion-row *ngIf="selectedSegment == 'preaparation' && mealStatus">
+  <ion-row *ngIf="selectedSegment == 'preparation' && mealStatus">
     <ion-col size="6" class="previous-btn" (click)="goToProcurement()">
       <div style="height: 12vw;">
         <span class="previous-btn-text">Previous</span>
