@@ -51,11 +51,11 @@ export class MealManagementPage implements OnInit {
     this.syncDisabled = false;
     this.selectedWeek = this.datepipe.transform(this.currentDate,'full').split(',')[0].trim()
 
-    this.storage.get(ConstantService.dbKeyNames.mealManagementData).then((data:any)=>{
+    this.storage.get(ConstantService.dbKeyNames.mealManagementData).then(async (data:any)=>{
       console.log(data)
-      this.reasonList = data.reason;
-      this.menuList = data.menu;
-      this.setMealDataToUi(this.currentDate);
+      this.reasonList = await data.reason;
+      this.menuList = await data.menu;
+      await this.setMealDataToUi(this.currentDate);
 
       // if(this.selectedWeek == 'Sunday'){
       //   this.sharedSvc.showAlert("Warning","Sunday is off, choose other date");

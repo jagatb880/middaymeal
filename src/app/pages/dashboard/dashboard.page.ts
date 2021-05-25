@@ -27,14 +27,13 @@ export class DashboardPage implements OnInit {
     })
   }
   mealmanagement(){
-    this.router.navigate(['meal-management'])
-    // this.storage.get(ConstantService.dbKeyNames.mealManagementData).then(data=>{
-    //   if(data == null){
-    //     this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noMealManagementRecord)
-    //   }else{
-    //     this.router.navigate(['meal-management'])
-    //   }
-    // })
+    this.storage.get(ConstantService.dbKeyNames.mealManagementData).then(data=>{
+      if(data == null){
+        this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noMealManagementRecord)
+      }else{
+        this.router.navigate(['meal-management'])
+      }
+    })
   }
   cchAttendance(){
     this.storage.get(ConstantService.dbKeyNames.cchData).then(data=>{
@@ -45,7 +44,4 @@ export class DashboardPage implements OnInit {
       }
     })
   }
-
-  
-
 }
