@@ -66,6 +66,11 @@
     <div *ngIf="selectedSegment == 'procurement'">
       <p class="upperp3">Capture image</p>
       <div class="lst" (click)="uploadphoto()">
+        <div  class="upload_text">
+          <p class="fstp">Lat:-</p>
+          <p class="fstp">Long:-</p>
+          <p class="fstp">Date:-</p>
+        </div>
         <ion-img *ngIf="procurementImage != undefind" style="height: 230px;object-fit: fill;" [src]="procurementImage.src"  [disabled]="syncDisabled">
         </ion-img>
         <img *ngIf="procurementImage == undefind" src="assets/icon/3941805.png">
@@ -78,6 +83,11 @@
     <div *ngIf="selectedSegment == 'preparation'">
       <p class="upperp3">Capture image</p>
       <div class="lst" (click)="uploadphoto()">
+        <div  class="upload_text">
+          <p class="fstp">Lat:-</p>
+          <p class="fstp">Long:-</p>
+          <p class="fstp">Date:-</p>
+        </div>
         <ion-img *ngIf="preparationImage != undefind" style="height: 230px;object-fit: fill;" [src]="preparationImage.src"  [disabled]="syncDisabled">
         </ion-img>
         <img *ngIf="preparationImage == undeind" src="assets/icon/3941805.png">
@@ -90,6 +100,11 @@
     <div *ngIf="selectedSegment == 'distribution'">
       <p class="upperp3">Capture image</p>
       <div class="lst" (click)="uploadphoto()">
+        <div  class="upload_text">
+          <p class="fstp">Lat:-</p>
+          <p class="fstp">Long:-</p>
+          <p class="fstp">Date:-</p>
+        </div>
         <ion-img *ngIf="distributionImage != undefind" style="height: 230px;object-fit: fill;" [src]="distributionImage.src"  [disabled]="syncDisabled">
         </ion-img>
         <img *ngIf="distributionImage == undefind" src="assets/icon/3941805.png">
