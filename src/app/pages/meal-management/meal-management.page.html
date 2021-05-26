@@ -66,14 +66,20 @@
     <div *ngIf="selectedSegment == 'procurement'">
       <p class="upperp3">Capture image</p>
       <div class="lst" (click)="uploadphoto()">
-        <div  class="upload_text">
-          <p class="fstp">Lat:-</p>
-          <p class="fstp">Long:-</p>
-          <p class="fstp">Date:-</p>
+        <div *ngIf="procurementGeoInfo.subLocality == undefined" class="upload_text">
+          <p class="fstp">Lat:-{{procurementGeoInfo.latitude}}</p>
+          <p class="fstp">Long:-{{procurementGeoInfo.longitude}}</p>
+          <p class="fstp">Date:-{{procurementDateTime}}</p>
         </div>
-        <ion-img *ngIf="procurementImage != undefind" style="height: 230px;object-fit: fill;" [src]="procurementImage.src"  [disabled]="syncDisabled">
+        <div *ngIf="procurementGeoInfo.subLocality != undefined" class="upload_text">
+          <p class="fstp">Lat:-{{procurementGeoInfo.latitude}}</p>
+          <p class="fstp">Long:-{{procurementGeoInfo.longitude}}</p>
+          <p class="fstp">Address:-{{procurementGeoInfo.subLocality}}, {{procurementGeoInfo.locality}}</p>
+          <p class="fstp">Date:-{{procurementDateTime}}</p>
+        </div>
+        <ion-img *ngIf="procurementImage != undefind" style="height: 230px;object-fit: fill;" [src]="procurementImage"  [disabled]="syncDisabled">
         </ion-img>
-        <img *ngIf="procurementImage == undefind" src="assets/icon/3941805.png">
+        <img src="assets/icon/3941805.png">
       </div>
       <p id="remark">Remarks</p>
       <div class="dvvv">
@@ -83,14 +89,20 @@
     <div *ngIf="selectedSegment == 'preparation'">
       <p class="upperp3">Capture image</p>
       <div class="lst" (click)="uploadphoto()">
-        <div  class="upload_text">
-          <p class="fstp">Lat:-</p>
-          <p class="fstp">Long:-</p>
-          <p class="fstp">Date:-</p>
+        <div *ngIf="preparationGeoInfo.subLocality == undefined" class="upload_text">
+          <p class="fstp">Lat:-{{preparationGeoInfo.latitude}}</p>
+          <p class="fstp">Long:-{{preparationGeoInfo.longitude}}</p>
+          <p class="fstp">Date:-{{preparationDateTime}}</p>
         </div>
-        <ion-img *ngIf="preparationImage != undefind" style="height: 230px;object-fit: fill;" [src]="preparationImage.src"  [disabled]="syncDisabled">
+        <div *ngIf="preparationGeoInfo.subLocality != undefined" class="upload_text">
+          <p class="fstp">Lat:-{{preparationGeoInfo.latitude}}</p>
+          <p class="fstp">Long:-{{preparationGeoInfo.longitude}}</p>
+          <p class="fstp">Address:-{{preparationGeoInfo.subLocality}}, {{preparationGeoInfo.locality}}</p>
+          <p class="fstp">Date:-{{preparationDateTime}}</p>
+        </div>
+        <ion-img *ngIf="preparationImage != undefind" style="height: 230px;object-fit: fill;" [src]="preparationImage"  [disabled]="syncDisabled">
         </ion-img>
-        <img *ngIf="preparationImage == undeind" src="assets/icon/3941805.png">
+        <img src="assets/icon/3941805.png">
       </div>
       <p id="remark">Remarks</p>
       <div class="dvvv">
@@ -100,14 +112,20 @@
     <div *ngIf="selectedSegment == 'distribution'">
       <p class="upperp3">Capture image</p>
       <div class="lst" (click)="uploadphoto()">
-        <div  class="upload_text">
-          <p class="fstp">Lat:-</p>
-          <p class="fstp">Long:-</p>
-          <p class="fstp">Date:-</p>
+        <div *ngIf="distributionGeoInfo.subLocality == undefined" class="upload_text">
+          <p class="fstp">Lat:-{{distributionGeoInfo.latitude}}</p>
+          <p class="fstp">Long:-{{distributionGeoInfo.longitude}}</p>
+          <p class="fstp">Date:-{{distributionDateTime}}</p>
         </div>
-        <ion-img *ngIf="distributionImage != undefind" style="height: 230px;object-fit: fill;" [src]="distributionImage.src"  [disabled]="syncDisabled">
+        <div *ngIf="distributionGeoInfo.subLocality != undefined" class="upload_text">
+          <p class="fstp">Lat:-{{distributionGeoInfo.latitude}}</p>
+          <p class="fstp">Long:-{{distributionGeoInfo.longitude}}</p>
+          <p class="fstp">Address:-{{distributionGeoInfo.subLocality}}, {{distributionGeoInfo.locality}}</p>
+          <p class="fstp">Date:-{{distributionDateTime}}</p>
+        </div>
+        <ion-img *ngIf="distributionImage != undefind" style="height: 230px;object-fit: fill;" [src]="distributionImage"  [disabled]="syncDisabled">
         </ion-img>
-        <img *ngIf="distributionImage == undefind" src="assets/icon/3941805.png">
+        <img src="assets/icon/3941805.png">
       </div>
       <p id="remark">Remarks</p>
       <div class="dvvv">

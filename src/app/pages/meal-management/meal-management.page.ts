@@ -56,22 +56,11 @@ export class MealManagementPage implements OnInit {
     this.mealNotHappenedRecords = [];
     this.syncDisabled = false;
     this.selectedWeek = this.datepipe.transform(this.currentDate,'full').split(',')[0].trim()
-
+    this.clearAllPreviewousValues();
     this.storage.get(ConstantService.dbKeyNames.mealManagementData).then(async (data:any)=>{
-      console.log(data)
       this.reasonList = await data.reason;
       this.menuList = await data.menu;
       await this.setMealDataToUi(this.currentDate);
-
-      // if(this.selectedWeek == 'Sunday'){
-      //   this.sharedSvc.showAlert("Warning","Sunday is off, choose other date");
-      // }else{
-      //   this.menuList.forEach(menu => {
-      //     if(menu.day == this.selectedWeek){
-      //       this.menuOnDate = menu.items
-      //     }
-      //   });
-      // }
     })
   }
 
@@ -83,6 +72,7 @@ export class MealManagementPage implements OnInit {
     }
     else{
       this.mealStatus = true;
+      this.selectedSegment = 'procurement'
       console.log(this.mealStatus);
     }
 
@@ -90,28 +80,16 @@ export class MealManagementPage implements OnInit {
 
   changeDate(currentDate){
     console.log(currentDate)
-    this.mealStatus = false;
-    this.currentReason = [];
-    this.noMealRemark = '';
-    this.noMealRemarkStatus = false;
-    this.procurementImage = undefined;
-    this.procurementRemark = undefined;
-    this.procurementDateTime = undefined;
-    this.preparationImage = undefined;
-    this.preparationRemark = undefined;
-    this.preparationDateTime = undefined;
-    this.distributionImage = undefined;
-    this.distributionRemark = undefined;
-    this.distributionDateTime = undefined;
-    this.mealNotHappenedRecords = [];
-    this.syncDisabled = false;
+    this.clearAllPreviewousValues();
     this.setMealDataToUi(currentDate);
   }
 
   setMealDataToUi(currentDate){
     this.toggle();
+    this.syncDisabled = false;
     this.selectedWeek = this.datepipe.transform(this.currentDate,'full').split(',')[0].trim();
     if(this.selectedWeek == 'Sunday'){
+      this.syncDisabled = true;
       this.sharedSvc.showAlert("Warning","Sunday is off, choose other date");
     }else{
       this.menuList.forEach(menu => {
@@ -131,10 +109,16 @@ export class MealManagementPage implements OnInit {
           this.mealSwitch = data[0].status == 1?true:false;
           this.procurementImage = data[0].stage1Image;
           this.procurementRemark = data[0].stage1Remark;
+          this.procurementDateTime = data[0].stage1DateTime;
+          this.procurementGeoInfo = data[0].stage1GeoInfo;
           this.preparationImage = data[0].stage2Image;
           this.preparationRemark = data[0].stage2Remark;
+          this.preparationDateTime = data[0].stage2DateTime;
+          this.preparationGeoInfo = data[0].stage2GeoInfo;
           this.distributionImage = data[0].stage3Image;
           this.distributionRemark = data[0].stage3Remark;
+          this.distributionDateTime = data[0].stage3DateTime;
+          this.distributionGeoInfo = data[0].stage3GeoInfo;
         }else{
           this.mealSwitch = data[0].status == 1?true:false;
           this.currentReason = data[0].reasonId
@@ -157,6 +141,7 @@ export class MealManagementPage implements OnInit {
 
   mealSubmit(){
     let mealNotHappened
+    if(!this.syncDisabled)
     if(!this.mealStatus){
       if(this.currentReason.length == 0){
         this.sharedSvc.showMessage("Please select the reason, why meal not happened.")
@@ -187,10 +172,16 @@ export class MealManagementPage implements OnInit {
           "status": this.mealStatus == true? 1 : 0,
           "stage1Image": this.procurementImage,
           "stage1Remark": this.procurementRemark,
+          "stage1DateTime": this.procurementDateTime,
+          "stage1GeoInfo": this.procurementGeoInfo,
           "stage2Image": this.preparationImage,
           "stage2Remark": this.preparationRemark,
+          "stage2DateTime": this.preparationDateTime,
+          "stage2GeoInfo": this.preparationGeoInfo,
           "stage3Image": this.distributionImage,
           "stage3Remark": this.distributionRemark,
+          "stage3DateTime": this.distributionDateTime,
+          "stage3GeoInfo": this.distributionGeoInfo,
           "sync_status": false,
         }
         this.saveMealManagementRecord(mealNotHappened)
@@ -276,20 +267,20 @@ export class MealManagementPage implements OnInit {
           this.sharedSvc.openCamera(this.networkSvc.online).then(data=>{
             switch (this.selectedSegment) {
               case 'procurement':
-                this.procurementImage = this.sharedSvc.imageData;
-                this.procurementDateTime = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
+                this.procurementImage = this.sharedSvc.imageData.src;
+                this.procurementDateTime = this.datepipe.transform(new Date(),ConstantService.message.dateTimeFormat);
                 this.procurementGeoInfo = this.sharedSvc.geocoderResult;
                 console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
                 break;
               case 'preparation':
-                this.preparationImage = this.sharedSvc.imageData
-                this.preparationDateTime = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
+                this.preparationImage = this.sharedSvc.imageData.src
+                this.preparationDateTime = this.datepipe.transform(new Date(),ConstantService.message.dateTimeFormat);
                 this.preparationGeoInfo = this.sharedSvc.geocoderResult;
                 console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
                 break;
               case 'distribution':
-                this.distributionImage = this.sharedSvc.imageData
-                this.distributionDateTime = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
+                this.distributionImage = this.sharedSvc.imageData.src
+                this.distributionDateTime = this.datepipe.transform(new Date(),ConstantService.message.dateTimeFormat);
                 this.distributionGeoInfo = this.sharedSvc.geocoderResult;
                 console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
                 break;
@@ -306,5 +297,27 @@ export class MealManagementPage implements OnInit {
     // }else{
     //   this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
     // }
+  }
+
+  clearAllPreviewousValues(){
+    this.mealStatus = false;
+    this.mealSwitch = false;
+    this.currentReason = [];
+    this.noMealRemark = '';
+    this.noMealRemarkStatus = false;
+    this.procurementImage = undefined;
+    this.procurementRemark = undefined;
+    this.procurementDateTime = undefined;
+    this.procurementGeoInfo = undefined;
+    this.preparationImage = undefined;
+    this.preparationRemark = undefined;
+    this.preparationDateTime = undefined;
+    this.preparationGeoInfo = undefined;
+    this.distributionImage = undefined;
+    this.distributionRemark = undefined;
+    this.distributionDateTime = undefined;
+    this.distributionGeoInfo = undefined;
+    this.mealNotHappenedRecords = [];
+    this.syncDisabled = false;
   }
 }
