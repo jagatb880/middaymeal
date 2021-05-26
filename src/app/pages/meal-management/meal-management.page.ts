@@ -28,11 +28,17 @@ export class MealManagementPage implements OnInit {
   noMealRemarkStatus: boolean;
   mealNotHappenedRecords: any[];
   procurementImage: any;
+  procurementDateTime: any;
   procurementRemark: any;
+  procurementGeoInfo: any;
   preparationImage: any;
+  preparationDateTime: any;
   preparationRemark: any;
+  preparationGeoInfo: any;
   distributionImage: any;
   distributionRemark: any;
+  distributionDateTime: any;
+  distributionGeoInfo: any;
   syncDisabled:boolean;
   constructor(private datepipe: DatePipe, private storage: Storage, private sharedSvc: SharedService,
     private location: Location, private diagnostic: Diagnostic, private platform: Platform,
@@ -90,10 +96,13 @@ export class MealManagementPage implements OnInit {
     this.noMealRemarkStatus = false;
     this.procurementImage = undefined;
     this.procurementRemark = undefined;
+    this.procurementDateTime = undefined;
     this.preparationImage = undefined;
     this.preparationRemark = undefined;
+    this.preparationDateTime = undefined;
     this.distributionImage = undefined;
-    this.distributionRemark = undefined
+    this.distributionRemark = undefined;
+    this.distributionDateTime = undefined;
     this.mealNotHappenedRecords = [];
     this.syncDisabled = false;
     this.setMealDataToUi(currentDate);
@@ -267,16 +276,22 @@ export class MealManagementPage implements OnInit {
           this.sharedSvc.openCamera(this.networkSvc.online).then(data=>{
             switch (this.selectedSegment) {
               case 'procurement':
-                this.procurementImage = this.sharedSvc.imageData
-            console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
+                this.procurementImage = this.sharedSvc.imageData;
+                this.procurementDateTime = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
+                this.procurementGeoInfo = this.sharedSvc.geocoderResult;
+                console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
                 break;
               case 'preparation':
                 this.preparationImage = this.sharedSvc.imageData
-            console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
+                this.preparationDateTime = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
+                this.preparationGeoInfo = this.sharedSvc.geocoderResult;
+                console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
                 break;
               case 'distribution':
                 this.distributionImage = this.sharedSvc.imageData
-            console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
+                this.distributionDateTime = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
+                this.distributionGeoInfo = this.sharedSvc.geocoderResult;
+                console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
                 break;
             }
           }).catch(error=>{
