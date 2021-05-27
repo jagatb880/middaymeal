@@ -317,14 +317,53 @@ export class SyncDataService {
       };
       let key1 = null;
       let key2 = null;
+      let geoInfo1 = {
+        "administrativeArea": mealManagementRecord[indexServerData].stage1GeoInfo.administrativeArea,
+        "areasOfInterest": mealManagementRecord[indexServerData].stage1GeoInfo.areasOfInterest[0],
+        "countryCode": mealManagementRecord[indexServerData].stage1GeoInfo.countryCode,
+        "countryName": mealManagementRecord[indexServerData].stage1GeoInfo.countryName,
+        "latitude": mealManagementRecord[indexServerData].stage1GeoInfo.latitude,
+        "locality": mealManagementRecord[indexServerData].stage1GeoInfo.locality,
+        "longitude": mealManagementRecord[indexServerData].stage1GeoInfo.longitude,
+        "postalCode": mealManagementRecord[indexServerData].stage1GeoInfo.postalCode,
+        "subAdministrativeArea": mealManagementRecord[indexServerData].stage1GeoInfo.subAdministrativeArea
+      }
+      let geoInfo2 = {
+        "administrativeArea": mealManagementRecord[indexServerData].stage2GeoInfo.administrativeArea,
+        "areasOfInterest": mealManagementRecord[indexServerData].stage2GeoInfo.areasOfInterest[0],
+        "countryCode": mealManagementRecord[indexServerData].stage2GeoInfo.countryCode,
+        "countryName": mealManagementRecord[indexServerData].stage2GeoInfo.countryName,
+        "latitude": mealManagementRecord[indexServerData].stage2GeoInfo.latitude,
+        "locality": mealManagementRecord[indexServerData].stage2GeoInfo.locality,
+        "longitude": mealManagementRecord[indexServerData].stage2GeoInfo.longitude,
+        "postalCode": mealManagementRecord[indexServerData].stage2GeoInfo.postalCode,
+        "subAdministrativeArea": mealManagementRecord[indexServerData].stage2GeoInfo.subAdministrativeArea
+      }
+      let geoInfo3 = {
+        "administrativeArea": mealManagementRecord[indexServerData].stage3GeoInfo.administrativeArea,
+        "areasOfInterest": mealManagementRecord[indexServerData].stage3GeoInfo.areasOfInterest[0],
+        "countryCode": mealManagementRecord[indexServerData].stage3GeoInfo.countryCode,
+        "countryName": mealManagementRecord[indexServerData].stage3GeoInfo.countryName,
+        "latitude": mealManagementRecord[indexServerData].stage3GeoInfo.latitude,
+        "locality": mealManagementRecord[indexServerData].stage3GeoInfo.locality,
+        "longitude": mealManagementRecord[indexServerData].stage3GeoInfo.longitude,
+        "postalCode": mealManagementRecord[indexServerData].stage3GeoInfo.postalCode,
+        "subAdministrativeArea": mealManagementRecord[indexServerData].stage3GeoInfo.subAdministrativeArea
+      }
       if(mealManagementRecord[indexServerData].status){
         key1 = {
           "stage1Image": mealManagementRecord[indexServerData].stage1Image,
           "stage1Remark": mealManagementRecord[indexServerData].stage1Remark,
+          "stage1DateTime": mealManagementRecord[indexServerData].stage1DateTime,
+          "stage1GeoInfo": geoInfo1,
           "stage2Image": mealManagementRecord[indexServerData].stage2Image,
           "stage2Remark": mealManagementRecord[indexServerData].stage2Remark,
+          "stage2DateTime": mealManagementRecord[indexServerData].stage2DateTime,
+          "stage2GeoInfo": geoInfo2,
           "stage3Image": mealManagementRecord[indexServerData].stage3Image,
           "stage3Remark": mealManagementRecord[indexServerData].stage3Remark,
+          "stage3DateTime": mealManagementRecord[indexServerData].stage3DateTime,
+          "stage3GeoInfo": geoInfo3,
         }
       }else{
         key2 = {
