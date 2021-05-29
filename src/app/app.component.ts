@@ -301,10 +301,17 @@ export class AppComponent {
           });
         }else{
           this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
-          this.syncData.syncCchDataFromServer(cchData,this.sharedSvc.accessToken).then(syncedData=>{
+          this.syncData.syncToServerCchData(cchData,this.sharedSvc.accessToken).then(syncedData=>{
             if(syncedData){
-              this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,syncedData).then(async (data)=>{
-                this.syncMealManagementDataToServer(this.sharedSvc.accessToken)
+              this.storage.set(ConstantService.dbKeyNames.cchAttendanceData,syncedData).then(async (data)=>{
+                this.storage.get(ConstantService.dbKeyNames.mealManagementRecord).then(mealManagementData=>{
+                  if(mealManagementData == null){
+                    this.sharedSvc.dismissLoader();
+                    this.showSyncedCountMsg();
+                  }else{
+                    this.syncMealManagementDataToServer(this.sharedSvc.accessToken)
+                  }
+                });
               })
             }
           }).catch(error=>{
