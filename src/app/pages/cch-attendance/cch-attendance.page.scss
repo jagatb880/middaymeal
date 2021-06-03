@@ -53,5 +53,27 @@ ion-select {
     border-radius: 5px;
 }
 
+.total_enrolled{
+    font-size: 14px;
+}
+
+.total_enrolled_margin{
+    @extend .total_enrolled;
+    margin-left: 20%;
+}
+
+ion-toggle {
+    // --background: #006400;
+    // --background-checked: #7a49a5;
+  
+    --handle-background: #FF0000;
+    --handle-background-checked: #008000;
+}
+
+.total_number {
+    font-size: 16px;
+    font-weight: bold;
+}
+
 
 

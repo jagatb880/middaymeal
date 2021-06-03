@@ -20,6 +20,9 @@ export class CchAttendancePage implements OnInit {
   currentDate: any;
   cchRecords: ICCHRecord[];
   maxDate: string
+  totalCount: number;
+  absentCount: number;
+  presentCount: number;
   constructor(private storage: Storage, public sharedSvc: SharedService, private datepipe: DatePipe,
     private location: Location) { }
 
@@ -48,6 +51,9 @@ export class CchAttendancePage implements OnInit {
       this.currentDate = currentDate;
       this.cchList = [];
       this.absentRecords = [];
+      this.totalCount = 0;
+      this.presentCount = 0;
+      this.absentCount = 0;
       this.syncedDisabled = false;
       let tempCchList = JSON.parse(JSON.stringify(this.cchDataList));
       let cchList: ICCHData[] = [...tempCchList]
@@ -58,8 +64,13 @@ export class CchAttendancePage implements OnInit {
           let fetchedCchData: ICCHRecord[] = this.cchRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)))
           if (fetchedCchData.length == 0) {
             this.cchList = tempCchList;
+            this.totalCount = cchList.length;
+            this.presentCount = cchList.length
           } else {
             this.absentRecords = fetchedCchData[0].cch_ids;
+            this.totalCount = cchList.length;
+            this.absentCount = this.absentRecords.length
+            this.presentCount = this.totalCount - this.absentCount
             for (let i = 0; i < cchList.length; i++) {
               for (let j = 0; j < fetchedCchData[0].cch_ids.length; j++) {
                 if (cchList[i].cchId == fetchedCchData[0].cch_ids[j]) {
@@ -72,6 +83,8 @@ export class CchAttendancePage implements OnInit {
           }
         } else {
           this.cchList = tempCchList;
+          this.totalCount = cchList.length;
+          this.presentCount = cchList.length
         }
       }).catch(err => {
         console.log(err)
@@ -82,10 +95,14 @@ export class CchAttendancePage implements OnInit {
   switchAttendance(cch_code: number, attendance: boolean) {
     if (!attendance) {
       this.absentRecords.push(cch_code);
+      this.presentCount--
+      this.absentCount++
     } else {
       const index = this.absentRecords.indexOf(cch_code);
       if (index > -1) {
         this.absentRecords.splice(index, 1);
+        this.presentCount++
+        this.absentCount--
       }
     }
   }

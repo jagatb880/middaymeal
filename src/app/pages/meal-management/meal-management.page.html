@@ -135,29 +135,7 @@
   </div>
 </ion-content>
 <ion-footer>
-  <div style="height: 12vw;" *ngIf="!mealStatus" (click)="mealSubmit()">
-    <span class="save-btn">SUBMIT</span>
-  </div>
-  <ion-row *ngIf="selectedSegment == 'procurement' && mealStatus">
-    <ion-col size="12" class="next-btn" (click)="goToPreparation()">
-      <div style="height: 12vw;">
-        <span class="next-btn-text">Next</span>
-      </div>
-    </ion-col>
-  </ion-row>
-  <ion-row *ngIf="selectedSegment == 'preparation' && mealStatus">
-    <ion-col size="6" class="previous-btn" (click)="goToProcurement()">
-      <div style="height: 12vw;">
-        <span class="previous-btn-text">Previous</span>
-      </div>
-    </ion-col>
-    <ion-col size="6" class="next-btn" (click)="goToDistribution()">
-      <div style="height: 12vw;">
-        <span class="pre-next-btn-text">Next</span>
-      </div>
-    </ion-col>
-  </ion-row>
-  <div style="height: 12vw;" *ngIf="selectedSegment == 'distribution' && mealStatus" (click)="mealSubmit()">
+  <div style="height: 12vw;" (click)="mealSubmit()">
     <span class="save-btn">SUBMIT</span>
   </div>
 </ion-footer>

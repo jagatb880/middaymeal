@@ -373,7 +373,7 @@ export class SyncDataService {
       }
       let data = {
         "schoolId": schoolId,
-        "date":this.datepipe.transform(mealManagementRecord[indexServerData].date,"dd-MM-YYYY"),
+        "date":this.datepipe.transform(mealManagementRecord[indexServerData].date,"dd-MM-YYYY h:mm:ss"),
         "status": mealManagementRecord[indexServerData].status,
         "key1": key1,
         "key2": key2

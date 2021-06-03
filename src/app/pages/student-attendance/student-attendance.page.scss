@@ -114,3 +114,25 @@ ion-icon {
 font-family: 'robot',sans-serif;font-size: 12px;background-color: rgb(10, 10, 10);width: 87%;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;
 opacity: 0.5;height: 80px;font-weight: 800;}
 .fstp{margin: 0;padding: 0;margin-top: 10px;margin-left: 10px;color: white;}
+
+.total_enrolled{
+    font-size: 14px;
+}
+
+.total_enrolled_margin{
+    @extend .total_enrolled;
+    margin-left: 20%;
+}
+
+ion-toggle {
+    // --background: #006400;
+    // --background-checked: #7a49a5;
+  
+    --handle-background: #FF0000;
+    --handle-background-checked: #008000;
+}
+
+.total_number {
+    font-size: 16px;
+    font-weight: bold;
+}

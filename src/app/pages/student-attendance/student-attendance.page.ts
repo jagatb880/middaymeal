@@ -30,6 +30,9 @@ export class StudentAttendancePage implements OnInit {
   absentRecords: number[];
   photoCapturedDate: string;
   syncedDisabled: boolean;
+  totalCount: number;
+  absentCount: number;
+  presentCount: number;
   constructor(private datepipe: DatePipe, public sharedSvc: SharedService, private diagnostic: Diagnostic,
     private platform: Platform, private storage: Storage, private location: Location,
     private networkSvc: NetworkService, private changeDeector: ChangeDetectorRef) {
@@ -84,6 +87,9 @@ export class StudentAttendancePage implements OnInit {
       this.sharedSvc.imageData = undefined;
       this.sharedSvc.geocoderResult = undefined;
       this.photoCapturedDate = undefined;
+      this.totalCount = 0;
+      this.presentCount = 0;
+      this.absentCount = 0;
       let studentSection: ISection[] = this.sectionList.filter(data => data.sectionName == this.currentSectionName);
       let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].student));
       let studentList: IStudent[] = [...tempStudentList]
@@ -95,8 +101,13 @@ export class StudentAttendancePage implements OnInit {
             (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
           if (fetchedStudentData.length == 0) {
             this.studentList = tempStudentList;
+            this.totalCount = studentList.length;
+            this.presentCount = studentList.length
           } else {
             this.absentRecords = fetchedStudentData[0].student_ids;
+            this.totalCount = studentList.length;
+            this.absentCount = this.absentRecords.length
+            this.presentCount = this.totalCount - this.absentCount
             for (let i = 0; i < studentList.length; i++) {
               for (let j = 0; j < fetchedStudentData[0].student_ids.length; j++) {
                 if (studentList[i].studentId == fetchedStudentData[0].student_ids[j]) {
@@ -112,6 +123,8 @@ export class StudentAttendancePage implements OnInit {
           }
         } else {
           this.studentList = tempStudentList;
+          this.totalCount = studentList.length;
+          this.presentCount = studentList.length
         }
       }).catch(err => {
         console.log(err)
@@ -122,10 +135,14 @@ export class StudentAttendancePage implements OnInit {
   switchAttendance(student_id: number, attendance: boolean) {
     if (!attendance) {
       this.absentRecords.push(student_id);
+      this.presentCount--
+      this.absentCount++
     } else {
       const index = this.absentRecords.indexOf(student_id);
       if (index > -1) {
         this.absentRecords.splice(index, 1);
+        this.presentCount++
+        this.absentCount--
       }
     }
   }
