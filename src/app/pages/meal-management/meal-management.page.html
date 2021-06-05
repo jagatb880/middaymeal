@@ -4,137 +4,173 @@
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title style="color: white;padding: 0;">Meals Management</ion-title>
-    <u>
-      <ion-datetime class="date-picker" displayFormat="DDDD DD, MMM YYYY" [(ngModel)]="currentDate"
-        (ionChange)="changeDate(currentDate)" [max]="maxDate"></ion-datetime>
+    <u><span style="font-size: 12px;" (click)="openCalender()">
+      {{currentDate}}
+    </span>
+      <!-- <ion-datetime class="date-picker" displayFormat="DDDD DD, MMM YYYY" [(ngModel)]="currentDate"
+       (click)="changeDate(currentDate, $event)" [max]="maxDate"></ion-datetime> -->
     </u>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-row class="rw">
-    <ion-col size="5">
-      <p class="notag">Meals Not Happening</p>
-    </ion-col>
-    <ion-col size="2">
-      <div class="toggle">
-        <ion-toggle [(ngModel)]="mealSwitch" (ionChange)="toggle(mealStatus)" [disabled]="syncDisabled"></ion-toggle>
+  <div *ngIf="dateSelected">
+    <ion-row class="rw">
+      <ion-col size="5">
+        <p class="notag">Meals Not Happening</p>
+      </ion-col>
+      <ion-col size="2">
+        <div class="toggle">
+          <ion-toggle [(ngModel)]="mealSwitch" (ionChange)="toggle(mealStatus)" [disabled]="syncDisabled"></ion-toggle>
+        </div>
+      </ion-col>
+      <ion-col size="5">
+        <p class="yestag">Meals Happening</p>
+      </ion-col>
+    </ion-row>
+    <div class="dvcrd">
+      <ion-card class="crd">
+        <ion-row>
+          <ion-col size="3" class="ion-no-padding">
+          </ion-col>
+          <ion-col size="9" class="ion-no-padding">
+            <p class="fstp">Menu<span class="fstspn"> : {{menuOnDate}}</span></p>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+    </div>
+    <div *ngIf="!mealStatus">
+      <p class="upperp">Reason</p>
+      <ion-item class="slctitm">
+        <ion-select [(ngModel)]="currentReason" placeholder="Select Reason" (ionChange)="selectReason()" multiple="true"  [disabled]="syncDisabled">
+          <ion-select-option *ngFor="let reason of reasonList" [value]="reason.reasonId">
+            {{reason.reason}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <p class="upperp1">Remarks</p>
+      <div class="dvvv">
+        <ion-textarea placeholder="Write your remark" [(ngModel)]="noMealRemark" [disabled]="syncDisabled"></ion-textarea>
       </div>
-    </ion-col>
-    <ion-col size="5">
-      <p class="yestag">Meals Happening</p>
-    </ion-col>
-  </ion-row>
-  <div class="dvcrd">
-    <ion-card class="crd">
-      <ion-row>
-        <ion-col size="3" class="ion-no-padding">
-        </ion-col>
-        <ion-col size="9" class="ion-no-padding">
-          <p class="fstp">Menu<span class="fstspn"> : {{menuOnDate}}</span></p>
-        </ion-col>
-      </ion-row>
-    </ion-card>
+    </div>
+    <div *ngIf="mealStatus">
+      <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)" [disabled]="syncDisabled">
+        <ion-segment-button value="procurement">
+          <ion-label>Ration <br>Procurement</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="preparation" [disabled]="procurementImage == undefined">
+          <ion-label>Meal <br>preparation</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="distribution"[disabled]="preparationImage == undefined">
+          <ion-label>Meal <br>Distribution</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <div *ngIf="selectedSegment == 'procurement'">
+        <p class="upperp3">Capture image</p>
+        <div class="lst" (click)="uploadphoto()">
+          <div *ngIf="procurementGeoInfo.subLocality == undefined" class="upload_text">
+            <p class="fstp">Lat:-{{procurementGeoInfo.latitude}}</p>
+            <p class="fstp">Long:-{{procurementGeoInfo.longitude}}</p>
+            <p class="fstp">Date:-{{procurementDateTime}}</p>
+          </div>
+          <div *ngIf="procurementGeoInfo.subLocality != undefined" class="upload_text">
+            <p class="fstp">Lat:-{{procurementGeoInfo.latitude}}</p>
+            <p class="fstp">Long:-{{procurementGeoInfo.longitude}}</p>
+            <p class="fstp">Address:-{{procurementGeoInfo.subLocality}}, {{procurementGeoInfo.locality}}</p>
+            <p class="fstp">Date:-{{procurementDateTime}}</p>
+          </div>
+          <ion-img *ngIf="procurementImage != undefind" style="height: 230px;object-fit: fill;" [src]="procurementImage"  [disabled]="syncDisabled">
+          </ion-img>
+          <img src="assets/icon/3941805.png">
+        </div>
+        <p id="remark">Remarks</p>
+        <div class="dvvv">
+          <ion-textarea [(ngModel)]="procurementRemark" [disabled]="syncDisabled"></ion-textarea>
+        </div>
+      </div>
+      <div *ngIf="selectedSegment == 'preparation'">
+        <p class="upperp3">Capture image</p>
+        <div class="lst" (click)="uploadphoto()">
+          <div *ngIf="preparationGeoInfo.subLocality == undefined" class="upload_text">
+            <p class="fstp">Lat:-{{preparationGeoInfo.latitude}}</p>
+            <p class="fstp">Long:-{{preparationGeoInfo.longitude}}</p>
+            <p class="fstp">Date:-{{preparationDateTime}}</p>
+          </div>
+          <div *ngIf="preparationGeoInfo.subLocality != undefined" class="upload_text">
+            <p class="fstp">Lat:-{{preparationGeoInfo.latitude}}</p>
+            <p class="fstp">Long:-{{preparationGeoInfo.longitude}}</p>
+            <p class="fstp">Address:-{{preparationGeoInfo.subLocality}}, {{preparationGeoInfo.locality}}</p>
+            <p class="fstp">Date:-{{preparationDateTime}}</p>
+          </div>
+          <ion-img *ngIf="preparationImage != undefind" style="height: 230px;object-fit: fill;" [src]="preparationImage"  [disabled]="syncDisabled">
+          </ion-img>
+          <img src="assets/icon/3941805.png">
+        </div>
+        <p id="remark">Remarks</p>
+        <div class="dvvv">
+          <ion-textarea [(ngModel)]="preparationRemark" [disabled]="syncDisabled"></ion-textarea>
+        </div>
+      </div>
+      <div *ngIf="selectedSegment == 'distribution'">
+        <p class="upperp3">Capture image</p>
+        <div class="lst" (click)="uploadphoto()">
+          <div *ngIf="distributionGeoInfo.subLocality == undefined" class="upload_text">
+            <p class="fstp">Lat:-{{distributionGeoInfo.latitude}}</p>
+            <p class="fstp">Long:-{{distributionGeoInfo.longitude}}</p>
+            <p class="fstp">Date:-{{distributionDateTime}}</p>
+          </div>
+          <div *ngIf="distributionGeoInfo.subLocality != undefined" class="upload_text">
+            <p class="fstp">Lat:-{{distributionGeoInfo.latitude}}</p>
+            <p class="fstp">Long:-{{distributionGeoInfo.longitude}}</p>
+            <p class="fstp">Address:-{{distributionGeoInfo.subLocality}}, {{distributionGeoInfo.locality}}</p>
+            <p class="fstp">Date:-{{distributionDateTime}}</p>
+          </div>
+          <ion-img *ngIf="distributionImage != undefind" style="height: 230px;object-fit: fill;" [src]="distributionImage"  [disabled]="syncDisabled">
+          </ion-img>
+          <img src="assets/icon/3941805.png">
+        </div>
+        <p id="remark">Remarks</p>
+        <div class="dvvv">
+          <ion-textarea [(ngModel)]="distributionRemark" [disabled]="syncDisabled"></ion-textarea>
+        </div>
+      </div>
+    </div>
   </div>
-  <div *ngIf="!mealStatus">
-    <p class="upperp">Reason</p>
-    <ion-item class="slctitm">
-      <ion-select [(ngModel)]="currentReason" placeholder="Select Reason" (ionChange)="selectReason()" multiple="true"  [disabled]="syncDisabled">
-        <ion-select-option *ngFor="let reason of reasonList" [value]="reason.reasonId">
-          {{reason.reason}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-    <p class="upperp1">Remarks</p>
-    <div class="dvvv">
-      <ion-textarea placeholder="Write your remark" [(ngModel)]="noMealRemark" [disabled]="syncDisabled"></ion-textarea>
+  <div  *ngIf="!dateSelected">
+    <div style="padding-left: 20px;">
+      <h2>{{currentYear}}</h2>
+      <h4>{{currentMonth}}</h4>
     </div>
+    <ion-row>
+      <!-- Move back one screen of the slides -->
+      <ion-col size="6" text-left>
+       <ion-button fill="clear" (click)="back()">
+         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+       </ion-button>
+     </ion-col>
+  
+     <!-- Move forward one screen of the slides -->
+     <ion-col size="6" style="text-align: right;">
+       <ion-button fill="clear" (click)="next()">
+         <ion-icon name="arrow-forward" slot="icon-only"></ion-icon>
+       </ion-button>
+     </ion-col>
+   </ion-row>
+  
+   <calendar 
+   [calendarMode]="calendar.mode" 
+   [currentDate]="calendar.currentDate"
+   [showEventDetail] = "false"
+   [markDisabled]="markDisabled"
+   (onTimeSelected)="onTimeSelected($event)" >
+   </calendar>
+   <div style="height: 12vw;float: right;
+   margin-top: 10px;" (click)="dateSelectedDone()">
+    <ion-button>Done</ion-button>
   </div>
-
-  <div *ngIf="mealStatus">
-    <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)" [disabled]="syncDisabled">
-      <ion-segment-button value="procurement">
-        <ion-label>Ration <br>Procurement</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="preparation" [disabled]="procurementImage == undefined">
-        <ion-label>Meal <br>preparation</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="distribution"[disabled]="preparationImage == undefined">
-        <ion-label>Meal <br>Distribution</ion-label>
-      </ion-segment-button>
-    </ion-segment>
-    <div *ngIf="selectedSegment == 'procurement'">
-      <p class="upperp3">Capture image</p>
-      <div class="lst" (click)="uploadphoto()">
-        <div *ngIf="procurementGeoInfo.subLocality == undefined" class="upload_text">
-          <p class="fstp">Lat:-{{procurementGeoInfo.latitude}}</p>
-          <p class="fstp">Long:-{{procurementGeoInfo.longitude}}</p>
-          <p class="fstp">Date:-{{procurementDateTime}}</p>
-        </div>
-        <div *ngIf="procurementGeoInfo.subLocality != undefined" class="upload_text">
-          <p class="fstp">Lat:-{{procurementGeoInfo.latitude}}</p>
-          <p class="fstp">Long:-{{procurementGeoInfo.longitude}}</p>
-          <p class="fstp">Address:-{{procurementGeoInfo.subLocality}}, {{procurementGeoInfo.locality}}</p>
-          <p class="fstp">Date:-{{procurementDateTime}}</p>
-        </div>
-        <ion-img *ngIf="procurementImage != undefind" style="height: 230px;object-fit: fill;" [src]="procurementImage"  [disabled]="syncDisabled">
-        </ion-img>
-        <img src="assets/icon/3941805.png">
-      </div>
-      <p id="remark">Remarks</p>
-      <div class="dvvv">
-        <ion-textarea [(ngModel)]="procurementRemark" [disabled]="syncDisabled"></ion-textarea>
-      </div>
-    </div>
-    <div *ngIf="selectedSegment == 'preparation'">
-      <p class="upperp3">Capture image</p>
-      <div class="lst" (click)="uploadphoto()">
-        <div *ngIf="preparationGeoInfo.subLocality == undefined" class="upload_text">
-          <p class="fstp">Lat:-{{preparationGeoInfo.latitude}}</p>
-          <p class="fstp">Long:-{{preparationGeoInfo.longitude}}</p>
-          <p class="fstp">Date:-{{preparationDateTime}}</p>
-        </div>
-        <div *ngIf="preparationGeoInfo.subLocality != undefined" class="upload_text">
-          <p class="fstp">Lat:-{{preparationGeoInfo.latitude}}</p>
-          <p class="fstp">Long:-{{preparationGeoInfo.longitude}}</p>
-          <p class="fstp">Address:-{{preparationGeoInfo.subLocality}}, {{preparationGeoInfo.locality}}</p>
-          <p class="fstp">Date:-{{preparationDateTime}}</p>
-        </div>
-        <ion-img *ngIf="preparationImage != undefind" style="height: 230px;object-fit: fill;" [src]="preparationImage"  [disabled]="syncDisabled">
-        </ion-img>
-        <img src="assets/icon/3941805.png">
-      </div>
-      <p id="remark">Remarks</p>
-      <div class="dvvv">
-        <ion-textarea [(ngModel)]="preparationRemark" [disabled]="syncDisabled"></ion-textarea>
-      </div>
-    </div>
-    <div *ngIf="selectedSegment == 'distribution'">
-      <p class="upperp3">Capture image</p>
-      <div class="lst" (click)="uploadphoto()">
-        <div *ngIf="distributionGeoInfo.subLocality == undefined" class="upload_text">
-          <p class="fstp">Lat:-{{distributionGeoInfo.latitude}}</p>
-          <p class="fstp">Long:-{{distributionGeoInfo.longitude}}</p>
-          <p class="fstp">Date:-{{distributionDateTime}}</p>
-        </div>
-        <div *ngIf="distributionGeoInfo.subLocality != undefined" class="upload_text">
-          <p class="fstp">Lat:-{{distributionGeoInfo.latitude}}</p>
-          <p class="fstp">Long:-{{distributionGeoInfo.longitude}}</p>
-          <p class="fstp">Address:-{{distributionGeoInfo.subLocality}}, {{distributionGeoInfo.locality}}</p>
-          <p class="fstp">Date:-{{distributionDateTime}}</p>
-        </div>
-        <ion-img *ngIf="distributionImage != undefind" style="height: 230px;object-fit: fill;" [src]="distributionImage"  [disabled]="syncDisabled">
-        </ion-img>
-        <img src="assets/icon/3941805.png">
-      </div>
-      <p id="remark">Remarks</p>
-      <div class="dvvv">
-        <ion-textarea [(ngModel)]="distributionRemark" [disabled]="syncDisabled"></ion-textarea>
-      </div>
-    </div>
   </div>
 </ion-content>
-<ion-footer>
+<ion-footer *ngIf="dateSelected">
   <div style="height: 12vw;" (click)="mealSubmit()">
     <span class="save-btn">SUBMIT</span>
   </div>

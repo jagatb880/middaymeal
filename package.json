@@ -39,6 +39,7 @@
     "cordova-plugin-nativegeocoder": "^3.4.1",
     "cordova-plugin-network-information": "^2.0.2",
     "cordova.plugins.diagnostic": "^6.0.3",
+    "ionic2-calendar": "^0.6.7",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
