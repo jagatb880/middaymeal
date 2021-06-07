@@ -192,29 +192,41 @@ markDisabled: any;
           }
         }
       } else {
-        if (this.distributionImage != undefined) {
-          mealNotHappened = {
-            "date": this.currentDate,
-            "status": this.mealStatus == true ? 1 : 0,
-            "stage1Image": this.procurementImage,
-            "stage1Remark": this.procurementRemark,
-            "stage1DateTime": this.procurementDateTime,
-            "stage1GeoInfo": this.procurementGeoInfo,
-            "stage2Image": this.preparationImage,
-            "stage2Remark": this.preparationRemark,
-            "stage2DateTime": this.preparationDateTime,
-            "stage2GeoInfo": this.preparationGeoInfo,
-            "stage3Image": this.distributionImage,
-            "stage3Remark": this.distributionRemark,
-            "stage3DateTime": this.distributionDateTime,
-            "stage3GeoInfo": this.distributionGeoInfo,
-            "sync_status": false,
-          }
-          this.saveMealManagementRecord(mealNotHappened)
-        } else {
+        if(this.selectedSegment == 'procurement' && this.procurementImage == undefined){
+          this.sharedSvc.showMessage("Capture the procurement image.")
+        }else if(this.selectedSegment == 'procurement'){
+          this.setDataToObject(mealNotHappened)
+        }else if(this.selectedSegment == 'preparation' && this.preparationImage == undefined){
+          this.sharedSvc.showMessage("Capture the preparation image.")
+        }else if(this.selectedSegment == 'preparation'){
+          this.setDataToObject(mealNotHappened)
+        }if(this.selectedSegment == 'distribution' && this.distributionImage == undefined){
           this.sharedSvc.showMessage("Capture the distribution image.")
+        }else if(this.selectedSegment == 'distribution'){
+          this.setDataToObject(mealNotHappened)
         }
       }
+  }
+
+  setDataToObject(mealNotHappened){
+    mealNotHappened = {
+      "date": this.currentDate,
+      "status": this.mealStatus == true ? 1 : 0,
+      "stage1Image": this.procurementImage,
+      "stage1Remark": this.procurementRemark,
+      "stage1DateTime": this.procurementDateTime,
+      "stage1GeoInfo": this.procurementGeoInfo,
+      "stage2Image": this.preparationImage,
+      "stage2Remark": this.preparationRemark,
+      "stage2DateTime": this.preparationDateTime,
+      "stage2GeoInfo": this.preparationGeoInfo,
+      "stage3Image": this.distributionImage,
+      "stage3Remark": this.distributionRemark,
+      "stage3DateTime": this.distributionDateTime,
+      "stage3GeoInfo": this.distributionGeoInfo,
+      "sync_status": false,
+    }
+    this.saveMealManagementRecord(mealNotHappened)
   }
 
   saveMealManagementRecord(mealNotHappened) {
