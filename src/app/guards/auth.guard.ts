@@ -11,13 +11,14 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(route: ActivatedRouteSnapshot): Promise<boolean | UrlTree> {
     try {
-      const user= await this.loginSvc.get_user();
+      const user: any = await this.loginSvc.get_user();
       if (user == null) {
-        return this.router.parseUrl("/login");
+        return await this.router.parseUrl("/login");
       } else if(user != null && user.loginStatus == false){
-        return this.router.parseUrl("/login");
+        return await this.router.parseUrl("/login");
+      } else if(user != null && user.loginStatus == true){
+        return true;
       }
-      return true;
     }
     catch(error) {
       throw error;

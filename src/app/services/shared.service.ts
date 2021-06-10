@@ -6,6 +6,8 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Subject } from 'rxjs';
+import { ConstantService } from './constant.service';
+import { Storage } from '@ionic/storage';
 
 
 @Injectable({
@@ -21,7 +23,6 @@ export class SharedService {
   public serviceStatus: string;
   public imageData: any;
   public userFullName: string;
-  public userEmail: string;
   public geocoderResult: any;
   public schoolId: number;
   public accessToken: string;
@@ -29,12 +30,13 @@ export class SharedService {
   public userName: string
   public latitude: number
   public longitude: number
+  public blinkStauts: boolean;
 
   private dataUpdate = new Subject();
 
   constructor(private alertCtrl: AlertController, private location: Location, private loadingCtrl: LoadingController,
     private toastCtrl: ToastController, private camera: Camera, private geolocation: Geolocation,
-    private nativeGeocoder: NativeGeocoder, private diagnostic: Diagnostic) {}
+    private nativeGeocoder: NativeGeocoder, private diagnostic: Diagnostic, private storage: Storage) {}
 
   async showMessage(msg: string, duration: number = 2000): Promise < void > {
     const message = await this.toastCtrl.create({
@@ -223,6 +225,37 @@ export class SharedService {
     
   observeDataUpdate(): Subject<any> {
     return this.dataUpdate;
+  }
+
+  checkForDataSync(){
+    this.blinkStauts = false;
+    if(this.teacherRole){
+      this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(data=>{
+        if(data != null){
+          let filter = data.filter(d=> d.sync_status == false);
+          if(filter.length > 0){
+            this.blinkStauts = true;
+          }
+        }
+      })
+    }else{
+      this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(data=>{
+        if(data != null){
+          let filter = data.filter(d=> d.sync_status == false);
+          if(filter.length > 0){
+            this.blinkStauts = true;
+          }
+        }
+      })
+      this.storage.get(ConstantService.dbKeyNames.mealManagementRecord).then(data=>{
+        if(data != null){
+          let filter = data.filter(d=> d.sync_status == false);
+          if(filter.length > 0){
+            this.blinkStauts = true;
+          }
+        }
+      })
+    }
   }
     
 }

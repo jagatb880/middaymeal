@@ -1,5 +1,5 @@
 ion-content {
-  --ion-background-color: #ffffff;
+  --background: url(../../../assets/icon/dashboard_bg.jpg) 0 0/100% 100% no-repeat;
 }
 
 .crd {
@@ -14,3 +14,55 @@ ion-content {
     align-items: center;
     height: 33vw;
 }
+
+.sync-from-server{
+  // background: #FFFFFF;
+  // box-shadow: 3px 0px 10px rgba(72, 69, 230, 0.1);
+  // border-radius: 8px;
+  // border: 1px solid black;
+  font-weight: 500;
+  color: #462D2D;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.sync-to-server{
+  background: #FFFFFF;
+  // box-shadow: 3px 0px 10px rgba(72, 69, 230, 0.1);
+  // border-radius: 8px;
+  // border: 1px solid black;
+  font-weight: 500;
+  color: #462D2D;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.img{
+  width: 24px;
+  height: 24px;
+  margin-left: 9px;
+  margin-top: 5px;
+}
+
+.noRecords{
+  text-align: center;
+  margin-top: 108vw;
+  color: #5850F0;
+  font-size: 24px;
+}
+
+.blink {
+  animation: blink-animation 2s steps(5, start) infinite;
+  -webkit-animation: blink-animation 2s steps(5, start) infinite;
+}
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+

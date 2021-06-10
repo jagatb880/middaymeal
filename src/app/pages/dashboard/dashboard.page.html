@@ -8,24 +8,26 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngIf="sharedSvc.teacherRole" class="crd">
-    <ion-card-content class="crdcntn">
-      <p style="font-size: 23px;" (click)="studentAttendance()">Student Attendance</p>
-    </ion-card-content>
-  </ion-card>
-  <!-- <ion-card class="crd">
-    <ion-card-content class="crdcntn">
-      <p style="font-size: 23px;">Teacher attendance</p>
-    </ion-card-content>
-  </ion-card> -->
-  <ion-card *ngIf="!sharedSvc.teacherRole" class="crd">
-    <ion-card-content class="crdcntn">
-      <p style="font-size: 23px;"  (click)="cchAttendance()">CCH Attendance</p>
-    </ion-card-content>
-  </ion-card>
-  <ion-card *ngIf="!sharedSvc.teacherRole" class="crd">
-    <ion-card-content class="crdcntn">
-      <p style="font-size: 23px;" (click)="mealmanagement()">Meal Management</p>
-    </ion-card-content>
-  </ion-card>
+  <div style="margin-top: 3vh;">
+    <ion-row>
+      <ion-col size="6">
+        <ion-card (click)="sync_from_server()">
+          <div style="display: flex;padding: 3px 0px 2px 0px;background: aliceblue">
+            <img src="../../../assets/icon/sync_from.png" class="img">
+            <div class="sync-from-server">Sync from Server</div>
+          </div>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6">
+        <ion-card (click)="sync_to_server()">
+          <div style="display: flex;padding: 3px 0px 2px 0px;background: aliceblue">
+            <img src="../../../assets/icon/sync_to.png" class="img">
+            <div class="sync-from-server"><span [ngClass]="sharedSvc.blinkStauts == true?'blink':''">Sync to Server</span></div>
+          </div>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </div>
+  
+  <h4 class="noRecords" >Welcome To MDM</h4>
 </ion-content>

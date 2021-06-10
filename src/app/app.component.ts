@@ -8,7 +8,10 @@ import { SyncDataService } from './services/sync-data.service';
 import { Storage } from '@ionic/storage';
 import { ConstantService } from './services/constant.service';
 import { ICCHRecord } from './interfaces/cchRecord';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
 
+declare var window;
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -21,12 +24,23 @@ export class AppComponent {
     public networkService: NetworkService, private router: Router,
     private location: Location, private alertCtrl: AlertController,
     private platform: Platform, public sharedSvc: SharedService,
+    private statusBar: StatusBar,
+    private splashScreen: SplashScreen,
     private syncData: SyncDataService, private storage: Storage, private networkSvc: NetworkService) {
+    window.home = this;
     this.initializeApp();
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
+      this.statusBar.styleDefault();
+
+      // let status bar overlay webview
+      this.statusBar.overlaysWebView(false);
+
+      this.statusBar.styleBlackOpaque();
+      this.splashScreen.hide();
+
       this.networkService.listenNetwork();
       this.backButtonEvent();
       this.set_data_to_sidemenu();
@@ -47,9 +61,10 @@ export class AppComponent {
 
   set_data_to_sidemenu(){
     this.storage.get(ConstantService.dbKeyNames.userDetails).then(data=>{
-      if(data!= null)
-      this.sharedSvc.userFullName = data.firstName;
-      this.sharedSvc.userEmail = data.email;
+      if(data!= null){
+        this.sharedSvc.userFullName = data.firstName;
+        this.sharedSvc.userName = data.username;
+      }
     }).catch(error=>{
       console.log(error)
     })
@@ -238,9 +253,11 @@ export class AppComponent {
               setTimeout(() => {
                 if(this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0){
                   this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noActiveRecord)
+                  this.sharedSvc.checkForDataSync();
                 }else{
                   this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.syncedRecord+this.syncData.syncSuccessCount+'<br>'+
                   ConstantService.message.failedRecord+this.syncData.syncFailedCount)
+                  this.sharedSvc.checkForDataSync();
                 }
               }, 600); 
             })
@@ -288,7 +305,6 @@ export class AppComponent {
     //   this.sharedSvc.showMessage(ConstantService.message.wentWrong)
     // });
     if(this.networkSvc.online){
-      debugger;
       this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(cchData=>{
         if(cchData == null){
           this.storage.get(ConstantService.dbKeyNames.mealManagementRecord).then(mealManagementData=>{
@@ -367,12 +383,14 @@ export class AppComponent {
       if(this.syncData.syncSuccessCountForCch == 0 && this.syncData.syncFailedCountForCch == 0 &&
         this.syncData.syncSuccessCountForMMData == 0 && this.syncData.syncFailedCountForMMData == 0){
         this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noActiveRecord)
+        this.sharedSvc.checkForDataSync();
       }else{
         this.sharedSvc.showAlert(ConstantService.message.info,
         ConstantService.message.syncedRecordForCch+this.syncData.syncSuccessCountForCch+'<br>'+
         ConstantService.message.failedRecordForCch+this.syncData.syncFailedCountForCch+'<br>'+
         ConstantService.message.syncedRecordForMM+this.syncData.syncSuccessCountForMMData+'<br>'+
         ConstantService.message.failedRecordForMM+this.syncData.syncFailedCountForMMData)
+        this.sharedSvc.checkForDataSync();
       }
     }, 600); 
   }
@@ -416,7 +434,6 @@ export class AppComponent {
           this.sharedSvc.userName = userDatas[index].username;
           this.sharedSvc.schoolId = userDatas[index].schoolId;
           this.sharedSvc.userFullName = userDatas[index].firstName;
-          this.sharedSvc.userEmail = userDatas[index].email;
           if(userDatas[index].roleCode == 'ROLE_TEACHER')
           this.sharedSvc.teacherRole = true
           else

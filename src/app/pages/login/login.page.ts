@@ -114,7 +114,7 @@ export class LoginPage implements OnInit {
                   this.sharedSvc.userName = userDatas[index].username;
                   this.sharedSvc.schoolId = userDatas[index].schoolId;
                   this.sharedSvc.userFullName = userDatas[index].firstName;
-                  this.sharedSvc.userEmail = userDatas[index].email;
+                  this.sharedSvc.userName = userDatas[index].username;
                   if(userDatas[index].roleCode == 'ROLE_TEACHER')
                   this.sharedSvc.teacherRole = true
                   else
@@ -191,7 +191,7 @@ export class LoginPage implements OnInit {
         }
         userData['loginStatus'] = true;
         this.sharedSvc.userFullName = userData.firstName;
-        this.sharedSvc.userEmail = userData.email;
+        this.sharedSvc.userName = userData.username;
         this.sharedSvc.schoolId = userData.schoolId
         if (userData.roleCode == 'ROLE_TEACHER')
           this.sharedSvc.teacherRole = true
@@ -211,7 +211,7 @@ export class LoginPage implements OnInit {
         userDatas.push(userData)
         this.storage.set(ConstantService.dbKeyNames.userDetails, userDatas).then(data => {
           this.sharedSvc.userFullName = data[0].firstName;
-          this.sharedSvc.userEmail = data[0].email;
+          this.sharedSvc.userName = data[0].username;
           this.sharedSvc.schoolId = userData.schoolId
           if (userData.roleCode == 'ROLE_TEACHER')
             this.sharedSvc.teacherRole = true

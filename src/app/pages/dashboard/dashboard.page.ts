@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
-import { ConstantService } from 'src/app/services/constant.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { ConstantService } from 'src/app/services/constant.service';
 
+declare var window;
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
@@ -15,33 +16,19 @@ export class DashboardPage implements OnInit {
   constructor(private router: Router,private storage: Storage, public sharedSvc: SharedService) { }
 
   ngOnInit() {
+    this.sharedSvc.blinkStauts = false
   }
 
-  studentAttendance(){
-    this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
-      if(data == null){
-        this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noStudentRecord)
-      }else{
-        this.router.navigate(['student-attendance'])
-      }
-    })
+  ionViewWillEnter(){
+    this.sharedSvc.blinkStauts = false
+    this.sharedSvc.checkForDataSync();
   }
-  mealmanagement(){
-    this.storage.get(ConstantService.dbKeyNames.mealManagementData).then(data=>{
-      if(data == null){
-        this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noMealManagementRecord)
-      }else{
-        this.router.navigate(['meal-management'])
-      }
-    })
+
+  sync_to_server(){
+    window.home.syncToServer();
   }
-  cchAttendance(){
-    this.storage.get(ConstantService.dbKeyNames.cchData).then(data=>{
-      if(data == null){
-        this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noCCHRecord)
-      }else{
-        this.router.navigate(['cch-attendance'])
-      }
-    })
+
+  sync_from_server(){
+    window.home.syncFromServer();
   }
 }

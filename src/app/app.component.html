@@ -4,16 +4,14 @@
       <ion-content>
         <ion-list id="inbox-list" class="ion-no-padding">
           <div class="menu-header">
-            <ion-avatar>
-              <img src="assets/icons/profile.png">
-            </ion-avatar>
-            <p>{{sharedSvc.userFullName}}</p>
-            <p>{{sharedSvc.userEmail}}</p>
+            <p style="text-transform: none;">{{sharedSvc.userFullName}}</p>
+            <p>{{sharedSvc.userName}}</p>
           </div>
           <div class="menu-list">
             <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
-              <ion-item *ngIf="p.show" routerDirection="root" lines="none" detail="false" routerLinkActive="selected" (click)="open(p.title)">
+              <ion-item *ngIf="p.show" class="ion-activatable" routerDirection="root" lines="none" detail="false" routerLinkActive="selected" (click)="open(p.title)">
                 <ion-label>{{ p.title }}</ion-label>
+                <ion-ripple-effect></ion-ripple-effect>
               </ion-item>
             </ion-menu-toggle>
           </div>

@@ -15,6 +15,8 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 import { NgCalendarModule  } from 'ionic2-calendar';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,6 +37,8 @@ import { NgCalendarModule  } from 'ionic2-calendar';
       registrationStrategy: 'registerWhenStable:30000'
     })],
   providers: [
+    StatusBar,
+    SplashScreen,
     Network,
     DatePipe,
     Camera,
