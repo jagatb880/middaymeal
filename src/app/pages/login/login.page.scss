@@ -1,6 +1,34 @@
 ion-content {
   --ion-background-color: #ffffff;
 }
+.dvtag{
+  margin-top: -4vh;padding-left: 5vh;
+}
+
+.fastitem{--background: #e5e5e5;
+  --border-style: none;
+  margin-top: 18px;
+  --border-radius: 13px;
+}
+.item-interactive.item-has-focus{--highlight-background: none}
+
+
+  .numberinput{color: black;
+    --placeholder-color: black;
+    --placeholder-opacity: none;margin-left: 8px;}
+
+.departmentschool{
+    color: yellow;
+    margin: 0;
+    font-size: 14px;
+    font-family: auto;
+}
+
+.mdmtag{
+    font-size: 49px;
+    font-weight: 400;
+    margin: 0;
+}
 
 .ptag {
   margin-top: 15vh;

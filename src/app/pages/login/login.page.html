@@ -1,22 +1,33 @@
 <ion-content>
-  <div style="width: 100%;background-image: url('../../../assets/icon/login-top-bg.png');
-  background-size: cover;height: 36%;">
+  <div style="width: 100%;background: url('../../../assets/icon/login-top-bg.png');
+  background-size: cover;height: 41%;">
+      <img src="assets/icon/app_logo.png" style="margin: 6vh 0 0 38vh;">
+      <div  class="dvtag">
+            <p class="mdmtag">MDM</p>
+            <p class="departmentschool">Department of School & Mass Education</p>
+      </div>
+      
   </div>
+  
 <div class="ptag">
-  <div style="margin-top: 45px;">
+  <!-- <div style="margin-top: 45px;">
     <ion-label class="lbl">User name</ion-label>
-  </div>
-  <ion-item >
-    <!-- <ion-label>User name</ion-label> -->
+  </div> -->
+  <ion-item class="fastitem" >
+    <ion-input class="numberinput" type="tel" placeholder="User Id" [(ngModel)]="loginData.username"></ion-input>
+  </ion-item>
+  <!-- <ion-item >
     <ion-input placeholder="youremail@gmail.com" type="email" [(ngModel)]="loginData.username"></ion-input>
-  </ion-item>
-  <div class="dvscnd">
+  </ion-item> -->
+  <!-- <div class="dvscnd">
     <ion-label class="lbl">Password</ion-label>
-  </div>
-  <ion-item >
-    <!-- <ion-label>User name</ion-label> -->
-    <ion-input placeholder="************" type="password" [(ngModel)]="loginData.password"></ion-input>
+  </div> -->
+  <ion-item class="fastitem" >
+    <ion-input class="numberinput" type="password" placeholder="Password" [(ngModel)]="loginData.password"></ion-input>
   </ion-item>
+  <!-- <ion-item>
+    <ion-input placeholder="************" type="password" [(ngModel)]="loginData.password"></ion-input>
+  </ion-item> -->
   <!-- <p class="forgotpassword" [routerLink]="[ '/forgotpassword']">Forgot password?</p> -->
   <ion-button expand="full" (click)="login()">Sign in</ion-button>
 </div>
