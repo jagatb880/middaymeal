@@ -12,11 +12,11 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { NetworkService } from 'src/app/services/network.service';
 
 @Component({
-  selector: 'app-student-attendance',
-  templateUrl: './student-attendance.page.html',
-  styleUrls: ['./student-attendance.page.scss'],
+  selector: 'app-student-meal-attendance',
+  templateUrl: './student-meal-attendance.page.html',
+  styleUrls: ['./student-meal-attendance.page.scss'],
 })
-export class StudentAttendancePage implements OnInit {
+export class StudentMealAttendancePage implements OnInit {
 
   classList: IClass[];
   sectionList: ISection[];
@@ -27,9 +27,11 @@ export class StudentAttendancePage implements OnInit {
   maxDate: any;
   studentDataList: IClass[];
   studentRecords: IStudentRecord[];
+  studentMealRecords: IStudentRecord[];
   absentRecords: number[];
   photoCapturedDate: string;
   syncedDisabled: boolean;
+  hideView: boolean;
   totalCount: number;
   absentCount: number;
   presentCount: number;
@@ -45,8 +47,10 @@ export class StudentAttendancePage implements OnInit {
     this.currentSectionName = "";
     this.sharedSvc.imageData = undefined;
     this.studentRecords = [];
+    this.studentMealRecords = []
     this.absentRecords = [];
     this.syncedDisabled = false;
+    this.hideView = false;
     this.maxDate = this.datepipe.transform(new Date(), ConstantService.message.maxDate)
     this.fetchAllStudentData();
   }
@@ -84,6 +88,7 @@ export class StudentAttendancePage implements OnInit {
       this.currentDate = currentDate;
       this.absentRecords = [];
       this.syncedDisabled = false;
+      this.hideView = false;
       this.sharedSvc.imageData = undefined;
       this.sharedSvc.geocoderResult = undefined;
       this.photoCapturedDate = undefined;
@@ -101,41 +106,70 @@ export class StudentAttendancePage implements OnInit {
             (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
           if (fetchedStudentData.length == 0) {
             this.studentList = tempStudentList;
-            this.totalCount = studentList.length;
-            this.presentCount = studentList.length
+            this.totalCount = 0;
+            this.presentCount = 0;
+            this.hideView = true;
+            this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, secion and date.')
           } else {
-            this.absentRecords = fetchedStudentData[0].student_ids;
-            this.totalCount = studentList.length;
-            this.absentCount = this.absentRecords.length
-            this.presentCount = this.totalCount - this.absentCount
+            debugger;
+            let filterMealDatas = []
             for (let i = 0; i < studentList.length; i++) {
+              studentList[i]['hide'] = true
               for (let j = 0; j < fetchedStudentData[0].student_ids.length; j++) {
                 if (studentList[i].studentId == fetchedStudentData[0].student_ids[j]) {
                   studentList[i].attendance = false;
+                  studentList[i]['hide'] = false;
+                  filterMealDatas.push(i)
                 }
               }
             }
-            this.syncedDisabled = fetchedStudentData[0].sync_status;
-            this.sharedSvc.imageData = fetchedStudentData[0].image_base64;
-            this.sharedSvc.geocoderResult = fetchedStudentData[0].geo_coder_info;
-            this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
-            this.studentList = studentList;
-            this.storage.get(ConstantService.dbKeyNames.studentMealAttendanceData).then(studentMealDatas=>{
-              if(studentMealDatas != null){
-                let fetchedStudentMealData: IStudentRecord[] = studentMealDatas.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
-            (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
-                if(fetchedStudentMealData.length > 0){
-                  this.syncedDisabled = true;
-                  this.sharedSvc.showAlert(ConstantService.message.warning,'You are not allowed to change any student attendance, once after feeling the student meal attendance')
-                  
+            for (let i = 0; i < studentList.length; i++) {
+              for (let j = 0; j < filterMealDatas.length; j++) {
+                if(studentList[i] == filterMealDatas[j]){
+                  studentList.splice(i,1)
                 }
               }
+            }
+            this.totalCount = studentList.length-filterMealDatas.length;
+            this.absentCount = 0;
+            this.presentCount = this.totalCount - this.absentCount
+            this.storage.get(ConstantService.dbKeyNames.studentMealAttendanceData).then(mealAttendanceData=>{
+              if(mealAttendanceData == null){
+                this.studentList = studentList;
+              }else{
+                this.studentMealRecords = mealAttendanceData;
+                let fetchedStudentMealData: IStudentRecord[] = this.studentMealRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
+                  (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
+                  if (fetchedStudentMealData.length == 0) {
+                    this.studentList = studentList;
+                  }else{
+                    this.absentRecords = fetchedStudentMealData[0].student_ids;
+                    this.totalCount = studentList.length-filterMealDatas.length;
+                    this.absentCount = this.absentRecords.length
+                    this.presentCount = this.totalCount - this.absentCount
+                    for (let i = 0; i < studentList.length; i++) {
+                      for (let j = 0; j < fetchedStudentMealData[0].student_ids.length; j++) {
+                        if (studentList[i].studentId == fetchedStudentMealData[0].student_ids[j]) {
+                          studentList[i].attendance = false;
+                        }
+                      }
+                    }
+                    this.studentList = studentList;
+                    this.syncedDisabled = fetchedStudentMealData[0].sync_status;
+                    this.sharedSvc.imageData = fetchedStudentMealData[0].image_base64;
+                    this.sharedSvc.geocoderResult = fetchedStudentMealData[0].geo_coder_info;
+                    this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
+                  }
+              }
             })
+            
           }
         } else {
           this.studentList = tempStudentList;
-          this.totalCount = studentList.length;
-          this.presentCount = studentList.length
+          this.totalCount = 0;
+          this.presentCount = 0
+          this.hideView = true;
+          this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, secion and date.')
         }
       }).catch(err => {
         console.log(err)
@@ -162,27 +196,6 @@ export class StudentAttendancePage implements OnInit {
    * This method is used to show a action sheet with list of action to choose the user.
    */
   async uploadphoto() {
-    // const actionSheet = await this.actionSheetCtrl.create({
-    //   header: 'Select File Explorer',
-    //   buttons: [{
-    //     text: 'Load from File Explorer',
-    //     handler: () => {
-    //       this.sharedSvc.openGallery();
-    //     }
-    //   },
-    //   {
-    //     text: 'Use Camera',
-    //     handler: () => {
-    //       this.sharedSvc.openCamera();
-    //     }
-    //   },
-    //   {
-    //     text: 'Cancel',
-    //     role: 'cancel'
-    //   }
-    //   ]
-    // });
-    // await actionSheet.present();
     this.takeLocationPermission();
   }
 
@@ -236,10 +249,10 @@ export class StudentAttendancePage implements OnInit {
         image_base64: this.sharedSvc.imageData,
         geo_coder_info: this.sharedSvc.geocoderResult
       }
-      this.studentRecords.push(studentAttendanceData)
-      this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then((fetchedData: IStudentRecord[])=>{
+      this.studentMealRecords.push(studentAttendanceData)
+      this.storage.get(ConstantService.dbKeyNames.studentMealAttendanceData).then((fetchedData: IStudentRecord[])=>{
         if(fetchedData == null){
-          this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, this.studentRecords).then(data => {
+          this.storage.set(ConstantService.dbKeyNames.studentMealAttendanceData, this.studentMealRecords).then(data => {
             this.sharedSvc.showMessage(ConstantService.message.recordSaved)
             this.location.back();
           })
@@ -253,12 +266,12 @@ export class StudentAttendancePage implements OnInit {
             }
           }
           if(updateDataStatus){
-            this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, fetchedData).then(data => {
+            this.storage.set(ConstantService.dbKeyNames.studentMealAttendanceData, fetchedData).then(data => {
               this.sharedSvc.showMessage(ConstantService.message.recordUpdate)
               this.location.back();
             })
           }else{
-            this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, this.studentRecords).then(data => {
+            this.storage.set(ConstantService.dbKeyNames.studentMealAttendanceData, this.studentMealRecords).then(data => {
               this.sharedSvc.showMessage(ConstantService.message.recordSaved)
               this.location.back();
             })

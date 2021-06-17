@@ -114,7 +114,7 @@ export class SyncDataService {
       });
 
       if (finalizedCount == 0) {
-        resolve(syncedData);
+        resolve(studentsData);
       }
       while (finalizedCount >= 0) {
 
@@ -138,7 +138,8 @@ export class SyncDataService {
 
   sentDataToServer(studentsData: IStudentRecord[],indexServerData,acessToken){
     let promise = new Promise < any > ((resolve, reject) => {
-    let URL: string = ConstantService.baseUrl +'studentAttendance'
+    //let URL: string = ConstantService.baseUrl +'studentAttendance'
+    let URL: string = ConstantService.baseUrl +'attendance'
 
     let accessKey = [
       {
@@ -182,6 +183,7 @@ export class SyncDataService {
   }
 
   syncToServerCchData(cchsData: ICCHRecord[], acessToken: string){
+    debugger;
     let finalizedCount = 0;
     let indexServerData = 0;
     let syncedData = [];
@@ -197,7 +199,7 @@ export class SyncDataService {
       });
 
       if (finalizedCount == 0) {
-        resolve(syncedData);
+        resolve(cchsData);
       }
       while (finalizedCount >= 0) {
 

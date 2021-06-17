@@ -1,0 +1,165 @@
+ion-content {
+    --ion-background-color:#F7F8FC;
+}
+
+.body-content{
+    padding: 5px 10px 5px 10px;
+}
+
+
+ion-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    border: 1px solid #dedede;
+    background-color:#ffffff;
+    border-radius: 5px;
+}
+
+ion-icon {
+    zoom: 1.5;
+    margin-top: 7px;
+}
+
+.student-list-card {
+    background-color: white;
+    padding-left: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    padding-right: 10px;
+    box-shadow: 10px 10px #F7F8FC;
+    height: 64px;
+}
+
+.student-list-card-hide {
+    background-color: white;
+    padding-left: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    padding-right: 10px;
+    box-shadow: 10px 10px #F7F8FC;
+    height: 64px;
+    visibility: hidden;
+}
+
+.save-btn {
+    position: absolute;
+    top: 30%;
+    left: 45%;
+    color: #2264F6;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.student-name-text {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.roll-no-text {
+    font-size: 13px;
+    margin-top: 10px;
+    opacity: 0.4;
+    font-weight: 500;
+}
+
+.date-box {
+    background-color: white;
+    margin-left: 15px;
+    margin-right: 15px;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+}
+
+.upload-receipt-icon {
+    width: 22px;
+}
+
+.upload-receipt-text {
+    margin-top: 3%;
+    font-size: 14px;
+    font-weight: 500
+}
+
+.receipt-photo {
+    margin-left: 5%;
+    margin-right: 5%;
+    border: 2px solid gray
+}
+
+.delete-receipt {
+    border-radius: 8px;
+    padding: 9px 0px 9px 0px !important;
+    float: left;
+    font-size: 12px;
+    background: #2264F6;
+    color: #ffffff;
+    margin-top: 4vh;
+    width: 100%;
+    text-align: center;
+}
+
+.upload_receipt-section {
+    margin-top: 3vh;
+    margin-left: 4vw;
+    margin-right: 4vw;
+}
+
+.upload-section {
+    display: flex;
+    float: left;
+    margin-right: 3cw;
+    margin-top: 4vw;
+    margin-left: 5vw;
+    border: 2px solid lightgray;
+    padding: 4px 4px 5px 3px;
+}
+
+.upload-section-col {
+    padding: 0px;
+    margin: 15px 10px
+}
+.upload_text{position: absolute; left: 23px; top: 6px;color: white;margin: 0;padding: 0;line-height: 5px;
+font-family: 'robot',sans-serif;font-size: 12px;background-color: rgb(10, 10, 10);width: 87%;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;
+opacity: 0.5;height: 80px;font-weight: 800;}
+.fstp{margin: 0;padding: 0;margin-top: 10px;margin-left: 10px;color: white;}
+
+.total_enrolled{
+    font-size: 12px;
+    color: #180858;
+}
+
+.total_present{
+    @extend .total_enrolled;
+    margin-left: 7%;
+    color: #00CB39;
+    ;
+}
+
+.total_absent{
+    @extend .total_enrolled;
+    margin-left: 7%;
+    color: #FF3F3F;
+    ;
+}
+
+ion-toggle {
+    // --background: #006400;
+    // --background-checked: #7a49a5;
+  
+    --handle-background: #FF0000;
+    --handle-background-checked: #008000;
+}
+
+.total_number {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.hide-list{
+    visibility: hidden;
+}

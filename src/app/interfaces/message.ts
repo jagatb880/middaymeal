@@ -45,6 +45,7 @@ export interface IMessages {
     syncFromServer: string,
     syncToServer: string,
     sudentAttendance: string,
+    sudentMealAttendance: string,
     cchAttendance: string,
     mealManagement: string,
     changePassword: string,

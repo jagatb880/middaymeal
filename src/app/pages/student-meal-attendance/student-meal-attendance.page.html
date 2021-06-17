@@ -1,0 +1,96 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Student Meal Attendance</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row class="body-content">
+    <ion-col size=6>
+      <!-- <ion-item lines="none"> -->
+      <ion-select [(ngModel)]="currentClassName" placeholder="Class list" (ionChange)="selectClass()">
+        <!-- <ion-label position="fixed">Class List</ion-label> -->
+        <ion-select-option *ngFor="let class of classList" [value]="class.className">
+          {{class.className}}
+        </ion-select-option>
+      </ion-select>
+      <!-- </ion-item> -->
+    </ion-col>
+    <ion-col size=6>
+      <!-- <ion-item lines="none"> -->
+      <ion-select [disabled]="sectionList?.length == 0" [(ngModel)]="currentSectionName" placeholder="Section List"
+        (ionChange)="selectSection()">
+        <!-- <ion-label position="fixed">Section List</ion-label> -->
+        <ion-select-option *ngFor="let section of sectionList" [value]="section.sectionName">
+          {{section.sectionName}}
+        </ion-select-option>
+      </ion-select>
+      <!-- </ion-item> -->
+    </ion-col>
+  </ion-row>
+  <div class="date-box">
+    <ion-datetime [disabled]="!currentSectionName" displayFormat="DD-MM-YYYY" [(ngModel)]="currentDate"
+      placeholder="Choose Date" (ionChange)="changeDate(currentDate)" [max]="maxDate"></ion-datetime>
+  </div>
+  <div *ngIf="currentDate" style="margin-left: 20px;margin-top: 15px;margin-bottom: 20px;">
+    <div style="display: flex;height: 30px;">
+      <p class="total_enrolled">Total Present : {{totalCount}}</p>
+      <p class="total_present">Total Availed : {{presentCount}}</p>
+      <p class="total_absent">Total Not Availed : {{absentCount}}</p>
+    </div>
+  </div>
+  <div style="margin:15px;">
+    <ion-list *ngFor="let student of studentList" class="student-list-card" [hidden]="!student.hide">
+        <div style="width: 70%; float:left;">
+          <span class="student-name-text">{{student.studentName}}</span><br>
+          <div class="roll-no-text">Admission No: {{student.adminssionNo}}</div>
+        </div>
+        <div style="width: 30%; float:right">
+          <div style="float: right;margin-left: 30vw;margin-top: 2vw;">
+            <ion-toggle [disabled]="syncedDisabled" [(ngModel)]="student.attendance"
+              (ionChange)="switchAttendance(student.studentId,student.attendance)"></ion-toggle>
+          </div>
+        </div>
+    </ion-list>
+  </div>
+  <div *ngIf="studentList.length>0 && !hideView" class="upload-section-col">
+    <ion-row>
+      <ion-col size=6>
+        <ion-button [disabled]="syncedDisabled" expand="block" color="primary" (click)="uploadphoto()">Upload Photo
+        </ion-button>
+      </ion-col>
+      <ion-col size=6>
+        <ion-button [disabled]="syncedDisabled" *ngIf="sharedSvc.imageData != undefined" expand="block" color="primary"
+          (click)="deleteReceipt()">Delete Photo</ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+  <ion-row class="upload_receipt-section">
+    <ion-col>
+      <div *ngIf="photoCapturedDate != undefined">
+        <div *ngIf="sharedSvc.geocoderResult.subLocality == undefined" class="upload_text">
+          <p class="fstp">Lat:-{{sharedSvc.geocoderResult.latitude}}</p>
+          <p class="fstp">Long:-{{sharedSvc.geocoderResult.longitude}}</p>
+          <p class="fstp">Date:-{{photoCapturedDate}}</p>
+        </div>
+        <div *ngIf="sharedSvc.geocoderResult.subLocality != undefined" class="upload_text">
+          <p class="fstp">Lat:-{{sharedSvc.geocoderResult.latitude}}</p>
+          <p class="fstp">Long:-{{sharedSvc.geocoderResult.longitude}}</p>
+          <p class="fstp">Address:-{{sharedSvc.geocoderResult.subLocality}}, {{sharedSvc.geocoderResult.locality}}</p>
+          <p class="fstp">Date:-{{photoCapturedDate}}</p>
+        </div>
+        <ion-img class="receipt-photo" [src]="sharedSvc.imageData.src">
+        </ion-img>
+      </div>
+    </ion-col>
+  </ion-row>
+  <div></div>
+</ion-content>
+<ion-footer>
+  <div *ngIf="studentList.length>0 && !syncedDisabled && !hideView" style="height: 12vw;">
+    <span class="save-btn" (click)="saveRecord()">SAVE</span>
+  </div>
+</ion-footer>

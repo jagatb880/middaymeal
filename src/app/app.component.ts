@@ -50,6 +50,7 @@ export class AppComponent {
           { title: ConstantService.message.syncFromServer, show: true},
           { title: ConstantService.message.syncToServer, show: true},
           { title: ConstantService.message.sudentAttendance, show: this.sharedSvc.teacherRole},
+          { title: ConstantService.message.sudentMealAttendance, show: this.sharedSvc.teacherRole},
           { title: ConstantService.message.cchAttendance, show: !this.sharedSvc.teacherRole},
           { title: ConstantService.message.mealManagement, show: !this.sharedSvc.teacherRole},
           { title: ConstantService.message.changePassword, show: true},
@@ -119,6 +120,15 @@ export class AppComponent {
             this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noStudentRecord)
           }else{
             this.router.navigate(['student-attendance'])
+          }
+        })
+        break;
+      case ConstantService.message.sudentMealAttendance:
+        this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
+          if(data == null){
+            this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noStudentRecord)
+          }else{
+            this.router.navigate(['student-meal-attendance'])
           }
         })
         break;
@@ -319,6 +329,7 @@ export class AppComponent {
           this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
           this.syncData.syncToServerCchData(cchData,this.sharedSvc.accessToken).then(syncedData=>{
             if(syncedData){
+              debugger;
               this.storage.set(ConstantService.dbKeyNames.cchAttendanceData,syncedData).then(async (data)=>{
                 this.storage.get(ConstantService.dbKeyNames.mealManagementRecord).then(mealManagementData=>{
                   if(mealManagementData == null){
