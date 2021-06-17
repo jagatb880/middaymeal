@@ -12,6 +12,8 @@ export class SyncDataService {
 
   syncFailedCount: number = 0;
   syncSuccessCount: number = 0;
+  syncSMFailedCount: number = 0;
+  syncSMSuccessCount: number = 0;
   syncFailedCountForCch: number = 0;
   syncSuccessCountForCch: number = 0;
   syncFailedCountForMMData: number = 0;
@@ -98,7 +100,7 @@ export class SyncDataService {
       return promise
   }
 
-  syncToServer(studentsData: IStudentRecord[], acessToken: string){
+  syncStudentToServer(studentsData: IStudentRecord[], acessToken: string){
     let finalizedCount = 0;
     let indexServerData = 0;
     let syncedData = [];
@@ -124,7 +126,7 @@ export class SyncDataService {
         }
         finalizedCount--
         try {
-          await this.sentDataToServer(studentsData,studentDataIndex[indexServerData],acessToken);
+          await this.sentStudentDataToServer(studentsData,studentDataIndex[indexServerData],acessToken);
         } catch (err) {
           console.log(err)
           reject(false);
@@ -136,7 +138,7 @@ export class SyncDataService {
     return promise;
   }
 
-  sentDataToServer(studentsData: IStudentRecord[],indexServerData,acessToken){
+  sentStudentDataToServer(studentsData: IStudentRecord[],indexServerData,acessToken){
     let promise = new Promise < any > ((resolve, reject) => {
     //let URL: string = ConstantService.baseUrl +'studentAttendance'
     let URL: string = ConstantService.baseUrl +'attendance'
@@ -172,6 +174,90 @@ export class SyncDataService {
             studentsData[indexServerData].sync_status = true;
           }else {
             this.syncFailedCount++
+          }
+        resolve(true)
+      }, (err) => {
+        console.log(err)
+        reject(false)
+      });
+    });
+    return promise;
+  }
+
+  syncStudentMealToServer(studentsData: IStudentRecord[], acessToken: string){
+    let finalizedCount = 0;
+    let indexServerData = 0;
+    let syncedData = [];
+    this.syncSMSuccessCount = 0;
+    this.syncSMFailedCount = 0;
+    let studentDataIndex = []
+    let promise = new Promise < any > (async (resolve, reject) => {
+      await studentsData.forEach(async (studentData: IStudentRecord, index) => {
+          if(!studentData.sync_status){
+            studentDataIndex.push(index)
+            finalizedCount++;
+          }
+      });
+
+      if (finalizedCount == 0) {
+        resolve(studentsData);
+      }
+      while (finalizedCount >= 0) {
+
+        if (finalizedCount == 0) {
+          resolve(studentsData);
+          break;
+        }
+        finalizedCount--
+        try {
+          await this.sentStudentMealDataToServer(studentsData,studentDataIndex[indexServerData],acessToken);
+        } catch (err) {
+          console.log(err)
+          reject(false);
+          break;
+        }
+        indexServerData++
+      }
+    });
+    return promise;
+  }
+
+  sentStudentMealDataToServer(studentsData: IStudentRecord[],indexServerData,acessToken){
+    let promise = new Promise < any > ((resolve, reject) => {
+    let URL: string = ConstantService.baseUrl +'studentAttendance'
+    // let URL: string = ConstantService.baseUrl +'attendance'
+
+    let accessKey = [
+      {
+        "key":"token",
+        "value":acessToken
+      }
+    ]
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer'+ JSON.stringify(accessKey)
+      })
+    };
+    let data = {
+      "recordDate":this.datepipe.transform(studentsData[indexServerData].record_date,"dd-MM-YYYY HH:mm:ss"),
+      "className":studentsData[indexServerData].class_name,
+      "sectionName":studentsData[indexServerData].section_name,
+      "studentIds":studentsData[indexServerData].student_ids,
+      "syncStatus":false,
+      "image":studentsData[indexServerData].image_base64,
+      "availMeal":true
+    }
+
+      this.http.post(URL, data,httpOptions)
+      .subscribe(async (res: any)=> {
+        console.log(res)
+          if(res.outcome){
+            this.syncSMSuccessCount++
+            studentsData[indexServerData].sync_status = true;
+          }else {
+            this.syncSMFailedCount++
           }
         resolve(true)
       }, (err) => {

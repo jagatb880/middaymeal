@@ -168,7 +168,7 @@ export class StudentMealAttendancePage implements OnInit {
           this.totalCount = 0;
           this.presentCount = 0
           this.hideView = true;
-          this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, secion and date.')
+          this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, section and date.')
         }
       }).catch(err => {
         console.log(err)
@@ -236,7 +236,7 @@ export class StudentMealAttendancePage implements OnInit {
   }
 
   saveRecord() {
-    if (this.sharedSvc.imageData != undefined) {
+    if (this.sharedSvc.imageData == undefined) {
       this.sharedSvc.showAlert(ConstantService.message.warning, ConstantService.message.uploadPhoto)
     } else {
       let studentAttendanceData: IStudentRecord = {

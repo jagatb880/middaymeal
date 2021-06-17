@@ -125,9 +125,10 @@ export class StudentAttendancePage implements OnInit {
                 let fetchedStudentMealData: IStudentRecord[] = studentMealDatas.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
             (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
                 if(fetchedStudentMealData.length > 0){
-                  this.syncedDisabled = true;
-                  this.sharedSvc.showAlert(ConstantService.message.warning,'You are not allowed to change any student attendance, once after feeling the student meal attendance')
-                  
+                  if(!this.syncedDisabled){
+                    this.syncedDisabled = true;
+                    this.sharedSvc.showAlert(ConstantService.message.warning,'You are not allowed to change any student attendance, once after feeling the student meal attendance')
+                  }
                 }
               }
             })
@@ -224,7 +225,7 @@ export class StudentAttendancePage implements OnInit {
   }
 
   saveRecord() {
-    if (this.sharedSvc.imageData != undefined) {
+    if (this.sharedSvc.imageData == undefined) {
       this.sharedSvc.showAlert(ConstantService.message.warning, ConstantService.message.uploadPhoto)
     } else {
       let studentAttendanceData: IStudentRecord = {
