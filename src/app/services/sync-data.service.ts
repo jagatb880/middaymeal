@@ -183,7 +183,6 @@ export class SyncDataService {
   }
 
   syncToServerCchData(cchsData: ICCHRecord[], acessToken: string){
-    debugger;
     let finalizedCount = 0;
     let indexServerData = 0;
     let syncedData = [];

@@ -111,7 +111,6 @@ export class StudentMealAttendancePage implements OnInit {
             this.hideView = true;
             this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, secion and date.')
           } else {
-            debugger;
             let filterMealDatas = []
             for (let i = 0; i < studentList.length; i++) {
               studentList[i]['hide'] = true

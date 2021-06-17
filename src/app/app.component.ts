@@ -329,7 +329,6 @@ export class AppComponent {
           this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
           this.syncData.syncToServerCchData(cchData,this.sharedSvc.accessToken).then(syncedData=>{
             if(syncedData){
-              debugger;
               this.storage.set(ConstantService.dbKeyNames.cchAttendanceData,syncedData).then(async (data)=>{
                 this.storage.get(ConstantService.dbKeyNames.mealManagementRecord).then(mealManagementData=>{
                   if(mealManagementData == null){
