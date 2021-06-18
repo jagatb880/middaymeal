@@ -63,6 +63,8 @@ export class ConstantService {
     noActiveRecord: 'No Active record found for synced.',
     syncedRecord: 'Student record synced: ',
     failedRecord: 'Student record not synced: ',
+    syncedMealRecord: 'Meal record synced: ',
+    failedMealRecord: 'Meal record not synced: ',
     syncedRecordForCch: 'Cch record synced: ',
     failedRecordForCch: 'Cch record not synced: ',
     syncedRecordForMM: 'Meal record synced: ',

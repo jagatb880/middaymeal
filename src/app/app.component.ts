@@ -418,8 +418,8 @@ export class AppComponent {
         this.sharedSvc.showAlert(ConstantService.message.info,
         ConstantService.message.syncedRecord+this.syncData.syncSuccessCount+'<br>'+
         ConstantService.message.failedRecord+this.syncData.syncFailedCount+'<br>'+
-        ConstantService.message.syncedRecord+this.syncData.syncSMSuccessCount+'<br>'+
-        ConstantService.message.failedRecord+this.syncData.syncSMFailedCount)
+        ConstantService.message.syncedMealRecord+this.syncData.syncSMSuccessCount+'<br>'+
+        ConstantService.message.failedMealRecord+this.syncData.syncSMFailedCount)
         this.sharedSvc.checkForDataSync();
       }
     }, 600); 
