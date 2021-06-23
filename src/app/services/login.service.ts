@@ -128,14 +128,14 @@ export class LoginService {
     return promise
   }
 
-  get_user() {
+  async get_user() {
     let promise = new Promise < any > ((resolve, reject) => {
       this.storage.get(ConstantService.dbKeyNames.userDetails).then(async userDetails => {
         if(userDetails != null){
           let result = await userDetails.find(userDetail=> userDetail.username == this.sharedSvc.userName)
-          resolve(result)
+          await resolve(result)
         }else{
-          resolve(userDetails)
+          await resolve(userDetails)
         }
       }, (err) => {
         console.log(err)

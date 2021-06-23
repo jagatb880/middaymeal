@@ -21,11 +21,9 @@ export class AppComponent {
   public appPages = [];
 
   constructor(
-    public networkService: NetworkService, private router: Router,
-    private location: Location, private alertCtrl: AlertController,
-    private platform: Platform, public sharedSvc: SharedService,
-    private statusBar: StatusBar,
-    private splashScreen: SplashScreen,
+    private router: Router, private location: Location, 
+    private alertCtrl: AlertController, private platform: Platform, public sharedSvc: SharedService,
+    private statusBar: StatusBar, private splashScreen: SplashScreen,
     private syncData: SyncDataService, private storage: Storage, private networkSvc: NetworkService) {
     window.home = this;
     this.initializeApp();
@@ -40,8 +38,7 @@ export class AppComponent {
 
       this.statusBar.styleBlackOpaque();
       this.splashScreen.hide();
-
-      this.networkService.listenNetwork();
+      this.networkSvc.listenNetwork();
       this.backButtonEvent();
       this.set_data_to_sidemenu();
       this.set_school_id();

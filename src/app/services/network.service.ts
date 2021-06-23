@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Network } from '@ionic-native/network/ngx'
-import { Platform } from '@ionic/angular';
-import { SharedService } from './shared.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,43 +7,39 @@ import { SharedService } from './shared.service';
 export class NetworkService extends Network {
   public online: boolean;
 
-  constructor(
-    private platform: Platform, private sharedSvc: SharedService
-  ) {
+  constructor() {
     super();
   }
 
   listenNetwork() {
-    this.onDisconnect().subscribe(() => {
-      //this.sharedSvc.showMessage("Network disconnected!");
-      this.online = false;
-    });
+		this.onDisconnect().subscribe(() => {
+			console.log('network was disconnected');
+			console.log(this.type);
+			this.online = false;
+		});
 
-    this.onConnect().subscribe(() => {
-      this.online = true;
-    });
-    this.online = this.checkInternet();
-  }
+		this.onConnect().subscribe(() => {
+			console.log('network connected');
+      console.log(this.type);
+      if(this.type == "unknown"){
+        this.online = false;
+      }else{
+        this.online = true;
+      }
+		});
 
-  checkInternet(): boolean {
-    if (this.platform.is("cordova")) {
-      if (
-        this.type == "ethernet" ||
-        this.type == "wifi" ||
-        this.type == "2g" ||
-        this.type == "3g" ||
-        this.type == "4g" ||
-        this.type == "cellular"
-      ) {
-        return true;
-      }
-      else {
-        return false;
-      }
-    } else if (window.navigator.onLine) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+    this.online = this.check_internet();
+	}
+
+	check_internet(): boolean {
+		if (this.type == "ethernet" || this.type == "wifi" || this.type == "2g"
+    || this.type == "3g" || this.type == "4g" || this.type == "cellular") {
+			console.log("device is online");
+	 		return true;
+		}
+		else {
+			console.log("device is offline");
+			return false;
+		}
+	}
 }
