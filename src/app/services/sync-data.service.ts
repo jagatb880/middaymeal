@@ -14,6 +14,10 @@ export class SyncDataService {
   syncSuccessCount: number = 0;
   syncSMFailedCount: number = 0;
   syncSMSuccessCount: number = 0;
+  hmsyncFailedCount: number = 0;
+  hmsyncSuccessCount: number = 0;
+  hmsyncSMFailedCount: number = 0;
+  hmsyncSMSuccessCount: number = 0;
   syncFailedCountForCch: number = 0;
   syncSuccessCountForCch: number = 0;
   syncFailedCountForMMData: number = 0;

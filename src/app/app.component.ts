@@ -46,8 +46,8 @@ export class AppComponent {
         this.appPages = [
           { title: ConstantService.message.syncFromServer, show: true},
           { title: ConstantService.message.syncToServer, show: true},
-          { title: ConstantService.message.sudentAttendance, show: this.sharedSvc.teacherRole},
-          { title: ConstantService.message.sudentMealAttendance, show: this.sharedSvc.teacherRole},
+          { title: ConstantService.message.sudentAttendance, show: true},
+          { title: ConstantService.message.sudentMealAttendance, show: true},
           { title: ConstantService.message.cchAttendance, show: !this.sharedSvc.teacherRole},
           { title: ConstantService.message.mealManagement, show: !this.sharedSvc.teacherRole},
           { title: ConstantService.message.changePassword, show: true},
@@ -112,22 +112,42 @@ export class AppComponent {
         this.syncToServer();
         break;
       case ConstantService.message.sudentAttendance:
-        this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
-          if(data == null){
-            this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noStudentRecord)
-          }else{
-            this.router.navigate(['student-attendance'])
-          }
-        })
+        if(this.sharedSvc.teacherRole){
+          this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
+            if(data == null){
+              this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noStudentRecord)
+            }else{
+              this.router.navigate(['student-attendance'])
+            }
+          })
+        }else{
+          this.storage.get(ConstantService.dbKeyNames.hmstudentData).then(data=>{
+            if(data == null){
+              this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noStudentRecord)
+            }else{
+              this.router.navigate(['student-attendance'])
+            }
+          })
+        }
         break;
       case ConstantService.message.sudentMealAttendance:
-        this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
-          if(data == null){
-            this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noStudentRecord)
-          }else{
-            this.router.navigate(['student-meal-attendance'])
-          }
-        })
+        if(this.sharedSvc.teacherRole){
+          this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
+            if(data == null){
+              this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noStudentRecord)
+            }else{
+              this.router.navigate(['student-meal-attendance'])
+            }
+          })
+        }else{
+          this.storage.get(ConstantService.dbKeyNames.hmstudentData).then(data=>{
+            if(data == null){
+              this.sharedSvc.showAlert(ConstantService.message.warning,ConstantService.message.noStudentRecord)
+            }else{
+              this.router.navigate(['student-meal-attendance'])
+            }
+          })
+        }
         break;
       case ConstantService.message.cchAttendance:
         this.storage.get(ConstantService.dbKeyNames.cchData).then(data=>{
@@ -161,7 +181,7 @@ export class AppComponent {
       if(this.sharedSvc.teacherRole)
       this.studentDataSyncFromServer()
       else
-      this.cchDataSyncFromServer()
+      this.hmStudentDataSyncFromServer()
     }else{
       this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
     }
@@ -187,6 +207,33 @@ export class AppComponent {
         this.storage.set(ConstantService.dbKeyNames.studentData,response).then(data=>{
           this.sharedSvc.dismissLoader();
           this.sharedSvc.showMessage(ConstantService.message.dataSyncMsg)
+        }).catch(error=>{
+          console.log(error);
+          this.sharedSvc.dismissLoader()
+          this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+        })
+      }).catch(error=>{
+        console.log(error);
+        this.sharedSvc.dismissLoader()
+        this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+      })
+    }).catch(error=>{
+      console.log(error);
+      this.sharedSvc.dismissLoader()
+      this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+    })
+  }
+
+  hmStudentDataSyncFromServer(){
+    this.sharedSvc.showLoader(ConstantService.message.syncDataMsg)
+    this.storage.get(ConstantService.dbKeyNames.userDetails).then(userDatas=>{
+      let index = userDatas.findIndex(userData=> userData.username == this.sharedSvc.userName)
+      debugger
+      this.syncData.syncFromServer(userDatas[index].username).then(response=>{
+        if(response)
+        this.storage.set(ConstantService.dbKeyNames.hmstudentData,response).then(data=>{
+          this.sharedSvc.dismissLoader();
+          this.cchDataSyncFromServer();
         }).catch(error=>{
           console.log(error);
           this.sharedSvc.dismissLoader()
@@ -280,21 +327,26 @@ export class AppComponent {
   syncStudentMealDataToServer(token){
     let studentMealDataForSync = []
     this.storage.get(ConstantService.dbKeyNames.studentMealAttendanceData).then(studentMealData=>{
-      studentMealData.forEach((mealData: any) => {
-        studentMealDataForSync.push(mealData)
-      });
-      this.syncData.syncStudentMealToServer(studentMealDataForSync,token).then(syncedData=>{
-        if(syncedData){
-            this.storage.set(ConstantService.dbKeyNames.studentMealAttendanceData,syncedData).then(async (data)=>{
-            this.sharedSvc.dismissLoader()
-            this.showStudentSyncedCountMsg()
-          })
-        }
-      }).catch(error=>{
-        console.log(error)
+      if(studentMealData!=undefined){
+        studentMealData.forEach((mealData: any) => {
+          studentMealDataForSync.push(mealData)
+        });
+        this.syncData.syncStudentMealToServer(studentMealDataForSync,token).then(syncedData=>{
+          if(syncedData){
+              this.storage.set(ConstantService.dbKeyNames.studentMealAttendanceData,syncedData).then(async (data)=>{
+              this.sharedSvc.dismissLoader()
+              this.showStudentSyncedCountMsg()
+            })
+          }
+        }).catch(error=>{
+          console.log(error)
+          this.sharedSvc.dismissLoader()
+          this.sharedSvc.showMessage(ConstantService.message.wentWrong)
+        })
+      }else{
         this.sharedSvc.dismissLoader()
-        this.sharedSvc.showMessage(ConstantService.message.wentWrong)
-      })
+        this.showStudentSyncedCountMsg()
+      }
     }).catch(error=>{
       console.log(error)
       this.sharedSvc.dismissLoader()

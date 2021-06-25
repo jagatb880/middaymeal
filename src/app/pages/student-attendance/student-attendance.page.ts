@@ -33,10 +33,12 @@ export class StudentAttendancePage implements OnInit {
   totalCount: number;
   absentCount: number;
   presentCount: number;
+  studentFetchData: any;
+  studentSavedData: any;
   constructor(private datepipe: DatePipe, public sharedSvc: SharedService, private diagnostic: Diagnostic,
     private platform: Platform, private storage: Storage, private location: Location,
     private networkSvc: NetworkService, private changeDeector: ChangeDetectorRef) {
-    }
+  }
 
   ngOnInit() {
     this.studentList = [];
@@ -48,13 +50,23 @@ export class StudentAttendancePage implements OnInit {
     this.absentRecords = [];
     this.syncedDisabled = false;
     this.maxDate = this.datepipe.transform(new Date(), ConstantService.message.maxDate)
+  }
+
+  ionViewWillEnter(){
+    if(this.sharedSvc.teacherRole){
+      this.studentFetchData = ConstantService.dbKeyNames.studentData;
+      this.studentSavedData = ConstantService.dbKeyNames.studentAttendanceData;
+    }else{
+      this.studentFetchData = ConstantService.dbKeyNames.hmstudentData;
+      this.studentSavedData = ConstantService.dbKeyNames.hmstudentAttendanceData;
+    }
     this.fetchAllStudentData();
   }
 
   fetchAllStudentData(){
-    this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
+    this.storage.get(this.studentFetchData).then(data=>{
       if(data)
-      this.studentDataList = data;
+        this.studentDataList = data;
       if (this.studentDataList.length > 0) {
         this.classList = this.studentDataList
       }
@@ -93,7 +105,7 @@ export class StudentAttendancePage implements OnInit {
       let studentSection: ISection[] = this.sectionList.filter(data => data.sectionName == this.currentSectionName);
       let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].student));
       let studentList: IStudent[] = [...tempStudentList]
-      this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(attendanceData => {
+      this.storage.get(this.studentSavedData).then(attendanceData => {
         if (attendanceData != null) {
           console.log(attendanceData);
           this.studentRecords = attendanceData;
@@ -238,9 +250,9 @@ export class StudentAttendancePage implements OnInit {
         geo_coder_info: this.sharedSvc.geocoderResult
       }
       this.studentRecords.push(studentAttendanceData)
-      this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then((fetchedData: IStudentRecord[])=>{
+      this.storage.get(this.studentSavedData).then((fetchedData: IStudentRecord[])=>{
         if(fetchedData == null){
-          this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, this.studentRecords).then(data => {
+          this.storage.set(this.studentSavedData, this.studentRecords).then(data => {
             this.sharedSvc.showMessage(ConstantService.message.recordSaved)
             this.location.back();
           })
@@ -254,12 +266,12 @@ export class StudentAttendancePage implements OnInit {
             }
           }
           if(updateDataStatus){
-            this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, fetchedData).then(data => {
+            this.storage.set(this.studentSavedData, fetchedData).then(data => {
               this.sharedSvc.showMessage(ConstantService.message.recordUpdate)
               this.location.back();
             })
           }else{
-            this.storage.set(ConstantService.dbKeyNames.studentAttendanceData, this.studentRecords).then(data => {
+            this.storage.set(this.studentSavedData, this.studentRecords).then(data => {
               this.sharedSvc.showMessage(ConstantService.message.recordSaved)
               this.location.back();
             })

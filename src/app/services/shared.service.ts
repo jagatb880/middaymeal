@@ -238,6 +238,14 @@ export class SharedService {
           }
         }
       })
+      this.storage.get(ConstantService.dbKeyNames.studentMealAttendanceData).then(data=>{
+        if(data != null){
+          let filter = data.filter(d=> d.sync_status == false);
+          if(filter.length > 0){
+            this.blinkStauts = true;
+          }
+        }
+      })
     }else{
       this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(data=>{
         if(data != null){

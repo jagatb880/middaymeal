@@ -35,6 +35,9 @@ export class StudentMealAttendancePage implements OnInit {
   totalCount: number;
   absentCount: number;
   presentCount: number;
+  studentFetchData: any;
+  studentSavedData: any;
+  studentMealSavedData: any;
   constructor(private datepipe: DatePipe, public sharedSvc: SharedService, private diagnostic: Diagnostic,
     private platform: Platform, private storage: Storage, private location: Location,
     private networkSvc: NetworkService, private changeDeector: ChangeDetectorRef) {
@@ -51,12 +54,24 @@ export class StudentMealAttendancePage implements OnInit {
     this.absentRecords = [];
     this.syncedDisabled = false;
     this.hideView = false;
-    this.maxDate = this.datepipe.transform(new Date(), ConstantService.message.maxDate)
+    this.maxDate = this.datepipe.transform(new Date(), ConstantService.message.maxDate);
+  }
+
+  ionViewWillEnter(){
+    if(this.sharedSvc.teacherRole){
+      this.studentFetchData = ConstantService.dbKeyNames.studentData;
+      this.studentSavedData = ConstantService.dbKeyNames.studentAttendanceData;
+      this.studentMealSavedData = ConstantService.dbKeyNames.studentMealAttendanceData;
+    }else{
+      this.studentFetchData = ConstantService.dbKeyNames.hmstudentData;
+      this.studentSavedData = ConstantService.dbKeyNames.hmstudentAttendanceData;
+      this.studentMealSavedData = ConstantService.dbKeyNames.hmstudentMealAttendanceData;
+    }
     this.fetchAllStudentData();
   }
 
   fetchAllStudentData(){
-    this.storage.get(ConstantService.dbKeyNames.studentData).then(data=>{
+    this.storage.get(this.studentFetchData).then(data=>{
       if(data)
       this.studentDataList = data;
       if (this.studentDataList.length > 0) {
@@ -98,7 +113,7 @@ export class StudentMealAttendancePage implements OnInit {
       let studentSection: ISection[] = this.sectionList.filter(data => data.sectionName == this.currentSectionName);
       let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].student));
       let studentList: IStudent[] = [...tempStudentList]
-      this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(attendanceData => {
+      this.storage.get(this.studentSavedData).then(attendanceData => {
         if (attendanceData != null) {
           console.log(attendanceData);
           this.studentRecords = attendanceData;
@@ -132,7 +147,7 @@ export class StudentMealAttendancePage implements OnInit {
             this.totalCount = studentList.length-filterMealDatas.length;
             this.absentCount = 0;
             this.presentCount = this.totalCount - this.absentCount
-            this.storage.get(ConstantService.dbKeyNames.studentMealAttendanceData).then(mealAttendanceData=>{
+            this.storage.get(this.studentMealSavedData).then(mealAttendanceData=>{
               if(mealAttendanceData == null){
                 this.studentList = studentList;
               }else{
@@ -249,9 +264,9 @@ export class StudentMealAttendancePage implements OnInit {
         geo_coder_info: this.sharedSvc.geocoderResult
       }
       this.studentMealRecords.push(studentAttendanceData)
-      this.storage.get(ConstantService.dbKeyNames.studentMealAttendanceData).then((fetchedData: IStudentRecord[])=>{
+      this.storage.get(this.studentMealSavedData).then((fetchedData: IStudentRecord[])=>{
         if(fetchedData == null){
-          this.storage.set(ConstantService.dbKeyNames.studentMealAttendanceData, this.studentMealRecords).then(data => {
+          this.storage.set(this.studentMealSavedData, this.studentMealRecords).then(data => {
             this.sharedSvc.showMessage(ConstantService.message.recordSaved)
             this.location.back();
           })
@@ -265,12 +280,12 @@ export class StudentMealAttendancePage implements OnInit {
             }
           }
           if(updateDataStatus){
-            this.storage.set(ConstantService.dbKeyNames.studentMealAttendanceData, fetchedData).then(data => {
+            this.storage.set(this.studentMealSavedData, fetchedData).then(data => {
               this.sharedSvc.showMessage(ConstantService.message.recordUpdate)
               this.location.back();
             })
           }else{
-            this.storage.set(ConstantService.dbKeyNames.studentMealAttendanceData, this.studentMealRecords).then(data => {
+            this.storage.set(this.studentMealSavedData, this.studentMealRecords).then(data => {
               this.sharedSvc.showMessage(ConstantService.message.recordSaved)
               this.location.back();
             })
