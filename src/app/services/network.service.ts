@@ -20,12 +20,11 @@ export class NetworkService extends Network {
 
 		this.onConnect().subscribe(() => {
 			console.log('network connected');
-      console.log(this.type);
-      if(this.type == "unknown"){
-        this.online = false;
-      }else{
-        this.online = true;
-      }
+			if(this.type == "unknown"){
+				this.online = false;
+			}else{
+				this.online = true;
+			}
 		});
 
     this.online = this.check_internet();
@@ -37,8 +36,9 @@ export class NetworkService extends Network {
 			console.log("device is online");
 	 		return true;
 		}
-		else {
-			console.log("device is offline");
+		else if (window.navigator.onLine) {
+			return true;
+		} else {
 			return false;
 		}
 	}

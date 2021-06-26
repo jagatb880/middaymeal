@@ -20,6 +20,8 @@ declare var window;
 export class AppComponent {
   public appPages = [];
 
+  studentSavedData: any;
+  studentMealSavedData: any;
   constructor(
     private router: Router, private location: Location, 
     private alertCtrl: AlertController, private platform: Platform, public sharedSvc: SharedService,
@@ -187,17 +189,6 @@ export class AppComponent {
     }
   }
 
-  syncToServer(){
-    if(this.networkSvc.online){
-      if(this.sharedSvc.teacherRole)
-      this.syncStudentDataToServer(this.sharedSvc.accessToken)
-      else
-      this.syncCchDataToServer(this.sharedSvc.accessToken)
-    }else{
-      this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
-    }
-  }
-
   studentDataSyncFromServer(){
     this.sharedSvc.showLoader(ConstantService.message.syncDataMsg)
     this.storage.get(ConstantService.dbKeyNames.userDetails).then(userDatas=>{
@@ -228,7 +219,6 @@ export class AppComponent {
     this.sharedSvc.showLoader(ConstantService.message.syncDataMsg)
     this.storage.get(ConstantService.dbKeyNames.userDetails).then(userDatas=>{
       let index = userDatas.findIndex(userData=> userData.username == this.sharedSvc.userName)
-      debugger
       this.syncData.syncFromServer(userDatas[index].username).then(response=>{
         if(response)
         this.storage.set(ConstantService.dbKeyNames.hmstudentData,response).then(data=>{
@@ -256,8 +246,6 @@ export class AppComponent {
     this.syncData.syncCchDataFromServer(this.sharedSvc.schoolId,this.sharedSvc.accessToken).then(data=>{
       if(data)
       this.storage.set(ConstantService.dbKeyNames.cchData,data[0].cch_details).then(()=>{
-        // this.sharedSvc.dismissLoader();
-        // this.sharedSvc.showMessage(ConstantService.message.dataSyncMsg)
         this.mealManagementSyncFromServer()
       }).catch(error=>{
         console.log(error)
@@ -289,22 +277,35 @@ export class AppComponent {
     })
   }
 
+  syncToServer(){
+    if(this.networkSvc.online){
+      if(this.sharedSvc.teacherRole){
+        this.studentSavedData = ConstantService.dbKeyNames.studentAttendanceData
+        this.studentMealSavedData = ConstantService.dbKeyNames.studentMealAttendanceData
+      }else{
+        this.studentSavedData = ConstantService.dbKeyNames.hmstudentAttendanceData
+        this.studentMealSavedData = ConstantService.dbKeyNames.hmstudentMealAttendanceData
+      }
+      this.syncStudentDataToServer(this.sharedSvc.accessToken)
+    }else{
+      this.sharedSvc.showMessage(ConstantService.message.checkInternetConnection)
+    }
+  }
+
   syncStudentDataToServer(token: string){
     if(this.networkSvc.online){
       this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
       let studentDataForSync = []
-      this.storage.get(ConstantService.dbKeyNames.studentAttendanceData).then(studentDatas=>{
+      this.storage.get(this.studentSavedData).then(studentDatas=>{
         if(studentDatas == null){
-          this.sharedSvc.dismissLoader()
-          this.showSyncedCountMsg();  
+          this.syncStudentMealDataToServer(token);  
         }else{
           studentDatas.forEach((cchData: ICCHRecord) => {
             studentDataForSync.push(cchData)
           });
           this.syncData.syncStudentToServer(studentDataForSync,token).then(syncedData=>{
             if(syncedData){
-                this.storage.set(ConstantService.dbKeyNames.studentAttendanceData,syncedData).then(async (data)=>{
-                this.sharedSvc.dismissLoader()
+                this.storage.set(this.studentSavedData,syncedData).then(async (data)=>{
                 this.syncStudentMealDataToServer(token);
               })
             }
@@ -326,16 +327,20 @@ export class AppComponent {
 
   syncStudentMealDataToServer(token){
     let studentMealDataForSync = []
-    this.storage.get(ConstantService.dbKeyNames.studentMealAttendanceData).then(studentMealData=>{
-      if(studentMealData!=undefined){
+    this.storage.get(this.studentMealSavedData).then(studentMealData=>{
+      if(studentMealData != null){
         studentMealData.forEach((mealData: any) => {
           studentMealDataForSync.push(mealData)
         });
         this.syncData.syncStudentMealToServer(studentMealDataForSync,token).then(syncedData=>{
           if(syncedData){
-              this.storage.set(ConstantService.dbKeyNames.studentMealAttendanceData,syncedData).then(async (data)=>{
-              this.sharedSvc.dismissLoader()
-              this.showStudentSyncedCountMsg()
+              this.storage.set(this.studentMealSavedData,syncedData).then(async (data)=>{
+                if(this.sharedSvc.teacherRole){
+                  this.sharedSvc.dismissLoader()
+                  this.showStudentSyncedCountMsg()
+                }else{
+                  this.syncCchDataToServer()
+                }
             })
           }
         }).catch(error=>{
@@ -344,8 +349,12 @@ export class AppComponent {
           this.sharedSvc.showMessage(ConstantService.message.wentWrong)
         })
       }else{
-        this.sharedSvc.dismissLoader()
-        this.showStudentSyncedCountMsg()
+        if(this.sharedSvc.teacherRole){
+          this.sharedSvc.dismissLoader()
+          this.showStudentSyncedCountMsg()
+        }else{
+          this.syncCchDataToServer()
+        }
       }
     }).catch(error=>{
       console.log(error)
@@ -354,48 +363,21 @@ export class AppComponent {
     });
   }
 
-  syncCchDataToServer(token: string){
-    // this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
-    // let cchDataForSync = []
-    // this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(cchDatas=>{
-    //   if(cchDatas == null){
-    //     this.sharedSvc.dismissLoader()
-    //     this.showSyncedCountMsg();  
-    //   }else{
-    //     cchDatas.forEach((cchData: ICCHRecord) => {
-    //       cchDataForSync.push(cchData)
-    //     });
-    //     this.syncData.syncToServerCchData(cchDataForSync,token).then(syncedData=>{
-    //       if(syncedData){
-    //         this.storage.set(ConstantService.dbKeyNames.cchAttendanceData,syncedData).then(async (data)=>{
-    //         this.sharedSvc.dismissLoader()
-    //           this.showSyncedCountMsg();
-    //         })
-    //       }
-    //     }).catch(error=>{
-    //       console.log(error)
-    //       this.sharedSvc.dismissLoader()
-    //       this.sharedSvc.showMessage(ConstantService.message.wentWrong)
-    //     })
-    //   }
-    // }).catch(error=>{
-    //   console.log(error)
-    //   this.sharedSvc.dismissLoader()
-    //   this.sharedSvc.showMessage(ConstantService.message.wentWrong)
-    // });
+  syncCchDataToServer(){
     if(this.networkSvc.online){
       this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(cchData=>{
         if(cchData == null){
           this.storage.get(ConstantService.dbKeyNames.mealManagementRecord).then(mealManagementData=>{
             if(mealManagementData == null){
-              this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noDataToSync)
+              this.sharedSvc.dismissLoader()
+              this.showSyncedCountMsg();
             }else{
-              this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
+              //this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
               this.syncMealManagementDataToServer(this.sharedSvc.accessToken)
             }
           });
         }else{
-          this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
+          //this.sharedSvc.showLoader(ConstantService.message.syncDataToServer)
           this.syncData.syncToServerCchData(cchData,this.sharedSvc.accessToken).then(syncedData=>{
             if(syncedData){
               this.storage.set(ConstantService.dbKeyNames.cchAttendanceData,syncedData).then(async (data)=>{
@@ -430,10 +412,6 @@ export class AppComponent {
   syncMealManagementDataToServer(token){
     let mealManagementDataForSync = []
     this.storage.get(ConstantService.dbKeyNames.mealManagementRecord).then(mealManagementData=>{
-      // if(mealManagementData == null){
-      //   this.sharedSvc.dismissLoader()
-      //   this.showSyncedCountMsg();  
-      // }else{
         mealManagementData.forEach((mealData: any) => {
           mealManagementDataForSync.push(mealData)
         });
@@ -449,7 +427,6 @@ export class AppComponent {
           this.sharedSvc.dismissLoader()
           this.sharedSvc.showMessage(ConstantService.message.wentWrong)
         })
-      // }
     }).catch(error=>{
       console.log(error)
       this.sharedSvc.dismissLoader()
@@ -477,11 +454,17 @@ export class AppComponent {
   showSyncedCountMsg(){
     setTimeout(() => {
       if(this.syncData.syncSuccessCountForCch == 0 && this.syncData.syncFailedCountForCch == 0 &&
-        this.syncData.syncSuccessCountForMMData == 0 && this.syncData.syncFailedCountForMMData == 0){
+        this.syncData.syncSuccessCountForMMData == 0 && this.syncData.syncFailedCountForMMData == 0 &&
+        this.syncData.syncSuccessCount == 0 && this.syncData.syncFailedCount == 0 &&
+        this.syncData.syncSMSuccessCount == 0 && this.syncData.syncSMFailedCount == 0){
         this.sharedSvc.showAlert(ConstantService.message.info,ConstantService.message.noActiveRecord)
         this.sharedSvc.checkForDataSync();
       }else{
         this.sharedSvc.showAlert(ConstantService.message.info,
+        ConstantService.message.syncedRecord+this.syncData.syncSuccessCount+'<br>'+
+        ConstantService.message.failedRecord+this.syncData.syncFailedCount+'<br>'+
+        ConstantService.message.syncedMealRecord+this.syncData.syncSMSuccessCount+'<br>'+
+        ConstantService.message.failedMealRecord+this.syncData.syncSMFailedCount+'<br>'+
         ConstantService.message.syncedRecordForCch+this.syncData.syncSuccessCountForCch+'<br>'+
         ConstantService.message.failedRecordForCch+this.syncData.syncFailedCountForCch+'<br>'+
         ConstantService.message.syncedRecordForMM+this.syncData.syncSuccessCountForMMData+'<br>'+

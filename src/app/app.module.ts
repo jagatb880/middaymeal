@@ -23,10 +23,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
   entryComponents: [],
   imports: [BrowserModule, 
     IonicModule.forRoot(),
-    IonicStorageModule.forRoot({
-      name: '__myCrewMobile',
-      driverOrder: ['indexeddb' , 'websql', 'localstorage']
-    }), 
+    IonicStorageModule.forRoot(), 
     HttpClientModule,
     AppRoutingModule,
     NgCalendarModule,
