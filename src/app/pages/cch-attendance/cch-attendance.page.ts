@@ -48,47 +48,54 @@ export class CchAttendancePage implements OnInit {
 
   changeDate(currentDate){
     if (currentDate != "") {
-      this.currentDate = currentDate;
-      this.cchList = [];
-      this.absentRecords = [];
-      this.totalCount = 0;
-      this.presentCount = 0;
-      this.absentCount = 0;
-      this.syncedDisabled = false;
-      let tempCchList = JSON.parse(JSON.stringify(this.cchDataList));
-      let cchList: ICCHData[] = [...tempCchList]
-      this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(attendanceData => {
-        if (attendanceData != null) {
-          console.log(attendanceData);
-          this.cchRecords = attendanceData;
-          let fetchedCchData: ICCHRecord[] = this.cchRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)))
-          if (fetchedCchData.length == 0) {
+      let week = new Date(currentDate)
+      let weekName = week.toString().substring(0,3)
+      if(weekName != "Sun"){
+        this.currentDate = currentDate;
+        this.cchList = [];
+        this.absentRecords = [];
+        this.totalCount = 0;
+        this.presentCount = 0;
+        this.absentCount = 0;
+        this.syncedDisabled = false;
+        let tempCchList = JSON.parse(JSON.stringify(this.cchDataList));
+        let cchList: ICCHData[] = [...tempCchList]
+        this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(attendanceData => {
+          if (attendanceData != null) {
+            console.log(attendanceData);
+            this.cchRecords = attendanceData;
+            let fetchedCchData: ICCHRecord[] = this.cchRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)))
+            if (fetchedCchData.length == 0) {
+              this.cchList = tempCchList;
+              this.totalCount = cchList.length;
+              this.presentCount = cchList.length
+            } else {
+              this.absentRecords = fetchedCchData[0].cch_ids;
+              this.totalCount = cchList.length;
+              this.absentCount = this.absentRecords.length
+              this.presentCount = this.totalCount - this.absentCount
+              for (let i = 0; i < cchList.length; i++) {
+                for (let j = 0; j < fetchedCchData[0].cch_ids.length; j++) {
+                  if (cchList[i].cchId == fetchedCchData[0].cch_ids[j]) {
+                    cchList[i].attendance = false;
+                  }
+                }
+              }
+              this.syncedDisabled = fetchedCchData[0].sync_status;
+              this.cchList = cchList;
+            }
+          } else {
             this.cchList = tempCchList;
             this.totalCount = cchList.length;
             this.presentCount = cchList.length
-          } else {
-            this.absentRecords = fetchedCchData[0].cch_ids;
-            this.totalCount = cchList.length;
-            this.absentCount = this.absentRecords.length
-            this.presentCount = this.totalCount - this.absentCount
-            for (let i = 0; i < cchList.length; i++) {
-              for (let j = 0; j < fetchedCchData[0].cch_ids.length; j++) {
-                if (cchList[i].cchId == fetchedCchData[0].cch_ids[j]) {
-                  cchList[i].attendance = false;
-                }
-              }
-            }
-            this.syncedDisabled = fetchedCchData[0].sync_status;
-            this.cchList = cchList;
           }
-        } else {
-          this.cchList = tempCchList;
-          this.totalCount = cchList.length;
-          this.presentCount = cchList.length
-        }
-      }).catch(err => {
-        console.log(err)
-      })
+        }).catch(err => {
+          console.log(err)
+        })
+      }else{
+        this.syncedDisabled = true;
+        this.sharedSvc.showAlert("Warning", "Sunday is off, choose other date");
+      }
     }
   }
 

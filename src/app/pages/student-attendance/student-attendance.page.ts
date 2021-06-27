@@ -93,66 +93,73 @@ export class StudentAttendancePage implements OnInit {
 
   changeDate(currentDate) {
     if (currentDate != "") {
-      this.currentDate = currentDate;
-      this.absentRecords = [];
-      this.syncedDisabled = false;
-      this.sharedSvc.imageData = undefined;
-      this.sharedSvc.geocoderResult = undefined;
-      this.photoCapturedDate = undefined;
-      this.totalCount = 0;
-      this.presentCount = 0;
-      this.absentCount = 0;
-      let studentSection: ISection[] = this.sectionList.filter(data => data.sectionName == this.currentSectionName);
-      let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].student));
-      let studentList: IStudent[] = [...tempStudentList]
-      this.storage.get(this.studentSavedData).then(attendanceData => {
-        if (attendanceData != null) {
-          console.log(attendanceData);
-          this.studentRecords = attendanceData;
-          let fetchedStudentData: IStudentRecord[] = this.studentRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
-            (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
-          if (fetchedStudentData.length == 0) {
-            this.studentList = tempStudentList;
-            this.totalCount = studentList.length;
-            this.presentCount = studentList.length
-          } else {
-            this.absentRecords = fetchedStudentData[0].student_ids;
-            this.totalCount = studentList.length;
-            this.absentCount = this.absentRecords.length
-            this.presentCount = this.totalCount - this.absentCount
-            for (let i = 0; i < studentList.length; i++) {
-              for (let j = 0; j < fetchedStudentData[0].student_ids.length; j++) {
-                if (studentList[i].studentId == fetchedStudentData[0].student_ids[j]) {
-                  studentList[i].attendance = false;
-                }
-              }
-            }
-            this.syncedDisabled = fetchedStudentData[0].sync_status;
-            this.sharedSvc.imageData = fetchedStudentData[0].image_base64;
-            this.sharedSvc.geocoderResult = fetchedStudentData[0].geo_coder_info;
-            this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
-            this.studentList = studentList;
-            this.storage.get(ConstantService.dbKeyNames.studentMealAttendanceData).then(studentMealDatas=>{
-              if(studentMealDatas != null){
-                let fetchedStudentMealData: IStudentRecord[] = studentMealDatas.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
-            (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
-                if(fetchedStudentMealData.length > 0){
-                  if(!this.syncedDisabled){
-                    this.syncedDisabled = true;
-                    this.sharedSvc.showAlert(ConstantService.message.warning,'You are not allowed to change any student attendance, once after feeling the student meal attendance')
+      let week = new Date(currentDate)
+      let weekName = week.toString().substring(0,3)
+      if(weekName != "Sun"){
+        this.currentDate = currentDate;
+        this.absentRecords = [];
+        this.syncedDisabled = false;
+        this.sharedSvc.imageData = undefined;
+        this.sharedSvc.geocoderResult = undefined;
+        this.photoCapturedDate = undefined;
+        this.totalCount = 0;
+        this.presentCount = 0;
+        this.absentCount = 0;
+        let studentSection: ISection[] = this.sectionList.filter(data => data.sectionName == this.currentSectionName);
+        let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].student));
+        let studentList: IStudent[] = [...tempStudentList]
+        this.storage.get(this.studentSavedData).then(attendanceData => {
+          if (attendanceData != null) {
+            console.log(attendanceData);
+            this.studentRecords = attendanceData;
+            let fetchedStudentData: IStudentRecord[] = this.studentRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
+              (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
+            if (fetchedStudentData.length == 0) {
+              this.studentList = tempStudentList;
+              this.totalCount = studentList.length;
+              this.presentCount = studentList.length
+            } else {
+              this.absentRecords = fetchedStudentData[0].student_ids;
+              this.totalCount = studentList.length;
+              this.absentCount = this.absentRecords.length
+              this.presentCount = this.totalCount - this.absentCount
+              for (let i = 0; i < studentList.length; i++) {
+                for (let j = 0; j < fetchedStudentData[0].student_ids.length; j++) {
+                  if (studentList[i].studentId == fetchedStudentData[0].student_ids[j]) {
+                    studentList[i].attendance = false;
                   }
                 }
               }
-            })
+              this.syncedDisabled = fetchedStudentData[0].sync_status;
+              this.sharedSvc.imageData = fetchedStudentData[0].image_base64;
+              this.sharedSvc.geocoderResult = fetchedStudentData[0].geo_coder_info;
+              this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
+              this.studentList = studentList;
+              this.storage.get(ConstantService.dbKeyNames.studentMealAttendanceData).then(studentMealDatas=>{
+                if(studentMealDatas != null){
+                  let fetchedStudentMealData: IStudentRecord[] = studentMealDatas.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
+              (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
+                  if(fetchedStudentMealData.length > 0){
+                    if(!this.syncedDisabled){
+                      this.syncedDisabled = true;
+                      this.sharedSvc.showAlert(ConstantService.message.warning,'You are not allowed to change any student attendance, once after feeling the student meal attendance')
+                    }
+                  }
+                }
+              })
+            }
+          } else {
+            this.studentList = tempStudentList;
+            this.totalCount = studentList.length;
+            this.presentCount = studentList.length
           }
-        } else {
-          this.studentList = tempStudentList;
-          this.totalCount = studentList.length;
-          this.presentCount = studentList.length
-        }
-      }).catch(err => {
-        console.log(err)
-      })
+        }).catch(err => {
+          console.log(err)
+        })
+      }else{
+        this.syncedDisabled = true;
+        this.sharedSvc.showAlert("Warning", "Sunday is off, choose other date");
+      }
     }
   }
 

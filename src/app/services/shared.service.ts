@@ -247,6 +247,22 @@ export class SharedService {
         }
       })
     }else{
+      this.storage.get(ConstantService.dbKeyNames.hmstudentAttendanceData).then(data=>{
+        if(data != null){
+          let filter = data.filter(d=> d.sync_status == false);
+          if(filter.length > 0){
+            this.blinkStauts = true;
+          }
+        }
+      })
+      this.storage.get(ConstantService.dbKeyNames.hmstudentMealAttendanceData).then(data=>{
+        if(data != null){
+          let filter = data.filter(d=> d.sync_status == false);
+          if(filter.length > 0){
+            this.blinkStauts = true;
+          }
+        }
+      })
       this.storage.get(ConstantService.dbKeyNames.cchAttendanceData).then(data=>{
         if(data != null){
           let filter = data.filter(d=> d.sync_status == false);

@@ -100,94 +100,101 @@ export class StudentMealAttendancePage implements OnInit {
 
   changeDate(currentDate) {
     if (currentDate != "") {
-      this.currentDate = currentDate;
-      this.absentRecords = [];
-      this.syncedDisabled = false;
-      this.hideView = false;
-      this.sharedSvc.imageData = undefined;
-      this.sharedSvc.geocoderResult = undefined;
-      this.photoCapturedDate = undefined;
-      this.totalCount = 0;
-      this.presentCount = 0;
-      this.absentCount = 0;
-      let studentSection: ISection[] = this.sectionList.filter(data => data.sectionName == this.currentSectionName);
-      let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].student));
-      let studentList: IStudent[] = [...tempStudentList]
-      this.storage.get(this.studentSavedData).then(attendanceData => {
-        if (attendanceData != null) {
-          console.log(attendanceData);
-          this.studentRecords = attendanceData;
-          let fetchedStudentData: IStudentRecord[] = this.studentRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
-            (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
-          if (fetchedStudentData.length == 0) {
-            this.studentList = tempStudentList;
-            this.totalCount = 0;
-            this.presentCount = 0;
-            this.hideView = true;
-            this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, secion and date.')
-          } else {
-            let filterMealDatas = []
-            for (let i = 0; i < studentList.length; i++) {
-              studentList[i]['hide'] = true
-              for (let j = 0; j < fetchedStudentData[0].student_ids.length; j++) {
-                if (studentList[i].studentId == fetchedStudentData[0].student_ids[j]) {
-                  studentList[i].attendance = false;
-                  studentList[i]['hide'] = false;
-                  filterMealDatas.push(i)
+      let week = new Date(currentDate)
+      let weekName = week.toString().substring(0,3)
+      if(weekName != "Sun"){
+        this.currentDate = currentDate;
+        this.absentRecords = [];
+        this.syncedDisabled = false;
+        this.hideView = false;
+        this.sharedSvc.imageData = undefined;
+        this.sharedSvc.geocoderResult = undefined;
+        this.photoCapturedDate = undefined;
+        this.totalCount = 0;
+        this.presentCount = 0;
+        this.absentCount = 0;
+        let studentSection: ISection[] = this.sectionList.filter(data => data.sectionName == this.currentSectionName);
+        let tempStudentList = JSON.parse(JSON.stringify(studentSection[0].student));
+        let studentList: IStudent[] = [...tempStudentList]
+        this.storage.get(this.studentSavedData).then(attendanceData => {
+          if (attendanceData != null) {
+            console.log(attendanceData);
+            this.studentRecords = attendanceData;
+            let fetchedStudentData: IStudentRecord[] = this.studentRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
+              (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
+            if (fetchedStudentData.length == 0) {
+              this.studentList = tempStudentList;
+              this.totalCount = 0;
+              this.presentCount = 0;
+              this.hideView = true;
+              this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, secion and date.')
+            } else {
+              let filterMealDatas = []
+              for (let i = 0; i < studentList.length; i++) {
+                studentList[i]['hide'] = true
+                for (let j = 0; j < fetchedStudentData[0].student_ids.length; j++) {
+                  if (studentList[i].studentId == fetchedStudentData[0].student_ids[j]) {
+                    studentList[i].attendance = false;
+                    studentList[i]['hide'] = false;
+                    filterMealDatas.push(i)
+                  }
                 }
               }
-            }
-            for (let i = 0; i < studentList.length; i++) {
-              for (let j = 0; j < filterMealDatas.length; j++) {
-                if(studentList[i] == filterMealDatas[j]){
-                  studentList.splice(i,1)
+              for (let i = 0; i < studentList.length; i++) {
+                for (let j = 0; j < filterMealDatas.length; j++) {
+                  if(studentList[i] == filterMealDatas[j]){
+                    studentList.splice(i,1)
+                  }
                 }
               }
-            }
-            this.totalCount = studentList.length-filterMealDatas.length;
-            this.absentCount = 0;
-            this.presentCount = this.totalCount - this.absentCount
-            this.storage.get(this.studentMealSavedData).then(mealAttendanceData=>{
-              if(mealAttendanceData == null){
-                this.studentList = studentList;
-              }else{
-                this.studentMealRecords = mealAttendanceData;
-                let fetchedStudentMealData: IStudentRecord[] = this.studentMealRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
-                  (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
-                  if (fetchedStudentMealData.length == 0) {
-                    this.studentList = studentList;
-                  }else{
-                    this.absentRecords = fetchedStudentMealData[0].student_ids;
-                    this.totalCount = studentList.length-filterMealDatas.length;
-                    this.absentCount = this.absentRecords.length
-                    this.presentCount = this.totalCount - this.absentCount
-                    for (let i = 0; i < studentList.length; i++) {
-                      for (let j = 0; j < fetchedStudentMealData[0].student_ids.length; j++) {
-                        if (studentList[i].studentId == fetchedStudentMealData[0].student_ids[j]) {
-                          studentList[i].attendance = false;
+              this.totalCount = studentList.length-filterMealDatas.length;
+              this.absentCount = 0;
+              this.presentCount = this.totalCount - this.absentCount
+              this.storage.get(this.studentMealSavedData).then(mealAttendanceData=>{
+                if(mealAttendanceData == null){
+                  this.studentList = studentList;
+                }else{
+                  this.studentMealRecords = mealAttendanceData;
+                  let fetchedStudentMealData: IStudentRecord[] = this.studentMealRecords.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
+                    (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
+                    if (fetchedStudentMealData.length == 0) {
+                      this.studentList = studentList;
+                    }else{
+                      this.absentRecords = fetchedStudentMealData[0].student_ids;
+                      this.totalCount = studentList.length-filterMealDatas.length;
+                      this.absentCount = this.absentRecords.length
+                      this.presentCount = this.totalCount - this.absentCount
+                      for (let i = 0; i < studentList.length; i++) {
+                        for (let j = 0; j < fetchedStudentMealData[0].student_ids.length; j++) {
+                          if (studentList[i].studentId == fetchedStudentMealData[0].student_ids[j]) {
+                            studentList[i].attendance = false;
+                          }
                         }
                       }
+                      this.studentList = studentList;
+                      this.syncedDisabled = fetchedStudentMealData[0].sync_status;
+                      this.sharedSvc.imageData = fetchedStudentMealData[0].image_base64;
+                      this.sharedSvc.geocoderResult = fetchedStudentMealData[0].geo_coder_info;
+                      this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
                     }
-                    this.studentList = studentList;
-                    this.syncedDisabled = fetchedStudentMealData[0].sync_status;
-                    this.sharedSvc.imageData = fetchedStudentMealData[0].image_base64;
-                    this.sharedSvc.geocoderResult = fetchedStudentMealData[0].geo_coder_info;
-                    this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
-                  }
-              }
-            })
-            
+                }
+              })
+              
+            }
+          } else {
+            this.studentList = tempStudentList;
+            this.totalCount = 0;
+            this.presentCount = 0
+            this.hideView = true;
+            this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, section and date.')
           }
-        } else {
-          this.studentList = tempStudentList;
-          this.totalCount = 0;
-          this.presentCount = 0
-          this.hideView = true;
-          this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, section and date.')
-        }
-      }).catch(err => {
-        console.log(err)
-      })
+        }).catch(err => {
+          console.log(err)
+        })
+      }else{
+        this.syncedDisabled = true;
+        this.sharedSvc.showAlert("Warning", "Sunday is off, choose other date");
+      }
     }
   }
 

@@ -103,10 +103,10 @@ markDisabled: any;
   changeDate(currentDate, event) {
     event.stopPropagation();
     return false
-    this.dateSelected = false;
-    console.log(currentDate)
-    this.clearAllPreviewousValues();
-    this.setMealDataToUi(currentDate);
+    // this.dateSelected = false;
+    // console.log(currentDate)
+    // this.clearAllPreviewousValues();
+    // this.setMealDataToUi(currentDate);
   }
 
   setMealDataToUi(currentDate) {
