@@ -410,46 +410,46 @@ export class SyncDataService {
       let key2 = null;
       if(mealManagementRecord[indexServerData].status){
         let geoInfo1 = {
-          "administrativeArea": mealManagementRecord[indexServerData].stage1GeoInfo.administrativeArea,
-          "areasOfInterest": mealManagementRecord[indexServerData].stage1GeoInfo.areasOfInterest[0],
-          "countryCode": mealManagementRecord[indexServerData].stage1GeoInfo.countryCode,
-          "countryName": mealManagementRecord[indexServerData].stage1GeoInfo.countryName,
+          "administrativeArea": mealManagementRecord[indexServerData].stage1GeoInfo.administrativeArea == undefined?null:mealManagementRecord[indexServerData].stage1GeoInfo.administrativeArea,
+          "areasOfInterest": mealManagementRecord[indexServerData].stage1GeoInfo.areasOfInterest == undefined?null:mealManagementRecord[indexServerData].stage1GeoInfo.areasOfInterest[0],
+          "countryCode": mealManagementRecord[indexServerData].stage1GeoInfo.countryCode == undefined?null:mealManagementRecord[indexServerData].stage1GeoInfo.countryCode,
+          "countryName": mealManagementRecord[indexServerData].stage1GeoInfo.countryName == undefined?null:mealManagementRecord[indexServerData].stage1GeoInfo.countryName,
           "latitude": mealManagementRecord[indexServerData].stage1GeoInfo.latitude,
-          "locality": mealManagementRecord[indexServerData].stage1GeoInfo.locality,
+          "locality": mealManagementRecord[indexServerData].stage1GeoInfo.locality == undefined?null:mealManagementRecord[indexServerData].stage1GeoInfo.locality,
           "longitude": mealManagementRecord[indexServerData].stage1GeoInfo.longitude,
-          "postalCode": mealManagementRecord[indexServerData].stage1GeoInfo.postalCode,
-          "subAdministrativeArea": mealManagementRecord[indexServerData].stage1GeoInfo.subAdministrativeArea
+          "postalCode": mealManagementRecord[indexServerData].stage1GeoInfo.postalCode == undefined?null:mealManagementRecord[indexServerData].stage1GeoInfo.postalCode,
+          "subAdministrativeArea": mealManagementRecord[indexServerData].stage1GeoInfo.subAdministrativeArea == undefined?null:mealManagementRecord[indexServerData].stage1GeoInfo.subAdministrativeArea
         }
         let geoInfo2
         if(mealManagementRecord[indexServerData].stage2GeoInfo == undefined){
           geoInfo2 = null;
         }else{
           geoInfo2 = {
-            "administrativeArea": mealManagementRecord[indexServerData].stage2GeoInfo.administrativeArea,
-            "areasOfInterest": mealManagementRecord[indexServerData].stage2GeoInfo.areasOfInterest[0],
-            "countryCode": mealManagementRecord[indexServerData].stage2GeoInfo.countryCode,
-            "countryName": mealManagementRecord[indexServerData].stage2GeoInfo.countryName,
+            "administrativeArea": mealManagementRecord[indexServerData].stage2GeoInfo.administrativeArea == undefined?null:mealManagementRecord[indexServerData].stage2GeoInfo.administrativeArea,
+            "areasOfInterest": mealManagementRecord[indexServerData].stage2GeoInfo.areasOfInterest == undefined?null:mealManagementRecord[indexServerData].stage2GeoInfo.areasOfInterest[0],
+            "countryCode": mealManagementRecord[indexServerData].stage2GeoInfo.countryCode == undefined?null:mealManagementRecord[indexServerData].stage2GeoInfo.countryCode,
+            "countryName": mealManagementRecord[indexServerData].stage2GeoInfo.countryName == undefined?null:mealManagementRecord[indexServerData].stage2GeoInfo.countryName,
             "latitude": mealManagementRecord[indexServerData].stage2GeoInfo.latitude,
-            "locality": mealManagementRecord[indexServerData].stage2GeoInfo.locality,
+            "locality": mealManagementRecord[indexServerData].stage2GeoInfo.locality == undefined?null:mealManagementRecord[indexServerData].stage2GeoInfo.locality,
             "longitude": mealManagementRecord[indexServerData].stage2GeoInfo.longitude,
-            "postalCode": mealManagementRecord[indexServerData].stage2GeoInfo.postalCode,
-            "subAdministrativeArea": mealManagementRecord[indexServerData].stage2GeoInfo.subAdministrativeArea
+            "postalCode": mealManagementRecord[indexServerData].stage2GeoInfo.postalCode == undefined?null:mealManagementRecord[indexServerData].stage2GeoInfo.postalCode,
+            "subAdministrativeArea": mealManagementRecord[indexServerData].stage2GeoInfo.subAdministrativeArea == undefined?null:mealManagementRecord[indexServerData].stage2GeoInfo.subAdministrativeArea
           }
         }
         let geoInfo3
-        if(mealManagementRecord[indexServerData].stage2GeoInfo == undefined){
-          geoInfo2 = null;
+        if(mealManagementRecord[indexServerData].stage3GeoInfo == undefined){
+          geoInfo3 = null;
         }else{
           geoInfo3 = {
-            "administrativeArea": mealManagementRecord[indexServerData].stage3GeoInfo.administrativeArea,
-            "areasOfInterest": mealManagementRecord[indexServerData].stage3GeoInfo.areasOfInterest[0],
-            "countryCode": mealManagementRecord[indexServerData].stage3GeoInfo.countryCode,
-            "countryName": mealManagementRecord[indexServerData].stage3GeoInfo.countryName,
+            "administrativeArea": mealManagementRecord[indexServerData].stage3GeoInfo.administrativeArea == undefined?null:mealManagementRecord[indexServerData].stage3GeoInfo.administrativeArea,
+            "areasOfInterest": mealManagementRecord[indexServerData].stage3GeoInfo.areasOfInterest == undefined?null:mealManagementRecord[indexServerData].stage3GeoInfo.areasOfInterest[0],
+            "countryCode": mealManagementRecord[indexServerData].stage3GeoInfo.countryCode == undefined?null:mealManagementRecord[indexServerData].stage3GeoInfo.countryCode,
+            "countryName": mealManagementRecord[indexServerData].stage3GeoInfo.countryName == undefined?null:mealManagementRecord[indexServerData].stage3GeoInfo.countryName,
             "latitude": mealManagementRecord[indexServerData].stage3GeoInfo.latitude,
-            "locality": mealManagementRecord[indexServerData].stage3GeoInfo.locality,
+            "locality": mealManagementRecord[indexServerData].stage3GeoInfo.locality == undefined?null:mealManagementRecord[indexServerData].stage3GeoInfo.locality,
             "longitude": mealManagementRecord[indexServerData].stage3GeoInfo.longitude,
-            "postalCode": mealManagementRecord[indexServerData].stage3GeoInfo.postalCode,
-            "subAdministrativeArea": mealManagementRecord[indexServerData].stage3GeoInfo.subAdministrativeArea
+            "postalCode": mealManagementRecord[indexServerData].stage3GeoInfo.postalCode == undefined?null:mealManagementRecord[indexServerData].stage3GeoInfo.postalCode,
+            "subAdministrativeArea": mealManagementRecord[indexServerData].stage3GeoInfo.subAdministrativeArea == undefined?null:mealManagementRecord[indexServerData].stage3GeoInfo.subAdministrativeArea,
           }
         }
         
