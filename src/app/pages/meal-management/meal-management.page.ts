@@ -115,7 +115,9 @@ markDisabled: any;
     this.selectedWeek = this.datepipe.transform(this.currentDate, 'full').split(',')[0].trim();
     if (this.selectedWeek == 'Sunday') {
       this.syncDisabled = true;
-      this.sharedSvc.showAlert("Warning", "Sunday is off, choose other date");
+      this.sharedSvc.showAlertCallBack("Warning", "Sunday is off, choose other date").then(data=>{
+        this.openCalender()
+      });
     } else {
       if (this.menuList != undefined)
         this.menuList.forEach(menu => {

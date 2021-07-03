@@ -17,6 +17,8 @@ import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 import { NgCalendarModule  } from 'ionic2-calendar';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -42,6 +44,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
     Geolocation,
     Diagnostic,
     NativeGeocoder,
+    AndroidPermissions,
+    LocationAccuracy,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })

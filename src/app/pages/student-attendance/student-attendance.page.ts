@@ -220,7 +220,7 @@ export class StudentAttendancePage implements OnInit {
             }
           })
         } else {
-          this.sharedSvc.openCamera(this.networkSvc.online).then(data=>{
+          this.sharedSvc.chckAppGpsPermission(this.networkSvc.online).then(data=>{
             this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
             console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
           }).catch(error=>{

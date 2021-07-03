@@ -454,9 +454,9 @@ export class SyncDataService {
         }
         
         key1 = {
-          "stage1Image": mealManagementRecord[indexServerData].stage1Image,
-          "stage1Remark": mealManagementRecord[indexServerData].stage1Remark,
-          "stage1DateTime": mealManagementRecord[indexServerData].stage1DateTime,
+          "stage1Image": mealManagementRecord[indexServerData].stage1Image == undefined?null:mealManagementRecord[indexServerData].stage2Image,
+          "stage1Remark": mealManagementRecord[indexServerData].stage1Remark == undefined?null:mealManagementRecord[indexServerData].stage1Remark,
+          "stage1DateTime": mealManagementRecord[indexServerData].stage1DateTime == undefined?null:mealManagementRecord[indexServerData].stage1DateTime,
           "stage1GeoInfo": geoInfo1,
           "stage2Image": mealManagementRecord[indexServerData].stage2Image == undefined?null:mealManagementRecord[indexServerData].stage2Image,
           "stage2Remark": mealManagementRecord[indexServerData].stage2Remark == undefined?null:mealManagementRecord[indexServerData].stage2Remark,

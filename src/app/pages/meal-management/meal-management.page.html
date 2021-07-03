@@ -54,7 +54,7 @@
       </div>
     </div>
     <div *ngIf="mealStatus">
-      <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)" [disabled]="syncDisabled">
+      <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)">
         <ion-segment-button value="procurement">
           <ion-label>Ration <br>Procurement</ion-label>
         </ion-segment-button>

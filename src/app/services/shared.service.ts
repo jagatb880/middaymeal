@@ -8,6 +8,9 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Subject } from 'rxjs';
 import { ConstantService } from './constant.service';
 import { Storage } from '@ionic/storage';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
+import { Network } from '@ionic-native/network/ngx';
 
 
 @Injectable({
@@ -36,7 +39,8 @@ export class SharedService {
 
   constructor(private alertCtrl: AlertController, private location: Location, private loadingCtrl: LoadingController,
     private toastCtrl: ToastController, private camera: Camera, private geolocation: Geolocation,
-    private nativeGeocoder: NativeGeocoder, private diagnostic: Diagnostic, private storage: Storage) {}
+    private nativeGeocoder: NativeGeocoder, private diagnostic: Diagnostic, private storage: Storage,
+    private androidPermissions: AndroidPermissions, private locationAccuracy: LocationAccuracy) {}
 
   async showMessage(msg: string, duration: number = 2000): Promise < void > {
     const message = await this.toastCtrl.create({
@@ -164,14 +168,18 @@ export class SharedService {
     let promise: Promise < any > = new Promise(async (resolve, reject) => {
       this.camera.getPicture(options).then((base64Data) => {
         this.showLoader("Please wait...")
+        let geoLocationOption = {
+          maximumAge: 3000, timeout: 30000, enableHighAccuracy: true
+        }
         let geoCoderOptions: NativeGeocoderOptions = {
           useLocale: true,
           maxResults: 5
         };
 
         this.diagnostic.isLocationEnabled().then((isEnabled) => {
+          debugger;
           if(isEnabled){
-            this.geolocation.getCurrentPosition(options).then(resp => {
+            this.geolocation.getCurrentPosition(geoLocationOption).then(resp => {
               this.imageData = {
                 src: "data:image/jpeg;base64," + base64Data,
                 meta_info: "Lat:" + resp.coords.latitude + "; Long:" + resp.coords.longitude + "; Accuracy :" + resp.coords.accuracy
@@ -225,6 +233,72 @@ export class SharedService {
     
   observeDataUpdate(): Subject<any> {
     return this.dataUpdate;
+  }
+
+  chckAppGpsPermission(network): Promise < any > {
+    let promise: Promise < any > = new Promise(async (resolve, reject) => {
+      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
+        result => {
+          if (result.hasPermission) {
+            this.requestToSwitchOnGPS(network).then(data => {
+              resolve(data)
+            }).catch(error => {
+              reject(error)
+            })
+          } else {
+            this.askGPSPermission(network);
+          }
+        },
+        error => {
+          reject(error)
+        }
+      );
+    })
+    return promise
+  }
+
+  requestToSwitchOnGPS(network): Promise < any > {
+    let promise: Promise < any > = new Promise(async (resolve, reject) => {
+      this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
+        () => {
+          this.openCamera(network).then(data => {
+            resolve(data)
+          }).catch(error => {
+            reject(error)
+          })
+        },
+        error => {
+          reject(error)
+        }
+      );
+    })
+    return promise
+  }
+
+  askGPSPermission(network): Promise < any > {
+    let promise: Promise < any > = new Promise(async (resolve, reject) => {
+      this.locationAccuracy.canRequest().then((canRequest: boolean) => {
+        if (canRequest) {
+        } else {
+          this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION)
+            .then(
+              () => {
+                this.requestToSwitchOnGPS(network).then(data => {
+                  resolve(data)
+                }).catch(error => {
+                  reject(error)
+                })
+              },
+              error => {
+                reject(error)
+              }
+            );
+        }
+      }).then(error=>{
+        reject(error)
+      });
+    })
+    return promise
   }
 
   checkForDataSync(){
