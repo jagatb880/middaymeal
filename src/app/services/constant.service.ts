@@ -21,7 +21,7 @@ export class ConstantService {
     validPassword:'Please enter Password.',
     authentication: 'Authenticating user, please wait...',
     wentWrong: 'Something went wrong, try after some times.',
-    somethingWentWrong: 'Somthing went Wrong!',
+    somethingWentWrong: 'Something went Wrong!',
     fetchUserDetails: 'Fetching user details, please wait...',
     warning: 'Warning',
     info: 'Info',
