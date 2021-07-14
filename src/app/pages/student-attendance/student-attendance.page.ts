@@ -153,6 +153,11 @@ export class StudentAttendancePage implements OnInit {
             this.totalCount = studentList.length;
             this.presentCount = studentList.length
           }
+          if(String(new Date()).substr(0,15) == String(new Date(currentDate)).substr(0,15)){
+            this.syncedDisabled = false;
+          }else{
+            this.syncedDisabled = true;
+          }
         }).catch(err => {
           console.log(err)
         })

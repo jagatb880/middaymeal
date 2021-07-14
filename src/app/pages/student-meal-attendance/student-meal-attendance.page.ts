@@ -127,7 +127,7 @@ export class StudentMealAttendancePage implements OnInit {
               this.totalCount = 0;
               this.presentCount = 0;
               this.hideView = true;
-              this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, secion and date.')
+              this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, section and date.')
             } else {
               let filterMealDatas = []
               for (let i = 0; i < studentList.length; i++) {
@@ -188,6 +188,11 @@ export class StudentMealAttendancePage implements OnInit {
             this.hideView = true;
             this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, section and date.')
           }
+          if(String(new Date()).substr(0,15) == String(new Date(currentDate)).substr(0,15)){
+            this.syncedDisabled = false;
+          }else{
+            this.syncedDisabled = true;
+          }
         }).catch(err => {
           console.log(err)
         })
@@ -234,7 +239,7 @@ export class StudentMealAttendancePage implements OnInit {
             }
           })
         } else {
-          this.sharedSvc.openCamera(this.networkSvc.online).then(data=>{
+          this.sharedSvc.chckAppGpsPermission(this.networkSvc.online).then(data=>{
             this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
             console.log("Reverse Geo Location"+JSON.stringify(this.sharedSvc.geocoderResult));
           }).catch(error=>{

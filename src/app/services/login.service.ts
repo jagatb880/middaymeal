@@ -133,9 +133,13 @@ export class LoginService {
       this.storage.get(ConstantService.dbKeyNames.userDetails).then(async userDetails => {
         if(userDetails != null){
           let result = await userDetails.find(userDetail=> userDetail.username == this.sharedSvc.userName)
-          await resolve(result)
+          await setTimeout(() => {
+            resolve(result)
+          }, 1000);
         }else{
-          await resolve(userDetails)
+          await setTimeout(() => {
+            resolve(userDetails)
+          }, 1000);
         }
       }, (err) => {
         console.log(err)

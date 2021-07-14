@@ -89,6 +89,11 @@ export class CchAttendancePage implements OnInit {
             this.totalCount = cchList.length;
             this.presentCount = cchList.length
           }
+          if(String(new Date()).substr(0,15) == String(new Date(currentDate)).substr(0,15)){
+            this.syncedDisabled = false;
+          }else{
+            this.syncedDisabled = true;
+          }
         }).catch(err => {
           console.log(err)
         })

@@ -67,6 +67,7 @@ markDisabled: any;
   ngOnInit() {
     this.markDisabled = (date: Date) => {
       var current = new Date();
+      // current.setDate(current.getDate() + 1);
       return date > current;
   };
     this.selectedDate =this.calendar.currentDate
@@ -304,7 +305,7 @@ markDisabled: any;
           }
         })
       } else {
-        this.sharedSvc.openCamera(this.networkSvc.online).then(data => {
+        this.sharedSvc.chckAppGpsPermission(this.networkSvc.online).then(data => {
           switch (this.selectedSegment) {
             case 'procurement':
               this.procurementImage = this.sharedSvc.imageData.src;
@@ -392,19 +393,48 @@ markDisabled: any;
     alert.present();
   }
 
-  dateSelectedDone(){
-    this.dateSelected = true
-    this.clearAllPreviewousValues();
-    this.setMealDataToUi(this.currentDate);
+  dateSelectedDone(ev){
+    let currentDate = new Date()
+    // currentDate.setDate(currentDate.getDate() + 1);
+    if(this.selectedDate>currentDate){
+      this.syncDisabled = true;
+      this.sharedSvc.showAlertCallBack("Warning", "Future date not allowed").then(data=>{
+        this.openCalender()
+      });
+    }else if(String(this.selectedDate).substr(0,15) == String(currentDate).substr(0,15)){
+      this.syncDisabled = false
+      this.dateSelected = true
+      this.clearAllPreviewousValues();
+      this.setMealDataToUi(this.currentDate);
+    }else{
+      this.syncDisabled = true;
+      this.dateSelected = true;
+      this.setMealDataToUi(this.currentDate);
+      this.syncDisabled = true;
+    }
   }
 
   onTimeSelected(ev) {
     let selected = new Date(ev.selectedTime);
-    this.selectedDate = selected
-    this.storage.set("Currentdate",selected)
-    this.currentDate = this.datepipe.transform(selected,"EEEE d MMM y");
-    this.currentYear = this.datepipe.transform(selected,"y");
-    this.currentMonth = this.datepipe.transform(selected,"MMM");
+    let currentDate = new Date()
+    // currentDate.setDate(currentDate.getDate() + 1);
+    if(selected>currentDate){
+      this.selectedDate = selected
+      ev.preventDefault()
+    }else if(String(this.selectedDate).substr(0,15) == String(currentDate).substr(0,15)){
+      this.selectedDate = selected
+      this.storage.set("Currentdate",selected)
+      this.currentDate = this.datepipe.transform(selected,"EEEE d MMM y");
+      this.currentYear = this.datepipe.transform(selected,"y");
+      this.currentMonth = this.datepipe.transform(selected,"MMM");
+    }else{
+      this.syncDisabled = true;
+      this.selectedDate = selected
+      this.storage.set("Currentdate",selected)
+      this.currentDate = this.datepipe.transform(selected,"EEEE d MMM y");
+      this.currentYear = this.datepipe.transform(selected,"y");
+      this.currentMonth = this.datepipe.transform(selected,"MMM");
+    }
   }
 
   openCalender(){

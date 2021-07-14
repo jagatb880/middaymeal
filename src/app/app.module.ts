@@ -25,7 +25,10 @@ import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
   entryComponents: [],
   imports: [BrowserModule, 
     IonicModule.forRoot(),
-    IonicStorageModule.forRoot(), 
+    IonicStorageModule.forRoot({
+      name: 'mdm',
+      driverOrder: ['indexeddb', 'websql', 'localstorage']
+    }),
     HttpClientModule,
     AppRoutingModule,
     NgCalendarModule,
