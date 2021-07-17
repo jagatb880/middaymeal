@@ -90,7 +90,7 @@ export class CchAttendancePage implements OnInit {
             this.presentCount = cchList.length
           }
           if(String(new Date()).substr(0,15) == String(new Date(currentDate)).substr(0,15)){
-            this.syncedDisabled = false;
+            // this.syncedDisabled = false;
           }else{
             this.syncedDisabled = true;
           }

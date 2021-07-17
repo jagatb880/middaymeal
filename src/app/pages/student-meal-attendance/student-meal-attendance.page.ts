@@ -189,7 +189,7 @@ export class StudentMealAttendancePage implements OnInit {
             this.sharedSvc.showAlert(ConstantService.message.warning,'Please fillup the student attendance first for same class, section and date.')
           }
           if(String(new Date()).substr(0,15) == String(new Date(currentDate)).substr(0,15)){
-            this.syncedDisabled = false;
+            // this.syncedDisabled = false;
           }else{
             this.syncedDisabled = true;
           }

@@ -35,6 +35,7 @@ export class StudentAttendancePage implements OnInit {
   presentCount: number;
   studentFetchData: any;
   studentSavedData: any;
+  studentMealAttendanceData: any;
   constructor(private datepipe: DatePipe, public sharedSvc: SharedService, private diagnostic: Diagnostic,
     private platform: Platform, private storage: Storage, private location: Location,
     private networkSvc: NetworkService, private changeDeector: ChangeDetectorRef) {
@@ -56,9 +57,11 @@ export class StudentAttendancePage implements OnInit {
     if(this.sharedSvc.teacherRole){
       this.studentFetchData = ConstantService.dbKeyNames.studentData;
       this.studentSavedData = ConstantService.dbKeyNames.studentAttendanceData;
+      this.studentMealAttendanceData = ConstantService.dbKeyNames.studentMealAttendanceData
     }else{
       this.studentFetchData = ConstantService.dbKeyNames.hmstudentData;
       this.studentSavedData = ConstantService.dbKeyNames.hmstudentAttendanceData;
+      this.studentMealAttendanceData = ConstantService.dbKeyNames.hmstudentAttendanceData
     }
     this.fetchAllStudentData();
   }
@@ -135,7 +138,7 @@ export class StudentAttendancePage implements OnInit {
               this.sharedSvc.geocoderResult = fetchedStudentData[0].geo_coder_info;
               this.photoCapturedDate = this.datepipe.transform(this.currentDate,ConstantService.message.dateTimeFormat);
               this.studentList = studentList;
-              this.storage.get(ConstantService.dbKeyNames.studentMealAttendanceData).then(studentMealDatas=>{
+              this.storage.get(this.studentMealAttendanceData).then(studentMealDatas=>{
                 if(studentMealDatas != null){
                   let fetchedStudentMealData: IStudentRecord[] = studentMealDatas.filter(data => (data.record_date.substr(0, 10) == currentDate.substr(0, 10)) &&
               (data.class_name == this.currentClassName) && (data.section_name == this.currentSectionName))
@@ -154,7 +157,7 @@ export class StudentAttendancePage implements OnInit {
             this.presentCount = studentList.length
           }
           if(String(new Date()).substr(0,15) == String(new Date(currentDate)).substr(0,15)){
-            this.syncedDisabled = false;
+            // this.syncedDisabled = false;
           }else{
             this.syncedDisabled = true;
           }

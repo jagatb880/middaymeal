@@ -67,7 +67,7 @@ markDisabled: any;
   ngOnInit() {
     this.markDisabled = (date: Date) => {
       var current = new Date();
-      // current.setDate(current.getDate() + 1);
+      current.setDate(current.getDate() + 1);
       return date > current;
   };
     this.selectedDate =this.calendar.currentDate
@@ -394,7 +394,10 @@ markDisabled: any;
   }
 
   dateSelectedDone(ev){
+    debugger;
     let currentDate = new Date()
+    currentDate.setHours(0,0,0,0)
+    this.selectedDate.setHours(0,0,0,0)
     // currentDate.setDate(currentDate.getDate() + 1);
     if(this.selectedDate>currentDate){
       this.syncDisabled = true;
@@ -417,6 +420,8 @@ markDisabled: any;
   onTimeSelected(ev) {
     let selected = new Date(ev.selectedTime);
     let currentDate = new Date()
+    currentDate.setHours(0,0,0,0)
+    selected.setHours(0,0,0,0)
     // currentDate.setDate(currentDate.getDate() + 1);
     if(selected>currentDate){
       this.selectedDate = selected
